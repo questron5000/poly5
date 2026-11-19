@@ -6,20 +6,21 @@ POLY5 started as a Web Audio synth ([poly5.html](poly5.html)) and runs as firmwa
 
 ## Video manual
 
-Ten short chapters in [manual/videos](manual/videos), or all of them in one: [poly5-manual-full.mp4](manual/videos/poly5-manual-full.mp4).
+Eleven short chapters in [manual/videos](manual/videos), or all of them in one: [poly5-manual-full.mp4](manual/videos/poly5-manual-full.mp4).
 
 | # | Chapter |
 | --- | --- |
 | 01 | Meet the five synths |
-| 02 | Play modes: round robin, random, unison, poly |
-| 03 | Patches and random sounds |
-| 04 | Performance knobs: filter, resonance, delay, reverb |
-| 05 | On, silent, skip |
-| 06 | A synth's page |
-| 07 | The effects pages |
-| 08 | The sequencer |
-| 09 | The arpeggiator |
-| 10 | Saving your patches |
+| 02 | **Random: the key to everything** (random synths, random sounds, random arpeggios) |
+| 03 | Play modes: round robin, random, unison, poly |
+| 04 | Patches and random sounds |
+| 05 | Performance knobs: filter, resonance, delay, reverb |
+| 06 | On, silent, skip |
+| 07 | A synth's page |
+| 08 | The effects pages |
+| 09 | The sequencer |
+| 10 | The arpeggiator |
+| 11 | Saving your patches |
 
 The videos are made from the firmware itself: Dinghy's host mode renders the screen and the sound, and [manual/manual.py](manual/manual.py) adds the panel picture and the captions. To change a chapter, edit [manual/chapters.py](manual/chapters.py), then run `python3 manual/manual.py` (add a chapter number to make only that one).
 
