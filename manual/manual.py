@@ -196,60 +196,156 @@ def glow(im, box, color, r=18):
     im.paste(lay, (0, 0), lay)
 
 
-def draw_panel(im, keys, key_leds, btn_leds, encpos, active):
-    """active: {control: (verb, strength 0..1)}"""
-    d = ImageDraw.Draw(im, "RGBA")
-    d.rounded_rectangle([PX0 - 20, PY0 - 10, PX0 + 920, KB_Y + 150], 26, fill=(18, 22, 34, 235), outline=(46, 52, 70), width=2)
-    for e, (x, y) in ENC_POS.items():
-        a = active.get(e)
-        if a:
-            glow(im, [x - 70, y - 70, x + 70, y + 70], AMBER, 22)
-            d = ImageDraw.Draw(im, "RGBA")
-        r = 38
-        d.ellipse([x - r - 6, y - r - 6, x + r + 6, y + r + 6], fill=(30, 34, 46), outline=AMBER if a else (60, 66, 84), width=3 if a else 2)
-        d.ellipse([x - r, y - r, x + r, y + r], fill=(52, 56, 68))
-        ang = math.radians(-90 + encpos[ENC[e]] * 18)
-        d.line([(x + math.cos(ang) * 10, y + math.sin(ang) * 10), (x + math.cos(ang) * (r - 4), y + math.sin(ang) * (r - 4))], fill=INK, width=5)
-        lbl = {"ALGORITHM": "ALGO"}.get(e, e)
-        tw = d.textlength(lbl, font=F_LBL)
-        d.text((x - tw / 2, y + r + 12), lbl, font=F_LBL, fill=AMBER if a else (170, 176, 192))
-        if a:
-            draw_verb(d, x, y - r - 40, a[0])
-    for b, (x, y) in BTN_POS.items():
-        a = active.get(b)
-        if a:
-            glow(im, [x - 70, y - 50, x + 70, y + 50], AMBER, 20)
-            d = ImageDraw.Draw(im, "RGBA")
-        lit = btn_leds >> BTN[b] & 1
-        si = ["FX", "SEL", "ENV", "LFO", "EDIT"].index(b) if b in ("FX", "SEL", "ENV", "LFO", "EDIT") else -1
-        col = SYNTH_RGB[si] if si >= 0 else (232, 220, 200)
-        fill = col if lit else (44, 48, 60)
-        d.rounded_rectangle([x - 50, y - 24, x + 50, y + 24], 10, fill=fill, outline=AMBER if a else (78, 84, 104), width=4 if a else 2)
-        tw = d.textlength(b.replace("-", "−"), font=F_LBL)
-        d.text((x - tw / 2, y - 12), b.replace("-", "−"), font=F_LBL, fill=(20, 20, 26) if lit else (200, 204, 216))
-        if si >= 0:
-            d.text((x - 5, y + 26), str(si + 1), font=F_LBL_S, fill=col)
-        if a:
-            draw_verb(d, x, y - 56, a[0])
-    # the keys, F3..G5
-    ww = KB_W / len(WHITE)
-    pos = {}
-    for i, k in enumerate(WHITE):
-        pos[k] = (KB_X0 + i * ww, ww)
-    kb_active = active.get("KEYS")
-    for k in WHITE:
-        x, w = pos[k]
-        on = keys >> k & 1
-        d.rectangle([x + 2, KB_Y, x + w - 2, KB_Y + 130], fill=AMBER if on else (214, 212, 206) if key_leds >> k & 1 == 0 else (250, 230, 180))
-        if (k + 53) % 12 == 0:
-            d.text((x + w / 2 - 11, KB_Y + 104), f"C{(k + 53) // 12 - 1}", font=F_LBL_S, fill=(90, 90, 96))
-    for k in range(27):
-        if k in pos:
-            continue
-        x = pos[k - 1][0] + ww * 0.68
-        on = keys >> k & 1
-        d.rectangle([x, KB_Y, x + ww * 0.64, KB_Y + 80], fill=AMBER if on else (28, 30, 38))
-    return d
+class FM1:
+    """The FM-1 as it is laid out (knobs left, the square screen, KNOB1-4 and the button block right, pill keys), in
+    panel units of 1760 x 1072, drawn at scale s from (ox, oy). The still parts are drawn once, at twice the size and
+    smoothed; each frame adds the screen, the knob marks, the lights, the keys and what is being pressed."""
+    PW, PH = 1760, 1072
+    KNOBS = {"MASTER": (155, 165), "SELECT": (340, 165), "PRESETS": (155, 348), "ALGORITHM": (340, 348),
+             "KNOB1": (990, 165), "KNOB2": (1185, 165), "KNOB3": (1380, 165), "KNOB4": (1575, 165)}
+    DOES = {"MASTER": "VOLUME", "SELECT": "CURSOR", "PRESETS": "PATCHES", "ALGORITHM": "PAGES",
+            "KNOB1": "FILTER", "KNOB2": "RESONANCE", "KNOB3": "DELAY", "KNOB4": "REVERB"}
+    ROWS = [("FX", "SEL", "ENV", "LFO", "EDIT", "GLO"), ("HOME", "SAVE", "ARP", "SEQ", "PLAY", "REC")]
+    SUB = {"GLO": "RANDOM", "PLAY": "START", "HOME": "BACK"}
+    SCREEN = (481, 101, 372)
+
+    def __init__(self, ox, oy, s, functions=True, ground=BG):
+        self.ox, self.oy, self.s, self.functions = ox, oy, s, functions
+        self.btn = {"OCT-": (181, 491, 42, 21), "OCT+": (314, 491, 42, 21)}
+        for r, row in enumerate(self.ROWS):
+            for i, b in enumerate(row):
+                self.btn[b] = (1012 + i * 108.4, 357 + r * 109, 36, 36)
+        low = [149 + i * 97.6 for i in range(16)]
+        up = [(low[a] + low[a + 1]) / 2 for a in (0, 1, 2, 4, 5, 7, 8, 9, 11, 12, 14)]
+        whites = [k for k in range(27) if (k + 53) % 12 in (0, 2, 4, 5, 7, 9, 11)]
+        blacks = [k for k in range(27) if k not in whites]
+        self.key = {k: (x, 792) for k, x in zip(whites, low)}
+        self.key.update({k: (x, 626) for k, x in zip(blacks, up)})
+        self.low = low
+        self.base = self._base(ground)
+        self.f_btn = font(max(8, int(20 * s * 1.0)), 0)
+        self.f_sub = mono(max(6, int(11 * s)), False)
+        self.f_verb = mono(max(10, int(30 * s)))
+
+    def P(self, x, y):
+        return (self.ox + x * self.s, self.oy + y * self.s)
+
+    def _base(self, ground):
+        Z = 2 * self.s
+        w, h = int(self.PW * Z), int(self.PH * Z)
+        im = Image.new("RGB", (w, h), ground)
+        d = ImageDraw.Draw(im)
+        z = lambda *v: [x * Z for x in v]
+        def ctext(x, y, t, f, c):
+            tw = d.textlength(t, font=f); d.text((x * Z - tw / 2, y * Z), t, font=f, fill=c)
+        CREAM, DIMG = (236, 232, 224), (96, 100, 112)
+        d.rounded_rectangle(z(8, 8, self.PW - 8, self.PH - 8), radius=64 * Z, fill=(30, 31, 37), outline=(48, 50, 58), width=max(1, int(3 * Z)))
+        for name, (x, y) in self.KNOBS.items():
+            ctext(x, 78 if y < 300 else 262, name, mono(int(19 * Z), False), DIMG)
+            r = 42
+            d.ellipse(z(x - r - 4, y - r - 4, x + r + 4, y + r + 4), fill=(18, 19, 23))
+            for k in range(36):
+                a = math.radians(k * 10)
+                d.line(z(x + math.cos(a) * (r - 2), y + math.sin(a) * (r - 2), x + math.cos(a) * (r + 2), y + math.sin(a) * (r + 2)), fill=(54, 56, 64), width=max(1, int(2 * Z)))
+            if self.functions:
+                i = list(self.KNOBS).index(name)
+                col = SYNTH_RGB[i - 4] if i >= 4 else CREAM
+                ctext(x, y + 58, self.DOES[name], font(int(22 * Z), 2), col)
+        d.rounded_rectangle(z(118, 455, 376, 528), radius=14 * Z, fill=(22, 23, 28))
+        d.rounded_rectangle(z(462, 82, 872, 492), radius=30 * Z, fill=(0, 0, 0), outline=(14, 14, 16), width=max(1, int(6 * Z)))
+        d.rounded_rectangle(z(944, 292, 1626, 542), radius=18 * Z, fill=(22, 23, 28))
+        d.rounded_rectangle(z(68, 584, 1692, 982), radius=40 * Z, fill=(22, 23, 28))
+        for k, (x, y0) in self.key.items():
+            d.rounded_rectangle(z(x - 42, y0, x + 42, y0 + 150), radius=42 * Z, fill=(46, 48, 56))
+        ctext(self.low[4], 906, "C4", mono(int(17 * Z), False), DIMG); ctext(self.low[11], 906, "C5", mono(int(17 * Z), False), DIMG)
+        return im.resize((int(self.PW * self.s), int(self.PH * self.s)), Image.LANCZOS)
+
+    def draw(self, im, screen=None, keys=0, key_leds=0, btn_leds=0, encpos=(0,) * 7, active=None):
+        active = active or {}
+        s = self.s
+        im.paste(self.base, (int(self.ox), int(self.oy)))
+        if screen is not None:
+            x, y, n = self.SCREEN
+            size = int(n * s)
+            im.paste(screen.resize((size, size), Image.NEAREST if size >= screen.width else Image.LANCZOS), tuple(int(v) for v in self.P(x, y)))
+        for name, (cx, cy) in self.KNOBS.items():           # glows first, under everything
+            if name in active: self._glow(im, cx, cy, 80)
+        for b, (cx, cy, hw, hh) in self.btn.items():
+            if b in active: self._glow(im, cx, cy, 70)
+        d = ImageDraw.Draw(im)
+        for name, (cx, cy) in self.KNOBS.items():
+            r = 34
+            X, Y = self.P(cx, cy)
+            d.ellipse([X - r * s, Y - r * s, X + r * s, Y + r * s], fill=(44, 46, 54), outline=AMBER if name in active else (60, 62, 72), width=max(1, int(3 * s)) if name in active else 1)
+            pos = encpos[ENC[name]] if name in ENC else 0
+            a = math.radians(-90 + pos * 18)
+            i = list(self.KNOBS).index(name)
+            col = SYNTH_RGB[i - 4] if (i >= 4 and self.functions) else INK
+            d.line([X + math.cos(a) * 8 * s, Y + math.sin(a) * 8 * s, X + math.cos(a) * 28 * s, Y + math.sin(a) * 28 * s], fill=col, width=max(2, int(5 * s)))
+        for b, (cx, cy, hw, hh) in self.btn.items():
+            X, Y = self.P(cx, cy)
+            lit = btn_leds >> BTN[b] & 1
+            si = ["FX", "SEL", "ENV", "LFO", "EDIT"].index(b) if b in ("FX", "SEL", "ENV", "LFO", "EDIT") else -1
+            if si >= 0:
+                c = SYNTH_RGB[si]
+                fill = c if lit else tuple(int(v * 0.42) for v in c)
+                ink = (16, 16, 20) if lit else tuple(min(255, int(v * 0.95)) for v in c)
+            elif b == "GLO":
+                fill, ink = (AMBER, (24, 16, 6)) if lit else ((118, 80, 30), (250, 214, 160))
+            elif b == "REC":
+                fill, ink = ((236, 64, 56), (255, 240, 236)) if lit else ((110, 34, 32), (236, 200, 196))
+            else:
+                fill, ink = ((236, 228, 210), (24, 22, 20)) if lit else ((80, 82, 92), (236, 232, 224))
+            d.rounded_rectangle([X - hw * s, Y - hh * s, X + hw * s, Y + hh * s], radius=max(2, int(9 * s)), fill=fill,
+                                outline=AMBER if b in active else None, width=max(2, int(5 * s)) if b in active else 0)
+            t = b.replace("-", "−")
+            if si >= 0:
+                self._ct(d, X, Y - 22 * s, t, self.f_btn, ink); self._ct(d, X, Y + 2 * s, str(si + 1), self.f_btn, ink)
+            elif b in self.SUB and hh > 30:
+                self._ct(d, X, Y - 22 * s, t, self.f_btn, ink); self._ct(d, X, Y + 6 * s, self.SUB[b], self.f_sub, ink)
+            else:
+                self._ct(d, X, Y - (14 if hh > 30 else 9) * s, t, self.f_btn, ink)
+        for k, (cx, y0) in self.key.items():
+            X, Y = self.P(cx, y0)
+            on, led = keys >> k & 1, key_leds >> k & 1
+            c = AMBER if on else (250, 226, 170) if led else (112, 114, 122)
+            d.rounded_rectangle([X - 8 * s, Y + 24 * s, X + 8 * s, Y + 86 * s], radius=max(2, int(8 * s)), fill=c)
+            if on:
+                d.rounded_rectangle([X - 42 * s, Y, X + 42 * s, Y + 150 * s], radius=int(42 * s), outline=AMBER, width=max(1, int(3 * s)))
+        for name, (cx, cy) in self.KNOBS.items():
+            if name in active: self._verb(d, cx, cy - 92 if cy < 300 else cy - 88, active[name][0])
+        for b, (cx, cy, hw, hh) in self.btn.items():
+            if b in active: self._verb(d, cx, cy - hh - 40, active[b][0])
+        return d
+
+    def _ct(self, d, X, Y, t, f, c):
+        tw = d.textlength(t, font=f); d.text((X - tw / 2, Y), t, font=f, fill=c)
+
+    def _glow(self, im, cx, cy, r):
+        X, Y = self.P(cx, cy); R = r * self.s; pad = int(R + 30)
+        box = (int(X - pad), int(Y - pad), int(X + pad), int(Y + pad))
+        lay = Image.new("RGBA", (box[2] - box[0], box[3] - box[1]), (0, 0, 0, 0))
+        ImageDraw.Draw(lay).ellipse([pad - R, pad - R, pad + R, pad + R], fill=AMBER + (170,))
+        lay = lay.filter(ImageFilter.GaussianBlur(R / 3))
+        im.paste(lay, box[:2], lay)
+
+    def _verb(self, d, cx, cy, verb):
+        X, Y = self.P(cx, cy)
+        tw = d.textlength(verb, font=self.f_verb)
+        h = self.f_verb.size
+        d.rounded_rectangle([X - tw / 2 - 10, Y - 4, X + tw / 2 + 10, Y + h + 6], 7, fill=AMBER)
+        d.text((X - tw / 2, Y), verb, font=self.f_verb, fill=(20, 16, 10))
+
+
+PANEL = None
+
+
+def draw_panel(im, keys, key_leds, btn_leds, encpos, active, screen=None):
+    """the manual's FM-1, in the right column under the caption"""
+    global PANEL
+    if PANEL is None:
+        PANEL = FM1(940, 528, 0.5, functions=False)
+    return PANEL.draw(im, screen, keys, key_leds, btn_leds, encpos, active)
 
 
 def draw_verb(d, x, y, verb):
@@ -329,7 +425,7 @@ def render(ch, still=False):
                 active[c] = (v, 1)
         if log[i][1]:
             active["KEYS"] = ("PLAY", 1)
-        draw_panel(im, log[i][1], log[i][2], log[i][3], log[i][4:], active)
+        draw_panel(im, log[i][1], log[i][2], log[i][3], log[i][4:], active, scr)
         cur = None
         for j, c in enumerate(caps):
             if c[0] <= ms:
