@@ -221,3 +221,7 @@ html.anim .panel-pic.rv.in { transform: none; }
 .card { display: flex; flex-direction: column; }
 .card > p { margin-bottom: 20px; }
 .card > img, .card > .ui-loop { margin-top: auto; }
+
+.safe { list-style: none; padding: 0; margin: 0 0 1.2em; display: grid; gap: 12px; max-width: 46em; }
+.safe li { border-left: 3px solid var(--s3); padding: 2px 0 2px 16px; font-size: 16px; }
+.safe b { display: block; }
