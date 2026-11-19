@@ -188,3 +188,36 @@ footer p { max-width: 52em; }
 
 .ui-loop { background: #000; }
 .card .ui-loop { aspect-ratio: 1; }
+
+/* ---- motion (only with html.anim: JavaScript on, no request for less motion) ---- */
+@keyframes p5-pop { 0% { opacity: 0; transform: translateY(0.45em) scale(0.55) rotate(-10deg); } 60% { opacity: 1; transform: translateY(-0.06em) scale(1.08) rotate(3deg); } 100% { opacity: 1; transform: none; } }
+@keyframes p5-rise { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: none; } }
+@keyframes p5-draw { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@keyframes p5-screen { from { opacity: 0; transform: translateY(26px) scale(0.94); filter: brightness(2.2) blur(3px); } to { opacity: 1; transform: none; filter: none; } }
+@keyframes p5-fade { from { opacity: 0; } to { opacity: 1; } }
+html.anim .hero .stripes i { transform-origin: left; animation: p5-draw 0.5s cubic-bezier(.2,.8,.2,1) both; }
+html.anim .hero .stripes i:nth-child(1) { animation-delay: 0.05s; } html.anim .hero .stripes i:nth-child(2) { animation-delay: 0.13s; }
+html.anim .hero .stripes i:nth-child(3) { animation-delay: 0.21s; } html.anim .hero .stripes i:nth-child(4) { animation-delay: 0.29s; }
+html.anim .hero .stripes i:nth-child(5) { animation-delay: 0.37s; }
+html.anim .hero h1 span { display: inline-block; animation: p5-pop 0.7s cubic-bezier(.2,.8,.25,1) both; }
+html.anim .hero h1 span:nth-child(1) { animation-delay: 0.25s; } html.anim .hero h1 span:nth-child(2) { animation-delay: 0.38s; }
+html.anim .hero h1 span:nth-child(3) { animation-delay: 0.51s; } html.anim .hero h1 span:nth-child(4) { animation-delay: 0.64s; }
+html.anim .hero h1 span:nth-child(5) { animation-delay: 0.77s; }
+html.anim .hero .lede { animation: p5-rise 0.7s ease 0.95s both; }
+html.anim .hero p.sub { animation: p5-rise 0.7s ease 1.08s both; }
+html.anim .hero .lights { animation: p5-rise 0.7s ease 1.18s both; }
+html.anim .hero .btns { animation: p5-rise 0.7s ease 1.28s both; }
+html.anim .hero figure.screen { animation: p5-screen 1s cubic-bezier(.2,.8,.2,1) 0.5s both; }
+html.anim .hero figure.screen figcaption { animation: p5-fade 0.8s ease 1.4s both; }
+html.anim .hero-grid { animation: p5-fade 1.6s ease both; }
+html.anim .nav { animation: p5-fade 0.6s ease both; }
+html.anim .rv { opacity: 0; transform: translateY(28px); transition: opacity 0.75s ease, transform 0.75s cubic-bezier(.2,.75,.2,1); transition-delay: var(--d, 0s); }
+html.anim .rv.in { opacity: 1; transform: none; }
+html.anim .panel-pic.rv { transform: translateY(36px) scale(0.97); }
+html.anim .panel-pic.rv.in { transform: none; }
+@media (prefers-reduced-motion: reduce) { html.anim * { animation: none !important; transition: none !important; } html.anim .rv { opacity: 1; transform: none; } }
+
+/* cards: the picture at the bottom, so a row of cards lines its pictures up whatever the text above */
+.card { display: flex; flex-direction: column; }
+.card > p { margin-bottom: 20px; }
+.card > img, .card > .ui-loop { margin-top: auto; }

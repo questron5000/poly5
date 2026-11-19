@@ -5,10 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>POLY5 for the M-VAVE FM-1</title>
 <meta name="description" content="Five synths in one for the M-VAVE FM-1: round robin, random, lofi tape, 24 patches with sequences. Open firmware, GPL-3.0.">
+<script>if(!matchMedia("(prefers-reduced-motion: reduce)").matches)document.documentElement.classList.add("anim")</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="site/site.css?v=d47a0fee">
+<link rel="stylesheet" href="site/site.css?v=47a3d3c3">
 </head>
 <body>
 
@@ -373,6 +374,24 @@ python3 tools/fm1_install.py build/dinghy.fwsc --port FM-1 --yes</code></pre>
   }
   items.forEach(function (it, i) { it.addEventListener('click', function () { show(i, true); }); });
   v.addEventListener('ended', function () { if (cur + 1 < items.length) show(cur + 1, true); });
+})();
+
+/* scroll: things rise in as they come into view; siblings (cards, modes) one after another */
+(function () {
+  var root = document.documentElement;
+  if (!root.classList.contains('anim') || !('IntersectionObserver' in window)) { root.classList.remove('anim'); return; }
+  var sel = 'main section .eyebrow, main section h2, main section h3, main section .lede, main section .wrap > p, main section .split p, ' +
+            '.card, .mode, .table, .panel-pic, main figure.screen, .player, main pre, main ol.pages, .video';
+  var els = [].slice.call(document.querySelectorAll(sel)).filter(function (e) { return !e.closest('.rv') && !e.closest('.player .pl-list'); });
+  els.forEach(function (e) {
+    e.classList.add('rv');
+    var sib = e.parentNode ? [].slice.call(e.parentNode.children).filter(function (x) { return x.matches(sel); }) : [];
+    if (e.matches('.card, .mode')) e.style.setProperty('--d', (sib.indexOf(e) * 0.12) + 's');
+  });
+  var io = new IntersectionObserver(function (es) {
+    es.forEach(function (x) { if (x.isIntersecting) { x.target.classList.add('in'); io.unobserve(x.target); } });
+  }, { threshold: 0.12, rootMargin: '0px 0px -6% 0px' });
+  els.forEach(function (e) { io.observe(e); });
 })();
 
 /* the hero's background: POLY5's PLAY screen. A floor and a ceiling of faint lines meeting near one point,
