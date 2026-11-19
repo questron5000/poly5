@@ -4,6 +4,10 @@ Five synths in one, for the M-VAVE FM-1. Every note you play goes to the next sy
 
 POLY5 started as a Web Audio synth ([poly5.html](poly5.html)) and runs as firmware on the FM-1 by way of [Dinghy](dinghy/) (zvenson/dinghy v0.5, GPL-3.0).
 
+## The webpage
+
+[index.html](index.html) is POLY5's page: what it is, random first, every control, the patches, the videos and how to install. Its pictures are the firmware's own screens, made by [site/make_images.py](site/make_images.py). Served from this repository's root (GitHub Pages: branch `main`, folder `/`).
+
 ## Video manual
 
 Eleven short chapters in [manual/videos](manual/videos), or all of them in one: [poly5-manual-full.mp4](manual/videos/poly5-manual-full.mp4).

@@ -1,0 +1,329 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>POLY5 for the M-VAVE FM-1</title>
+<meta name="description" content="Five synths in one for the M-VAVE FM-1: round robin, random, lofi tape, 24 patches with sequences. Open firmware, GPL-3.0.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="site/site.css">
+</head>
+<body>
+
+<nav class="nav" aria-label="Sections">
+  <div class="wrap">
+    <a class="logo word" href="#top" aria-label="POLY5, top"><span>P</span><span>O</span><span>L</span><span>Y</span><span>5</span></a>
+    <ul>
+      <li><a href="#random">Random</a></li>
+      <li><a href="#playing">Playing</a></li>
+      <li><a href="#synth">A synth</a></li>
+      <li><a href="#effects">Effects</a></li>
+      <li><a href="#sequencer">Sequencer</a></li>
+      <li><a href="#saving">Saving</a></li>
+      <li><a href="#patches">Patches</a></li>
+      <li><a href="#manual">Video manual</a></li>
+      <li><a href="#install">Install</a></li>
+    </ul>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="wrap">
+    <div>
+      <div class="stripes" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+      <h1 class="word" aria-label="POLY5"><span>P</span><span>O</span><span>L</span><span>Y</span><span>5</span></h1>
+      <p class="lede">Five synths in one, for the M&#8209;VAVE FM&#8209;1. Every note you play goes to the next synth&nbsp;&mdash; or to a random one.</p>
+      <p class="sub">Lofi and melodic, with worn tape, wow and flutter, and noise used on purpose. 24 factory patches, each with its own sequence. An arpeggiator, a step sequencer and eight effects on everything. Open firmware, GPL-3.0.</p>
+      <div class="lights" id="lights" aria-hidden="true"><b></b><b></b><b></b><b></b><b></b><span class="label" id="lights-label">ROUND ROBIN</span></div>
+      <div class="btns">
+        <a class="btn primary" href="#manual">Watch the manual</a>
+        <a class="btn" href="#install">Install</a>
+        <a class="btn" href="https://github.com/questron5000/poly5">Source on GitHub</a>
+      </div>
+    </div>
+    <figure class="screen">
+      <img src="site/img/screen-home-chord.png" width="480" height="480" alt="The FM&#8209;1's screen: five glass shapes in a row over a grid, the synths playing a chord lit in their colours, F01 KNUCKLES OF CHALK at the bottom.">
+      <figcaption>The home screen. Each shape is a synth: its wave is the shape, its number and colour are its own. A shape fills with light while its synth sounds; the amber bars mark who plays next.</figcaption>
+    </figure>
+  </div>
+</header>
+
+<main>
+
+<section id="random">
+  <div class="wrap">
+    <p class="eyebrow">The key to everything</p>
+    <h2>Random</h2>
+    <p class="lede" style="font-size:clamp(20px,2.3vw,26px)">POLY5 is built around chance. Three things can be left to it, and you keep what you love.</p>
+    <div class="cards">
+      <div class="card">
+        <span class="n">01 &middot; WHO PLAYS</span>
+        <h3>Random play mode</h3>
+        <p>Hold <span class="k">ARP</span> for half a second until it says RANDOM. Each note jumps to a random synth, never the same one twice in a row. Start the sequence and the same six notes come out differently every pass.</p>
+        <img src="site/img/screen-random.png" width="480" height="480" alt="The home screen in RANDOM mode, two synths lit.">
+      </div>
+      <div class="card">
+        <span class="n">02 &middot; WHAT THEY SOUND LIKE</span>
+        <h3>Random sounds</h3>
+        <p>Press <span class="k">GLO</span> and all five synths get a brand new sound: wave, filter, envelope, noise. Keep pressing until something makes you smile. On a synth's page, <span class="k">GLO</span> re-rolls only that one.</p>
+        <img src="site/img/screen-synth-page.png" width="480" height="480" alt="Synth 1's page: wave FM, octave, tone and detune dials, its shape and its wave running.">
+      </div>
+      <div class="card">
+        <span class="n">03 &middot; THE ORDER</span>
+        <h3>Random arpeggio</h3>
+        <p>Tap <span class="k">ARP</span> until it says RANDOM and hold a chord. Its notes come in a random order, each from a random synth. Chance on chance.</p>
+        <img src="site/img/screen-arp-random.png" width="480" height="480" alt="The home screen with ARP RANDOM / RR in the header, a chord held, one synth lit at a time.">
+      </div>
+    </div>
+    <div class="video">
+      <video controls preload="none" playsinline poster="site/img/poster-random-play.jpg" src="manual/videos/02-random.mp4"></video>
+    </div>
+    <p class="note" style="margin-top:12px">Chapter 2 of the video manual: Random, the key to everything (71&nbsp;s). Found something good? <span class="k">SAVE</span> <span class="k">SAVE</span> keeps it.</p>
+  </div>
+</section>
+
+<section id="playing">
+  <div class="wrap">
+    <p class="eyebrow">Playing</p>
+    <h2>The panel</h2>
+    <p>POLY5 is played from the FM&#8209;1's own panel: the 27 keys, seven rotaries and fourteen buttons. The five buttons in the middle row are the five synths, in their colours.</p>
+    <img class="panel-pic" src="site/img/panel.png" width="944" height="514" alt="A drawing of the FM&#8209;1's controls: seven rotaries (SELECT, ALGORITHM, KNOB1 to KNOB4, PRESETS), two rows of buttons (OCT minus, OCT plus, FX, SEL, ENV, LFO, EDIT; GLO, HOME, SAVE, ARP, SEQ, PLAY, REC) and a 27-key keyboard. FX to EDIT are coloured as synths 1 to 5.">
+
+    <h3>Play modes</h3>
+    <p>Hold <span class="k">ARP</span> to step through them. POLY5 starts in round robin.</p>
+    <div class="modes">
+      <div class="mode"><b>ROUND ROBIN</b><span>Each note goes to the next synth. Chords are dealt across them: every chord is a little ensemble.</span></div>
+      <div class="mode"><b>RANDOM</b><span>Each note jumps to a random synth, never the same one twice in a row.</span></div>
+      <div class="mode"><b>UNISON</b><span>Every synth plays every note together: one big layered sound.</span></div>
+      <div class="mode"><b>POLY</b><span>One synth plays everything, like an ordinary polysynth. <span class="k r">SELECT</span> chooses which.</span></div>
+    </div>
+
+    <h3>Buttons</h3>
+    <div class="table">
+      <table>
+        <thead><tr><th>Button</th><th>Tap</th><th>Hold</th><th>On a synth's page</th></tr></thead>
+        <tbody>
+          <tr><td><span class="k c1">FX</span> <span class="k c2">SEL</span> <span class="k c3">ENV</span> <span class="k c4">LFO</span> <span class="k c5">EDIT</span></td><td>Open synth 1&ndash;5's page. It stays open; the same button again goes back.</td><td></td><td>Back to the home screen, or another synth's page</td></tr>
+          <tr><td><span class="k">GLO</span></td><td><b>Random sounds</b>: five new synths</td><td></td><td>A new sound for this synth only</td></tr>
+          <tr><td><span class="k">ARP</span></td><td>The arpeggiator's style: off, up, down, up-down, random, as played, climb, chord</td><td>The play mode</td><td></td></tr>
+          <tr><td><span class="k">SEQ</span></td><td>The sequencer's page</td><td></td><td></td></tr>
+          <tr><td><span class="k">PLAY</span></td><td>Start and stop the sequence (it flashes on the beat)</td><td></td><td>This synth ON, SILENT or SKIP</td></tr>
+          <tr><td><span class="k">REC</span></td><td>Stopped: step entry. Playing: record live.</td><td>1.2&nbsp;s: clear the sequence</td><td></td></tr>
+          <tr><td><span class="k">SAVE</span></td><td>The save page; there, SAVE again does it</td><td></td><td></td></tr>
+          <tr><td><span class="k">HOME</span></td><td>From an effects page back to PLAY; leaves the save page</td><td></td><td>Back to the home screen</td></tr>
+          <tr><td><span class="k">OCT&minus;</span> <span class="k">OCT+</span></td><td>The keyboard's octave, two each way</td><td></td><td>This synth's octave</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Rotaries</h3>
+    <div class="table">
+      <table>
+        <thead><tr><th>Rotary</th><th>Home screen</th><th>A synth's page</th><th>Sequencer page</th></tr></thead>
+        <tbody>
+          <tr><td><span class="k r">KNOB1&ndash;4</span></td><td>Filter (left lowpass, right highpass), resonance, delay, reverb. On an effects page: its four dials.</td><td>The page's four dials</td><td>Tempo, step length, gate, length</td></tr>
+          <tr><td><span class="k r">ALGORITHM</span></td><td>Turn the effects pages. With the cursor showing: that synth ON, SILENT or SKIP.</td><td><b>Noise</b>, on every page</td><td>The step's note</td></tr>
+          <tr><td><span class="k r">SELECT</span></td><td>A cursor on the synths (in POLY, the one the keys play)</td><td>The wave: saw, square, triangle, sine, FM, metal</td><td>The step</td></tr>
+          <tr><td><span class="k r">PRESETS</span></td><td>The patches: F01&ndash;F24, then yours, U01&ndash;U32</td><td>Its ten pages</td><td></td></tr>
+          <tr><td><span class="k r">MASTER</span></td><td colspan="3">Volume</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>On, silent, skip</h3>
+    <p>Shape the round robin. Turn <span class="k r">SELECT</span> and a cursor appears over a synth; turn <span class="k r">ALGORITHM</span> and it goes <b>SILENT</b> (it still takes its turn but makes no sound: a rest in the rhythm) or <b>SKIP</b> (left out of the cycle, so the pattern lands differently).</p>
+  </div>
+</section>
+
+<section id="synth">
+  <div class="wrap split">
+    <div>
+      <p class="eyebrow">A synth's page</p>
+      <h2>Five synths, each its own</h2>
+      <p>Press a synth's button and its page opens: the keys play only that synth, and the four dials at the top follow <span class="k r">KNOB1</span> to <span class="k r">KNOB4</span>. <span class="k r">PRESETS</span> turns its ten pages, round and round:</p>
+      <ol class="pages">
+        <li>Wave</li><li>Amp envelope</li><li>Filter envelope</li><li>Filter</li><li>LFO</li>
+        <li>Noise</li><li>Saturation</li><li>Modulation</li><li>Delay</li><li>Reverb</li>
+      </ol>
+      <p><span class="k r">ALGORITHM</span> is its <b>noise</b> on every page: a little breath, hiss or static in the sound. Chance and noise are POLY5's two secret weapons.</p>
+    </div>
+    <figure class="screen">
+      <img src="site/img/screen-synth-page.png" width="480" height="480" alt="Synth 1's WAVE page.">
+      <figcaption>Synth 1's WAVE page: wave, octave, tone and detune; its shape and its wave running.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="effects">
+  <div class="wrap">
+    <div class="split wide-left">
+      <div>
+        <p class="eyebrow">Effects on everything</p>
+        <h2>Worn tape and a hall</h2>
+        <p>On the home screen, <span class="k r">ALGORITHM</span> turns through eight effects pages, each with four dials and its own picture. <span class="k">HOME</span> jumps back to PLAY.</p>
+        <div class="table">
+          <table>
+            <thead><tr><th>Page</th><th>The four dials</th></tr></thead>
+            <tbody>
+              <tr><td>Saturation</td><td>drive, type (soft, hard, fold), volume, on/off</td></tr>
+              <tr><td>Filter</td><td>sweep (lowpass, open, highpass), resonance, on/off</td></tr>
+              <tr><td>Modulation</td><td>type (chorus, flanger, phaser), speed, depth, mix</td></tr>
+              <tr><td>Delay</td><td>amount, time, repeats, on/off</td></tr>
+              <tr><td>Reverb</td><td>amount, size, damping, on/off</td></tr>
+              <tr><td>Bit reduction</td><td>bits, rate, mix, on/off</td></tr>
+              <tr><td><b>Lofi</b></td><td><b>wow</b> (slow drift), <b>flutter</b> (fast tremble), <b>age</b> (duller), <b>fail</b> (dropouts and hiss)</td></tr>
+              <tr><td>Mastering</td><td>compressor, release, gain, on/off; a limiter is always on</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <figure class="screen">
+        <img src="site/img/screen-lofi.png" width="480" height="480" alt="The LOFI page: wow, flutter, age and fail dials over a tape loop with two reels, guide rollers and a head.">
+        <figcaption>LOFI: a tape loop. The reels wobble with wow, the tape shakes with flutter, dulls with age, and breaks where it fails.</figcaption>
+      </figure>
+    </div>
+    <h3>The quick knobs</h3>
+    <p>On PLAY, the four knobs are filter, resonance, delay and reverb for the whole mix. The one you turn takes the screen for a moment.</p>
+    <div class="cards">
+      <div class="card"><span class="n">KNOB1 &middot; FILTER</span><p>The spectrum as ridges in the five colours, cut where the filter cuts.</p><img src="site/img/screen-filter.png" width="480" height="480" alt="The filter takeover: LOWPASS 60, coloured ridges."></div>
+      <div class="card"><span class="n">KNOB3 &middot; DELAY</span><p>Each note you play as its synth's shape, and its echoes one delay time apart.</p><img src="site/img/screen-delay.png" width="480" height="480" alt="The delay takeover: a shape and its fading echoes."></div>
+      <div class="card"><span class="n">STARTUP</span><p>The five synths spring up out of the grid, one for each letter of POLY5, with the version under them.</p><img src="site/img/screen-intro.png" width="480" height="480" alt="The startup animation, v1.0."></div>
+    </div>
+  </div>
+</section>
+
+<section id="sequencer">
+  <div class="wrap split">
+    <figure class="screen">
+      <img src="site/img/screen-sequencer.png" width="480" height="480" alt="The sequencer page: tempo 118, step 1/8, gate 60%, length 6; six glass bars in the synths' colours.">
+      <figcaption>Each step is a glass bar as high as its note, in the colour of the synth that played it.</figcaption>
+    </figure>
+    <div>
+      <p class="eyebrow">Sequencer and arpeggiator</p>
+      <h2>Every patch has a sequence</h2>
+      <p><span class="k">SEQ</span> opens its page and <span class="k">PLAY</span> starts it. Each step goes through the play mode like a key press, so round robin hands the pattern round the five synths, random scatters it, and a silent synth makes a rest. Thirteen of the factory sequences have chords.</p>
+      <p><b>Write your own:</b> hold <span class="k">REC</span> to clear, tap <span class="k">REC</span> while stopped for step entry (play a note or chord, let go, the cursor moves on; <span class="k r">SELECT</span> leaves a rest), or tap it while playing to record live. MIDI clock sets the tempo and starts and stops it.</p>
+      <p><b>The arpeggiator:</b> tap <span class="k">ARP</span> and hold a chord. Up, down, up-down, random, as played, climb, chord: at the sequencer's tempo, and through the play mode too.</p>
+    </div>
+  </div>
+</section>
+
+<section id="saving">
+  <div class="wrap split">
+    <div>
+      <p class="eyebrow">Saving</p>
+      <h2>Save, save</h2>
+      <p>Nothing saves itself. What you play is a working copy, and a <code>*</code> after the patch name means unsaved changes.</p>
+      <p><span class="k">SAVE</span> opens the save page: <span class="k r">KNOB1</span> picks the slot (U01&ndash;U32), <span class="k r">KNOB2</span> what to do (save, load, erase), <span class="k r">KNOB3</span> and <span class="k r">KNOB4</span> the name's two words. <span class="k">SAVE</span> again stores it. So <span class="k">SAVE</span> <span class="k">SAVE</span> always keeps what you hear; overwriting another patch or erasing asks once more.</p>
+      <p>Your patch keeps its sequence. The patch and octave you were on are kept when you switch off.</p>
+    </div>
+    <figure class="screen small">
+      <img src="site/img/screen-save.png" width="480" height="480" alt="The save page: slots U01 to U04, SAVE LOAD ERASE, name TINY CLOCK.">
+    </figure>
+  </div>
+</section>
+
+<section id="patches">
+  <div class="wrap">
+    <p class="eyebrow">24 factory patches</p>
+    <h2>The patches</h2>
+    <p>Lofi, melodic, in the manner of Boards of Canada, Bonobo, Tycho and Porter Robinson's Nurture. Each has its own sequence.</p>
+    <div class="table">
+      <table>
+        <thead><tr><th>#</th><th>Name</th><th>Mode</th><th>What it is</th></tr></thead>
+        <tbody>
+          <tr><td>F01</td><td><b>Knuckles of Chalk</b></td><td><span class="tag rr">ROUND ROBIN</span></td><td>Five keyboards for chords: FM piano, soft saw, hollow square, warm triangle, a bell; heavy wow and flutter</td></tr>
+          <tr><td>F02</td><td><b>Ladder of Wax</b></td><td><span class="tag rnd">RANDOM</span></td><td>An old polysynth that swells in and holds, badly drifting tape</td></tr>
+          <tr><td>F03</td><td><b>Climbing the Echo</b></td><td><span class="tag rnd">RANDOM</span></td><td>Harp, nylon guitar, kalimba, music box, ringing in a long delay</td></tr>
+          <tr><td>F04</td><td><b>That Never Climbs Back</b></td><td><span class="tag uni">UNISON</span></td><td>Detuned pad, a wash of hiss swept over four bars, huge reverb</td></tr>
+          <tr><td>F05</td><td><b>Gravity's Lawyer</b></td><td><span class="tag uni">UNISON</span></td><td>One thick keyboard: FM, saw, square, sub, hissy triangle on top</td></tr>
+          <tr><td>F06</td><td><b>Billing My Falls</b></td><td><span class="tag rnd">RANDOM</span></td><td>Cassette drum kit: soft kick, FM rim, noise snare and hat, low tom</td></tr>
+          <tr><td>F07</td><td><b>Taught Me to Orbit</b></td><td><span class="tag rr">ROUND ROBIN</span></td><td>Swells and wind; synths 2 and 5 silent, so the rests are built in</td></tr>
+          <tr><td>F08</td><td><b>Ungraspable Walls</b></td><td><span class="tag poly">POLY</span></td><td>Worn FM piano on the keys; bass, kalimba, lead and hat on MIDI channels 2&ndash;5</td></tr>
+          <tr><td>F09</td><td><b>Coroner's Tongue</b></td><td><span class="tag rr">ROUND ROBIN</span></td><td>Bright detuned saw plucks, pumping compressor</td></tr>
+          <tr><td>F10</td><td><b>Wrapped in Tin</b></td><td><span class="tag rnd">RANDOM</span></td><td>Toy piano and music boxes, thin, a little crushed</td></tr>
+          <tr><td>F11</td><td><b>Grief Goes Viral</b></td><td><span class="tag rr">ROUND ROBIN</span></td><td>Soft felt piano with breath in it, long room</td></tr>
+          <tr><td>F12</td><td><b>Before It Begins</b></td><td><span class="tag uni">UNISON</span></td><td>Wide saw pad rising slowly, phaser</td></tr>
+          <tr><td>F13</td><td><b>Lanterns of Static</b></td><td><span class="tag rr">ROUND ROBIN</span></td><td>Static in every voice moves the filters; worn tape</td></tr>
+          <tr><td>F14</td><td><b>Hung from the Pews</b></td><td><span class="tag rnd">RANDOM</span></td><td>Small church organ in a fast chorus, a hall</td></tr>
+          <tr><td>F15</td><td><b>Pulpit's a Mirror</b></td><td><span class="tag rr">ROUND ROBIN</span></td><td>Warm singing lead and plucks in a dotted-eighth delay</td></tr>
+          <tr><td>F16</td><td><b>Laughing at You</b></td><td><span class="tag rnd">RANDOM</span></td><td>Chopped-voice chirps: resonant plucks that fall onto the note</td></tr>
+          <tr><td>F17</td><td><b>Ballot of Rumors</b></td><td><span class="tag rr">ROUND ROBIN</span></td><td>Plucked bass and guitar figures, filters in time, flanger</td></tr>
+          <tr><td>F18</td><td><b>Signed in Milk</b></td><td><span class="tag rr">ROUND ROBIN</span></td><td>Lullaby: round sines, triangles, soft bells, thick chorus</td></tr>
+          <tr><td>F19</td><td><b>Velvet the Motive</b></td><td><span class="tag uni">UNISON</span></td><td>Brassy detuned lead whose filter opens after the note; heavy wow</td></tr>
+          <tr><td>F20</td><td><b>Gospel the Guilt</b></td><td><span class="tag rnd">RANDOM</span></td><td>Electric pianos and a small choir of slow bandpassed saws</td></tr>
+          <tr><td>F21</td><td><b>Fingertips Counting</b></td><td><span class="tag rr">ROUND ROBIN</span></td><td>Crisp short plucks made for the arpeggiator (arp up)</td></tr>
+          <tr><td>F22</td><td><b>Doors Made of Hum</b></td><td><span class="tag rr">ROUND ROBIN</span></td><td>Low drones that rise slowly and beat against each other</td></tr>
+          <tr><td>F23</td><td><b>Knocking in Latin</b></td><td><span class="tag rnd">RANDOM</span></td><td>Wood: marimba, kalimba, wood block, log drum (arp random)</td></tr>
+          <tr><td>F24</td><td><b>Answered in Drum</b></td><td><span class="tag rnd">RANDOM</span></td><td>Crunchy drum kit: kick, clap, hat, tom, rim; crushed and driven</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section id="manual">
+  <div class="wrap">
+    <p class="eyebrow">Video manual</p>
+    <h2>Learn it in eight minutes</h2>
+    <p>Eleven short chapters, made from the firmware itself: the screen and the sound are POLY5 running, the panel lights up what is pressed. Or watch them <a href="manual/videos/poly5-manual-full.mp4">all in one</a>.</p>
+    <div class="chapters">
+      <figure><div class="video"><video controls preload="none" playsinline poster="site/img/poster-01-welcome.jpg" src="manual/videos/01-welcome.mp4"></video></div><figcaption><b>01</b>Meet the five synths</figcaption></figure>
+      <figure><div class="video"><video controls preload="none" playsinline poster="site/img/poster-02-random.jpg" src="manual/videos/02-random.mp4"></video></div><figcaption><b>02</b>Random: the key to everything</figcaption></figure>
+      <figure><div class="video"><video controls preload="none" playsinline poster="site/img/poster-03-play-modes.jpg" src="manual/videos/03-play-modes.mp4"></video></div><figcaption><b>03</b>Play modes</figcaption></figure>
+      <figure><div class="video"><video controls preload="none" playsinline poster="site/img/poster-04-patches-and-random.jpg" src="manual/videos/04-patches-and-random.mp4"></video></div><figcaption><b>04</b>Patches and random sounds</figcaption></figure>
+      <figure><div class="video"><video controls preload="none" playsinline poster="site/img/poster-05-performance-knobs.jpg" src="manual/videos/05-performance-knobs.mp4"></video></div><figcaption><b>05</b>Performance knobs</figcaption></figure>
+      <figure><div class="video"><video controls preload="none" playsinline poster="site/img/poster-06-on-silent-skip.jpg" src="manual/videos/06-on-silent-skip.mp4"></video></div><figcaption><b>06</b>On, silent, skip</figcaption></figure>
+      <figure><div class="video"><video controls preload="none" playsinline poster="site/img/poster-07-a-synths-page.jpg" src="manual/videos/07-a-synths-page.mp4"></video></div><figcaption><b>07</b>A synth's page</figcaption></figure>
+      <figure><div class="video"><video controls preload="none" playsinline poster="site/img/poster-08-master-effects.jpg" src="manual/videos/08-master-effects.mp4"></video></div><figcaption><b>08</b>The effects pages</figcaption></figure>
+      <figure><div class="video"><video controls preload="none" playsinline poster="site/img/poster-09-sequencer.jpg" src="manual/videos/09-sequencer.mp4"></video></div><figcaption><b>09</b>The sequencer</figcaption></figure>
+      <figure><div class="video"><video controls preload="none" playsinline poster="site/img/poster-10-arpeggiator.jpg" src="manual/videos/10-arpeggiator.mp4"></video></div><figcaption><b>10</b>The arpeggiator</figcaption></figure>
+      <figure><div class="video"><video controls preload="none" playsinline poster="site/img/poster-11-saving.jpg" src="manual/videos/11-saving.mp4"></video></div><figcaption><b>11</b>Saving your patches</figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<section id="install">
+  <div class="wrap">
+    <p class="eyebrow">Install</p>
+    <h2>Put it on your FM&#8209;1</h2>
+    <p>POLY5 runs on <a href="https://github.com/zvenson/dinghy">Dinghy</a>, an open platform for the FM&#8209;1. Build the firmware and send it over USB:</p>
+<pre><code>git clone https://github.com/questron5000/poly5.git
+cd poly5/dinghy
+APP=poly5 ./build.sh
+python3 tools/fm1_install.py build/dinghy.fwsc --port FM-1 --yes</code></pre>
+    <p>Building needs Docker, the JieLi toolchain (<code>tools/get_toolchain.sh</code>) and the AC79 SDK. Hold <span class="k">OCT&minus;</span> while switching on to get back to the update mode if anything goes wrong.</p>
+    <p class="note">Try it without the device: <code>APP=poly5 tests/run_host.sh tests/scripts/poly5.txt</code> runs the same firmware on your computer and writes the sound as WAV and the screens as PNG.</p>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="stripes" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+    <p><b class="word"><span>P</span><span>O</span><span>L</span><span>Y</span><span>5</span></b> v1.0 for the M&#8209;VAVE FM&#8209;1. Built on <a href="https://github.com/zvenson/dinghy">Dinghy</a> by zvenson. Free software under the GPL-3.0: whoever gets the firmware gets its source. Not affiliated with M&#8209;VAVE.</p>
+    <p><a href="https://github.com/questron5000/poly5">github.com/questron5000/poly5</a></p>
+  </div>
+</footer>
+
+<script>
+/* the five lights: round robin a while, then random a while (never the same synth twice in a row) */
+(function () {
+  var b = document.querySelectorAll('#lights b'), label = document.getElementById('lights-label');
+  if (!b.length || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var i = -1, n = 0, random = false;
+  setInterval(function () {
+    if (n++ % 20 === 0) { random = !random; label.textContent = random ? 'ROUND ROBIN' : 'RANDOM'; }
+    var next;
+    if (label.textContent === 'RANDOM') { do { next = Math.floor(Math.random() * 5); } while (next === i); }
+    else next = (i + 1) % 5;
+    i = next;
+    b.forEach(function (x, k) { x.classList.toggle('on', k === i); });
+  }, 260);
+})();
+</script>
+</body>
+</html>
