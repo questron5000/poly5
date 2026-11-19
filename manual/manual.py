@@ -6,6 +6,7 @@ FM-1's controls that lights up what is pressed, plus the caption. Out: manual/vi
     python3 manual/manual.py            all chapters
     python3 manual/manual.py 3 5        chapters 3 and 5
     python3 manual/manual.py --still 3  one PNG a caption of chapter 3 (quick check, no video)
+    python3 manual/manual.py --voice    with the spoken narration (manual/narrate.py)
 """
 import math, os, subprocess, sys, tempfile, textwrap
 from pathlib import Path
@@ -402,9 +403,79 @@ def title_card(ch, a=1.0, base=None):
     return im
 
 
-def render(ch, still=False):
+VOICE_AT = 300          # a caption's voice starts this long after the caption
+VOICE_GAP = 550         # and the next caption waits at least this long after it ends
+
+
+def voice_plan(ch):
+    """each caption's voice (manual/narrate.py) and its length; the chapter's timeline stretched where a voice needs
+    longer than its caption had: everything from the next caption on moves later (the FM-1 just runs on meanwhile)"""
+    import narrate
+    title = narrate.speech(f"Chapter {ch.num}. {ch.title}.")
+    ch.title_ms = max(TITLE_MS, narrate.duration_ms(title) + 1100)
+    clips = []
+    for c in sorted(ch.caps):
+        w = narrate.speech(c[1] + (" " + c[2] if c[2] else ""))
+        clips.append([c, w, narrate.duration_ms(w)])
+    for i, (c, w, dur) in enumerate(clips):
+        nxt = clips[i + 1][0][0] if i + 1 < len(clips) else ch.t_end
+        need = VOICE_AT + dur + VOICE_GAP
+        if nxt - c[0] < need:
+            shift(ch, nxt, need - (nxt - c[0]))
+    return title, [(c[0], w) for c, w, _ in clips]
+
+
+def shift(ch, at, d):
+    """everything at or after `at` ms d ms later"""
+    out = []
+    for l in ch.lines:
+        t, rest = l.split(" ", 1)
+        out.append(f"{int(t) + d if int(t) >= at else int(t)} {rest}")
+    ch.lines = out
+    for c in ch.caps:
+        if c[0] >= at:
+            c[0] += d
+    ch.hl = [(t0 + d, t1 + d, c, v) if t0 >= at else ((t0, t1 + d, c, v) if t1 >= at else (t0, t1, c, v)) for t0, t1, c, v in ch.hl]
+    ch.t_end += d
+
+
+def mix(work, title_ms, total_ms, title_wav, clips):
+    """the FM-1's sound after the title, the voice over it; the synth ducks (about -9 dB) while she speaks"""
+    import wave
+    import numpy as np
+    def load(f):
+        with wave.open(str(f)) as w:
+            a = np.frombuffer(w.readframes(w.getnframes()), np.int16).astype(np.float32) / 32768
+            return a.reshape(-1, w.getnchannels())[:, :2] if w.getnchannels() > 1 else np.repeat(a[:, None], 2, 1)
+    n = int((title_ms + total_ms) * 44.1) + 44100
+    synth, voice = np.zeros((n, 2), np.float32), np.zeros((n, 2), np.float32)
+    s = load(work / "f.wav"); o = int(title_ms * 44.1); synth[o:o + len(s)] = s[:n - o]
+    marks = np.zeros(n, np.float32)
+    def put(f, at_ms):
+        v = load(f); i = int(at_ms * 44.1); v = v[:n - i]
+        voice[i:i + len(v)] += v; marks[i:i + len(v)] = 1
+    put(title_wav, 400)
+    for t, w in clips:
+        put(w, title_ms + t + VOICE_AT)
+    k = int(0.18 * 44100)                                          # 180 ms in and out
+    duck = np.convolve(marks, np.ones(k) / k, mode="same")
+    duck = np.convolve(np.minimum(1, duck * 3), np.ones(k) / k, mode="same")
+    out = synth * (1 - 0.65 * duck)[:, None] + voice * 0.95
+    pk = np.abs(out).max()
+    if pk > 0.95:
+        out *= 0.95 / pk
+    pcm = (out * 32767).astype(np.int16)
+    with wave.open(str(work / "mix.wav"), "wb") as w:
+        w.setnchannels(2); w.setsampwidth(2); w.setframerate(44100); w.writeframes(pcm.tobytes())
+    return work / "mix.wav"
+
+
+def render(ch, still=False, voiced=False):
     OUT.mkdir(exist_ok=True)
     work = Path(tempfile.mkdtemp(prefix=f"poly5man{ch.num}-", dir=os.environ.get("TMPDIR")))
+    ch.title_ms = TITLE_MS
+    if voiced:
+        title_wav, clips = voice_plan(ch)
     (work / "script.txt").write_text("\n".join(sorted(ch.lines, key=lambda l: int(l.split()[0]))) + "\n")
     subprocess.run([str(SIM), str(work / "f"), str(work / "script.txt"), str(FPS)], check=True,
                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=DINGHY)
@@ -437,7 +508,7 @@ def render(ch, still=False):
         # progress
         d = ImageDraw.Draw(im)
         d.rectangle([0, H - 6, W, H], fill=(24, 28, 44))
-        d.rectangle([0, H - 6, int(W * (i + TITLE_MS * FPS / 1000) / (nframes + TITLE_MS * FPS / 1000)), H], fill=AMBER)
+        d.rectangle([0, H - 6, int(W * (i + ch.title_ms * FPS / 1000) / (nframes + ch.title_ms * FPS / 1000)), H], fill=AMBER)
         return im
 
     if still:
@@ -448,14 +519,19 @@ def render(ch, still=False):
         return
 
     mp4 = OUT / f"{ch.num:02d}-{ch.slug}.mp4"
+    tm = ch.title_ms
+    if voiced:
+        audio, filt = mix(work, tm, ch.t_end, title_wav, clips), f"[1:a]afade=t=out:st={(tm + ch.t_end) / 1000 - 1.0}:d=1.0[a]"
+    else:
+        audio, filt = work / "f.wav", f"[1:a]adelay={tm}|{tm},afade=t=out:st={(tm + ch.t_end) / 1000 - 1.0}:d=1.0[a]"
     ff = subprocess.Popen(["ffmpeg", "-y", "-loglevel", "error", "-f", "rawvideo", "-pix_fmt", "rgb24", "-s", f"{W}x{H}",
-                           "-r", str(FPS), "-i", "-", "-i", str(work / "f.wav"),
-                           "-filter_complex", f"[1:a]adelay={TITLE_MS}|{TITLE_MS},afade=t=out:st={(TITLE_MS + ch.t_end) / 1000 - 1.0}:d=1.0[a]",
+                           "-r", str(FPS), "-i", "-", "-i", str(audio),
+                           "-filter_complex", filt,
                            "-map", "0:v", "-map", "[a]", "-c:v", "libx264", "-preset", "medium", "-crf", "20",
                            "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "192k", "-shortest", "-movflags", "+faststart", str(mp4)],
                           stdin=subprocess.PIPE)
     first = compose(0)
-    n_title = TITLE_MS * FPS // 1000
+    n_title = tm * FPS // 1000
     for i in range(n_title):     # the title card, then it fades onto the device
         a = 1.0 if i < n_title - 15 else (n_title - i) / 15
         ff.stdin.write(title_card(ch, a, first).tobytes())
@@ -486,8 +562,9 @@ if __name__ == "__main__":
     from chapters import CHAPTERS
     args = sys.argv[1:]
     still = "--still" in args
+    voiced = "--voice" in args      # the narration (manual/narrate.py: an ElevenLabs key and voice)
     nums = [int(a) for a in args if a.isdigit()]
     build_sim()
     for ch in CHAPTERS:
         if not nums or ch.num in nums:
-            render(ch, still)
+            render(ch, still, voiced)
