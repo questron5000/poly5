@@ -225,3 +225,42 @@ html.anim .panel-pic.rv.in { transform: none; }
 .safe { list-style: none; padding: 0; margin: 0 0 1.2em; display: grid; gap: 12px; max-width: 46em; }
 .safe li { border-left: 3px solid var(--s3); padding: 2px 0 2px 16px; font-size: 16px; }
 .safe b { display: block; }
+
+/* ---- the playable FM-1 (site/play/poly5-player.js) ---- */
+.play { background: radial-gradient(ellipse 70% 60% at 50% 55%, #131a30 0%, var(--ground) 70%); }
+.p5 { margin: 30px auto 0; max-width: 1100px; }
+.p5-device { position: relative; width: 100%; aspect-ratio: 1760 / 1072; border-radius: 3.6% / 6%; box-shadow: 0 40px 100px rgba(0,0,0,.6), 0 0 0 1px #2a2d38; }
+.p5-svg { display: block; width: 100%; height: 100%; touch-action: none; user-select: none; -webkit-user-select: none; }
+.p5-screen { position: absolute; left: 27.33%; top: 9.42%; width: 21.14%; height: 34.70%; image-rendering: pixelated; background: #000; pointer-events: none; }
+.p5-knob, .p5-btn, .p5-key { cursor: pointer; }
+.p5-knob:focus, .p5-btn:focus { outline: none; }
+.p5-knob:focus-visible circle:nth-child(2), .p5-btn:focus-visible rect { stroke: var(--cream); stroke-width: 4; }
+.p5-knob.on circle:nth-child(2) { stroke: var(--amber); stroke-dasharray: none; }
+.p5-on { position: absolute; inset: 0; margin: auto; width: max-content; height: max-content; display: flex; flex-direction: column; align-items: center; gap: 6px;
+  padding: 22px 36px; border-radius: 22px; border: 2px solid var(--amber); background: rgba(10,12,20,.88); color: var(--cream); font: inherit; cursor: pointer;
+  box-shadow: 0 0 60px rgba(240,160,48,.25); }
+.p5-on b { font-size: clamp(20px, 2.6vw, 30px); font-weight: 700; }
+.p5-on small { color: var(--dim); font-size: 14px; max-width: 26em; text-align: center; }
+.p5-on-dot { width: 14px; height: 14px; border-radius: 50%; background: var(--amber); box-shadow: 0 0 18px var(--amber); }
+.p5-on:hover { background: rgba(20,22,32,.95); }
+.p5-on.busy b::after { content: "\2026"; }
+.p5-device.running .p5-on { display: none; }
+.p5-help { display: grid; gap: 10px; margin-top: 22px; font-size: 15px; color: var(--text); max-width: 1100px; margin-left: auto; margin-right: auto; }
+@media (min-width: 900px) { .p5-help { grid-template-columns: repeat(2, 1fr); } }
+.p5-help b { color: var(--amber); font-weight: 600; margin-right: 6px; }
+
+/* the video manual: its own band, so it reads as a place to go, not one more picture */
+section.manual { background: linear-gradient(180deg, #17120a 0%, #0d0f1a 38%, #0a0c16 100%); border-top: 2px solid var(--amber); border-bottom: 2px solid var(--amber);
+  position: relative; overflow: hidden; }
+section.manual::before { content: ""; position: absolute; left: 50%; top: -260px; width: 900px; height: 520px; transform: translateX(-50%);
+  background: radial-gradient(ellipse at center, rgba(240,160,48,.22), transparent 65%); pointer-events: none; }
+section.manual .wrap { position: relative; }
+.manual-head { display: flex; flex-wrap: wrap; align-items: center; gap: 22px 28px; margin-bottom: 10px; }
+.manual-head h2 { margin: 0; font-size: clamp(38px, 5.6vw, 64px); }
+.manual-head .eyebrow { margin-bottom: 8px; }
+.manual-play { width: 74px; height: 74px; flex: none; border-radius: 50%; background: var(--amber); position: relative; box-shadow: 0 0 0 10px rgba(240,160,48,.15), 0 0 50px rgba(240,160,48,.45); }
+.manual-play::after { content: ""; position: absolute; left: 29px; top: 22px; border-left: 24px solid #1a1206; border-top: 15px solid transparent; border-bottom: 15px solid transparent; }
+.manual-start { margin-left: auto; font-size: 17px; padding: 14px 24px; }
+section.manual .player .video { box-shadow: 0 0 0 2px var(--amber), 0 30px 90px rgba(0,0,0,.6), 0 0 80px rgba(240,160,48,.18); }
+section.manual .pl-list { border-color: #3a3020; }
+@media (max-width: 600px) { .p5-on { padding: 10px 18px; border-radius: 14px; } .p5-on b { font-size: 18px; } .p5-on small { display: none; } .manual-start { margin-left: 0; } .manual-play { width: 54px; height: 54px; } .manual-play::after { left: 21px; top: 16px; border-left-width: 18px; border-top-width: 11px; border-bottom-width: 11px; } }

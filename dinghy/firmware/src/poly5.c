@@ -2461,10 +2461,20 @@ static void app_idle(void)
 /* switched on: 1.3 seconds. The five shapes spring up one after the other out of the grid, spinning, full of light
  * that drains, each with its letter of POLY5 under it; then the home screen takes over (the same shapes, in place).
  * The keys play all the while. */
+#ifdef DINGHY_WEB
+static int intro(void)                          /* (the browser: a frame a call, 1 while it runs; web/web.c) */
+#else
 static void intro(void)
+#endif
 {
     static const char L[5][2] = {"P", "O", "L", "Y", "5"};
+#ifdef DINGHY_WEB
+    static uint32_t t0, c, born, last;
+    static int on;
+    if (!on) { on = 1; t0 = fm1_ms; born = 0; last = 0; }
+#else
     uint32_t t0 = fm1_ms, c, born = 0, last = 0;
+#endif
     for (;;) {
         uint32_t t = fm1_ms - t0;
         if (t >= 1300u) break;
@@ -2493,15 +2503,35 @@ static void intro(void)
             uint32_t k = t < 700u ? (t - 500u) * 255u / 200u : t > 1100u ? 255u - (t - 1100u) * 255u / 200u : 255u;
             draw_text_box(0, 220, 240, &FONT_S, "v" POLY5_VER, RGB(k * 150u / 255u, k * 156u / 255u, k * 170u / 255u), 1);
         }
+#ifdef DINGHY_WEB
+        return 1;
+#endif
     }
     draw_text_box(0, 220, 240, &FONT_S, "", C_BLACK, 1);   /* (gone: the home screen's line) */
+#ifdef DINGHY_WEB
+    on = 0;
+    return 0;
+#endif
 }
+#ifdef DINGHY_WEB
+static int web_intro;                           /* (the browser: the startup animation runs; web/web.c calls intro()) */
+#endif
 static void app_main(void)
 {
+#ifdef DINGHY_WEB                               /* (the browser: one pass of the loop a call, so its state is kept) */
+    static struct { uint8_t patch; int8_t oct; uint8_t rev, spare; } set = {0, 0, 3, 0};
+    static uint32_t k, c, rel, b, row = 0, rnd_ms = 0, set_ms = 0, set_dirty = 0;
+    static uint32_t ui = 1, ui_drawn = 0, page_drawn = 99, frame_ms = 0, sel = 0, sel_ms = 0, rec_ms = 0, arp_ms = 0, sq_gen_seen = 0, sq_cur_seen = 0;
+    static int32_t e;
+    static int started;
+    if (started) goto web_step;
+    started = 1;
+#else
     struct { uint8_t patch; int8_t oct; uint8_t rev, spare; } set = {0, 0, 3, 0};   /* rev: older settings are not loaded: the factory's start */
     uint32_t k, c, rel, b, row = 0, rnd_ms = 0, set_ms = 0, set_dirty = 0;
     uint32_t ui = 1, ui_drawn = 0, page_drawn = 99, frame_ms = 0, sel = 0, sel_ms = 0, rec_ms = 0, arp_ms = 0, sq_gen_seen = 0, sq_cur_seen = 0;
     int32_t e;
+#endif
 
     {
         /* your patches: two halves. Older firmware kept all 32 in blob 0, with smaller synths: those are converted,
@@ -2555,9 +2585,17 @@ static void app_main(void)
     patch_load(set.patch);                      /* as you left it: the patch and the keys' octave */
     lcd_fill(0, 0, 240, 240, C_BLACK);
     for (c = 0; c < NCH; c++) rot[c] = c * 9000u;
+#ifdef DINGHY_WEB
+    web_intro = 1;
+    return;
+#else
     intro();
+#endif
 
     for (;;) {
+#ifdef DINGHY_WEB
+web_step: ;
+#endif
         uint32_t hold = 0, first = NCH, spin, page;
         platform_poll();
         passes++;
@@ -2873,5 +2911,8 @@ static void app_main(void)
             ui_drawn = ui; page_drawn = page;
             idle_ok = 0;
         }
+#ifdef DINGHY_WEB
+        return;
+#endif
     }
 }

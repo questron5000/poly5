@@ -8,6 +8,10 @@ POLY5 started as a Web Audio synth ([poly5.html](poly5.html)) and runs as firmwa
 
 [index.html](index.html) is POLY5's page: what it is, random first, every control, the patches, the videos and how to install. Its pictures are the firmware's own screens, made by [site/make_images.py](site/make_images.py). Served from this repository's root (GitHub Pages: branch `main`, folder `/`).
 
+## Play it in a browser
+
+The page's **Play it** section runs the real firmware: `dinghy/web/build.sh` compiles `poly5.c` to WebAssembly (`site/play/poly5.wasm`, with `dinghy/web/web.c` in place of the hardware), and it runs in the browser's audio thread (`site/play/poly5-worklet.js`) behind a playable FM-1 (`site/play/poly5-player.js`). The device build is unchanged by it, byte for byte. Needs LLVM's clang and `wasm-ld` (macOS: `brew install llvm lld`).
+
 ## Video manual
 
 Eleven short chapters in [manual/videos](manual/videos), or all of them in one: [poly5-manual-full.mp4](manual/videos/poly5-manual-full.mp4).

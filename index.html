@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="site/site.css?v=a24ad6eb">
+<link rel="stylesheet" href="site/site.css?v=00148cf2">
 </head>
 <body>
 
@@ -17,6 +17,7 @@
   <div class="wrap">
     <a class="logo word" href="#top" aria-label="POLY5, top"><span>P</span><span>O</span><span>L</span><span>Y</span><span>5</span></a>
     <ul>
+      <li><a href="#play">Play it</a></li>
       <li><a href="#random">Random</a></li>
       <li><a href="#playing">Playing</a></li>
       <li><a href="#synth">A synth</a></li>
@@ -40,7 +41,8 @@
       <p class="sub">Lofi and melodic, with worn tape, wow and flutter, and noise used on purpose. 24 factory patches, each with its own sequence. An arpeggiator, a step sequencer and eight effects on everything. Open firmware, GPL-3.0.</p>
       <div class="lights" id="lights" aria-hidden="true"><b></b><b></b><b></b><b></b><b></b><span class="label" id="lights-label">ROUND ROBIN</span></div>
       <div class="btns">
-        <a class="btn primary" href="#manual">Watch the manual</a>
+        <a class="btn primary" href="#play">Play it in your browser</a>
+        <a class="btn" href="#manual">Watch the manual</a>
         <a class="btn" href="#install">Install</a>
         <a class="btn" href="https://github.com/questron5000/poly5">Source on GitHub</a>
       </div>
@@ -56,6 +58,21 @@
 </header>
 
 <main>
+
+<section id="play" class="play">
+  <div class="wrap">
+    <p class="eyebrow">Play it here</p>
+    <h2>Try POLY5 in your browser</h2>
+    <p class="lede" style="font-size:clamp(20px,2.3vw,26px)">This is the real firmware, the same code the FM&#8209;1 runs, compiled for your browser. Switch it on and play.</p>
+    <div class="p5" id="p5" data-wasm="site/play/poly5.wasm?v=47a6fff7" data-worklet="site/play/poly5-worklet.js?v=bdee7d7f"></div>
+    <div class="p5-help">
+      <div><b>Play</b> click or tap the keys, or your keyboard: <span class="k">A</span> is C, <span class="k">W</span> <span class="k">S</span> <span class="k">E</span> <span class="k">D</span> &hellip; up to <span class="k">'</span>. A MIDI keyboard plays it too (Chrome, Edge).</div>
+      <div><b>Knobs</b> drag up or down, or scroll over them.</div>
+      <div><b>Buttons</b> click them; hold for a hold. Shortcuts: <span class="k">R</span> GLO (random sounds), <span class="k">1</span>&ndash;<span class="k">5</span> a synth's page, <span class="k">Space</span> PLAY, <span class="k">Q</span> ARP, <span class="k">B</span> HOME, <span class="k">Z</span> <span class="k">X</span> octave.</div>
+      <div><b>Saved patches</b> stay in this browser.</div>
+    </div>
+  </div>
+</section>
 
 <section id="random">
   <div class="wrap">
@@ -269,10 +286,16 @@
   </div>
 </section>
 
-<section id="manual">
+<section id="manual" class="manual">
   <div class="wrap">
-    <p class="eyebrow">Video manual</p>
-    <h2>Learn it in eight minutes</h2>
+    <div class="manual-head">
+      <span class="manual-play" aria-hidden="true"></span>
+      <div>
+        <p class="eyebrow">Video manual &middot; 11 chapters &middot; 8 minutes</p>
+        <h2>Learn POLY5 in eight minutes</h2>
+      </div>
+      <button type="button" class="btn primary manual-start" id="manual-start">&#9654;&ensp;Start the manual</button>
+    </div>
     <p>Eleven short chapters, made from the firmware itself: the screen and the sound are POLY5 running, the panel lights up what is pressed. Each one leads into the next; pick any chapter from the list. Or download them <a href="manual/videos/poly5-manual-full.mp4?v=29b1467c">all in one</a>.</p>
     <div class="player">
       <div class="pl-main">
@@ -361,7 +384,11 @@ python3 tools/fm1_install.py build/dinghy.fwsc --port FM-1 --yes</code></pre>
   </div>
 </footer>
 
+<script src="site/play/poly5-player.js?v=f57f0d79" defer></script>
 <script>
+/* the playable FM-1 (site/play/) */
+document.addEventListener('DOMContentLoaded', function () { var e = document.getElementById('p5'); if (e && window.Poly5Player) window.poly5 = new Poly5Player(e); });
+
 /* the manual's player: a chapter from the list plays in the big player; when one ends, the next starts */
 (function () {
   var v = document.getElementById('pl-video'), list = document.getElementById('pl-list');
@@ -382,6 +409,8 @@ python3 tools/fm1_install.py build/dinghy.fwsc --port FM-1 --yes</code></pre>
   }
   items.forEach(function (it, i) { it.addEventListener('click', function () { show(i, true); }); });
   v.addEventListener('ended', function () { if (cur + 1 < items.length) show(cur + 1, true); });
+  var st = document.getElementById('manual-start');
+  if (st) st.addEventListener('click', function () { v.scrollIntoView({ behavior: 'smooth', block: 'center' }); show(0, true); });
 })();
 
 /* scroll: things rise in as they come into view; siblings (cards, modes) one after another */

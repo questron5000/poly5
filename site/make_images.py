@@ -169,7 +169,7 @@ def bump_css():
         if path not in cache:
             cache[path] = hashlib.sha1(f.read_bytes()).hexdigest()[:8]
         return f'{attr}="{path}?v={cache[path]}"'
-    text = re.sub(r'(href|src|poster|data-src|data-poster)="((?:site|manual)/[^"?]+)(?:\?v=[^"]*)?"', tag, page.read_text())
+    text = re.sub(r'(href|src|poster|data-src|data-poster|data-wasm|data-worklet)="((?:site|manual)/[^"?]+)(?:\?v=[^"]*)?"', tag, page.read_text())
     page.write_text(text)
     print("index.html:", len(cache), "files fingerprinted")
 
