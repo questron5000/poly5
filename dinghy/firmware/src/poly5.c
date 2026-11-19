@@ -332,14 +332,14 @@ static void fx_render(int32_t *out, uint32_t n, uint32_t master)
             }
             l += (lf.l - l) * lmix >> 7; r += (lf.r - r) * lmix >> 7;
         }
-        if (tp_on) {                            /* LOFI: tape. The pitch drifts (wow) and trembles (flutter); worn: dull and thin; it fails: drops out, hisses */
+        if (tp_on) {                            /* LOFI: tape. The pitch drifts (wow) and trembles (flutter); worn: dull and thin; it fails: drops out, crackling */
             int32_t k2;
             if (!(i & (P5_BLK - 1u))) {         /* where the tape is read from: once a block */
                 if (!tp.wow_cnt--) {            /* wow: now and then a new place to drift to */
                     tp.rng ^= tp.rng << 13; tp.rng ^= tp.rng >> 17; tp.rng ^= tp.rng << 5;
                     tp.wow_t = (int32_t)tp.rng >> 16;
                     tp.wow_cnt = 600u + (tp.rng & 1023u);                    /* every 0.2 .. 0.6 s */
-                    if (tfail && (tp.rng >> 10 & 255u) < tfail) {           /* and sometimes it lets go for a moment */
+                    if (tfail && (tp.rng >> 10 & 255u) < tfail * 160u / 100u) {   /* and it lets go for a moment: at FAIL 10 about every 6 s, at 100 more than once a second */
                         tp.gain_t = 6000 + (int32_t)(tp.rng >> 20 & 8191u);
                         tp.drop = 60u + (tp.rng >> 24);                      /* 20 .. 110 ms */
                     }
@@ -360,7 +360,7 @@ static void fx_render(int32_t *out, uint32_t n, uint32_t master)
                 tp.lp[k2] += ((x - tp.lp[k2]) * (tlp >> 3)) >> 12;          /* dull */
                 tp.hp[k2] += ((tp.lp[k2] - tp.hp[k2]) * thp) >> 15;
                 x = ((tp.lp[k2] - tp.hp[k2]) * (tp.gain >> 3)) >> 12;       /* thin; and the dropout */
-                if (tfail) { tp.rng ^= tp.rng << 13; tp.rng ^= tp.rng >> 17; tp.rng ^= tp.rng << 5; x += ((int32_t)tp.rng >> 16) * (int32_t)tfail >> 11; }   /* hiss */
+                if (tfail && tp.drop) { tp.rng ^= tp.rng << 13; tp.rng ^= tp.rng >> 17; tp.rng ^= tp.rng << 5; x += (int32_t)(MULS(x, (int32_t)tp.rng >> 16) >> 15) * (int32_t)tfail / 60; }   /* while it drops out the sound crackles (grit on the sound itself: silence stays silent, no noise floor) */
                 if (k2) r = x; else l = x;
             }
             tp.w++;
@@ -1784,7 +1784,7 @@ static void g_tape(uint32_t t)                  /* LOFI: a tape loop, line art: 
         gap = fail && (int32_t)((r >> 8) % 500u) < fail && ((x / 6 + (int32_t)(t >> 6)) & 3) == 0;
         if (gap && x > 110 && x < 130) drop = 1;
         if (x > 84 && !gap) cv_line(x - 2, py, x, y, tape);
-        if (fail && (int32_t)((r >> 16) % 400u) < fail) cv_pset(x, 128 + (int32_t)((r >> 4) % 24u), C_SILK);   /* hiss */
+        if (gap) cv_pset(x, 128 + (int32_t)((r >> 4) % 24u), C_SILK);   /* sparks where it breaks */
         py = y;
     }
     cv_ring(50, 133, 4, C_SILK);                /* the rollers */

@@ -16,7 +16,7 @@ static const preset_t FACTORY[] = {
          .tone=14, .drop=0, .decay=56, .detune=0, .env_rate=35, .lfo_depth=0, .lfo_rate=30, .lfo_bits=0, .nz_depth=0, .nz_rate=50, .sat=0, .sus=25}},
      .mode=M_RR, .mvol=78, .dj=0, .del_time=19, .del_fb=38, .del_all=6, .rev_size=68, .rev_damp=50, .rev_all=16, .drive=0, .dj_reso=0, .comp=40,
      .ch_type=1, .ch_rate=20, .ch_depth=40, .ch_mix=35, .drv_type=0, .lofi_bits=0, .lofi_rate=0, .lofi_mix=0, .cmp_spd=45, .cmp_gain=15,
-     .tp_wow=60, .tp_flut=38, .tp_age=40, .tp_fail=3, .arp=0},
+     .tp_wow=60, .tp_flut=38, .tp_age=40, .tp_fail=0, .arp=0},
     /* LADDER OF WAX */
     {.name = "", .ch = {
         {.midi_ch=1, .enabled=1, .wave=W_SAW, .octave=0, .noise=0, .env_filt=45, .cutoff=52, .reso=10, .attack=6, .release=60, .dly=25, .rev=35, .vol=64,
@@ -31,7 +31,7 @@ static const preset_t FACTORY[] = {
          .tone=0, .drop=0, .decay=58, .detune=18, .env_rate=0, .lfo_depth=0, .lfo_rate=30, .lfo_bits=0, .nz_depth=12, .nz_rate=45, .sat=0, .sus=45}},
      .mode=M_RANDOM, .mvol=80, .dj=0, .del_time=19, .del_fb=45, .del_all=8, .rev_size=72, .rev_damp=45, .rev_all=18, .drive=0, .dj_reso=0, .comp=35,
      .ch_type=1, .ch_rate=26, .ch_depth=55, .ch_mix=55, .drv_type=0, .lofi_bits=0, .lofi_rate=0, .lofi_mix=0, .cmp_spd=50, .cmp_gain=14,
-     .tp_wow=52, .tp_flut=20, .tp_age=46, .tp_fail=4, .arp=0},
+     .tp_wow=52, .tp_flut=20, .tp_age=46, .tp_fail=0, .arp=0},
     /* CLIMBING THE ECHO */
     {.name = "", .ch = {
         {.midi_ch=1, .enabled=1, .wave=W_TRI, .octave=0, .noise=0, .env_filt=55, .cutoff=70, .reso=4, .attack=0, .release=50, .dly=40, .rev=25, .vol=84,

@@ -28,6 +28,8 @@ run "SMK-37 flash map: settings, blobs, owner tag, slots in the store; never the
 $CC -o "$OUT/smk_wheel_test" tests/smk_wheel_test.c
 run "SMK-37 pitch wheel: the bend is back to 0 at rest, however slowly the wheel was moved" "$OUT/smk_wheel_test"
 
+$CC -Ifirmware/hal -o "$OUT/fm1_jedec_test" tests/fm1_jedec_test.c
+run "FM-1 flash chips: the older (Puya P25Q80) and newer (UC25HQ80) units both accepted, anything else refused" "$OUT/fm1_jedec_test"
 $CC -o "$OUT/ota_test" tests/ota_test.c
 run "M-UPGRADE entry (FM-1)" "$OUT/ota_test" build/dinghy.fwsc
 head -c 60000 build/dinghy.bin > "$OUT/old_app.bin"

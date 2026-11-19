@@ -35,7 +35,7 @@ PATCHES = [
          seq=dict(div="1/8", gate=12, steps=[57, 64, 60, 69, 62, 67]),   # A minor: the triad up, the octave, the fourth, the seventh
          del_time=19, del_fb=38, del_all=6, rev_size=68, rev_damp=50, rev_all=16,
          mod="CHORUS", ch_rate=20, ch_depth=40, ch_mix=35, comp=40, cmp_spd=45, cmp_gain=15,
-         tp_wow=60, tp_flut=38, tp_age=40, tp_fail=3,
+         tp_wow=60, tp_flut=38, tp_age=40,   # (no FAIL: no dropouts, no noise)
          ch=[
              dict(wave="FM", tone=0, env_filt=50, env_rate=40, cutoff=72, attack=1, decay=62, sus=45, release=50,
                   nz_depth=8, nz_rate=30, dly=15, rev=30, vol=82),
@@ -54,7 +54,7 @@ PATCHES = [
          seq=dict(div="1/8", gate=16, steps=[[60, 64, 67], 0, 72, 69, [57, 60, 64], 0, 67, [55, 59, 62], 0]),   # C, A minor, G: swells, each answered by a note; nine
          del_time=19, del_fb=45, del_all=8, rev_size=72, rev_damp=45, rev_all=18,
          mod="CHORUS", ch_rate=26, ch_depth=55, ch_mix=55, comp=35, cmp_spd=50, cmp_gain=14,
-         tp_wow=52, tp_flut=20, tp_age=46, tp_fail=4,
+         tp_wow=52, tp_flut=20, tp_age=46,   # (no FAIL: no dropouts, no noise)
          ch=[
              dict(wave="SAW", detune=34, cutoff=52, reso=10, env_filt=45, env_rate=70, attack=6, decay=66, sus=60, release=60,
                   nz_depth=8, nz_rate=30, dly=25, rev=35, vol=64),

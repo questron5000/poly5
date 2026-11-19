@@ -37,6 +37,10 @@ python3 tools/fm1_install.py build/dinghy.fwsc --port FM-1 --yes
 APP=poly5 tests/run_host.sh tests/scripts/poly5.txt           # on your computer: sound as WAV, screens as PNG
 ```
 
+POLY5's package identity is **FM-1_945** (free in the FM-1 Firmware Hub's catalogue on 2026-11-19); installers and the hub tell it apart from Dinghy (FM-1_99N) by it. The update screen says POLY5.
+
+Both FM-1 flash chips are supported, the Puya P25Q80 of older units and the UC25HQ80 of newer ones; the update loader refuses any other chip before it erases anything. Hold **OCT-** while switching on for the USB rescue. `dinghy/tests/run_tests.sh` runs the platform's tests (installer, update loader, flash maps, both chips).
+
 `./build.sh` needs Docker, the JieLi toolchain (`tools/get_toolchain.sh`) and the AC79 SDK. After a change to the patches, run `python3 tools/gen_poly5_patches.py`.
 
 What the panel does, the factory patches, and the state of the port are all in [PORT-PLAN.md](PORT-PLAN.md).
