@@ -80,5 +80,71 @@ def main():
     im.crop(box).save(IMG / "panel.png", optimize=True)
     print("img/panel.png")
 
+
+# the hero's loop: switch-on, round robin lines and chords, a roll of GLO, then RANDOM; silent, 480 px, ~14 s
+HERO = """
+1700 keys 0x10
+1950 keys 0
+2000 keys 0x80
+2250 keys 0
+2300 keys 0x800
+2550 keys 0
+2600 keys 0x4000
+2850 keys 0
+2900 keys 0x10000
+3150 keys 0
+3200 keys 0x4000
+3450 keys 0
+3500 keys 0x800
+3750 keys 0
+3900 keys 0x10
+4000 keys 0x90
+4100 keys 0x890
+4200 keys 0x4890
+5600 keys 0
+6000 btn 7
+6600 keys 0x20
+6850 keys 0
+6900 keys 0x100
+7150 keys 0
+7200 keys 0x1000
+7450 keys 0
+7500 keys 0x8000
+7750 keys 0
+7800 keys 0x20000
+8050 keys 0
+8300 btndown 10
+9100 btnup 10
+9400 keys 0x10
+9600 keys 0
+9700 keys 0x800
+9900 keys 0
+10000 keys 0x80
+10200 keys 0
+10300 keys 0x4000
+10500 keys 0
+10600 keys 0x10000
+10800 keys 0
+10900 keys 0x800
+11100 keys 0
+11200 keys 0x10
+11300 keys 0x810
+11400 keys 0x4810
+12900 keys 0
+14200 end
+"""
+
+def hero():
+    with tempfile.TemporaryDirectory() as d:
+        s = Path(d) / "h.txt"
+        s.write_text(HERO)
+        subprocess.run([str(manual.SIM), f"{d}/f", str(s), "30"], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=manual.DINGHY)
+        for out in ("hero.mp4",):
+            enc = ["-c:v", "libx264", "-preset", "slow", "-crf", "24", "-pix_fmt", "yuv420p", "-movflags", "+faststart"]
+            subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-framerate", "30", "-i", f"{d}/f-%05d.ppm",
+                            "-vf", "scale=480:480:flags=neighbor", "-an", *enc, str(IMG / out)], check=True)
+            print("img/" + out)
+
 if __name__ == "__main__":
     main()
+    hero()

@@ -44,8 +44,11 @@
       </div>
     </div>
     <figure class="screen">
-      <img src="site/img/screen-home-chord.png" width="480" height="480" alt="The FM&#8209;1's screen: five glass shapes in a row over a grid, the synths playing a chord lit in their colours, F01 KNUCKLES OF CHALK at the bottom.">
-      <figcaption>The home screen. Each shape is a synth: its wave is the shape, its number and colour are its own. A shape fills with light while its synth sounds; the amber bars mark who plays next.</figcaption>
+      <video id="hero-video" class="screen-video" width="480" height="480" autoplay muted loop playsinline preload="auto" poster="site/img/screen-home-chord.png" aria-label="POLY5 running on the FM&#8209;1's screen: it switches on, the five shapes light up in turn as notes and chords play in round robin, GLO rolls new sounds, then RANDOM mode scatters the notes.">
+        <source src="site/img/hero.mp4" type="video/mp4">
+        <img src="site/img/screen-home-chord.png" width="480" height="480" alt="The FM&#8209;1's screen: five glass shapes in a row over a grid, lit in their colours.">
+      </video>
+      <figcaption>POLY5 running, straight from the firmware. Each shape is a synth: its wave is the shape, its number and colour are its own. A shape fills with light while its synth sounds; the amber bars mark who plays next.</figcaption>
     </figure>
   </div>
 </header>
@@ -310,6 +313,11 @@ python3 tools/fm1_install.py build/dinghy.fwsc --port FM-1 --yes</code></pre>
 </footer>
 
 <script>
+/* the hero loop: still for anyone who asked for less motion */
+(function () {
+  var v = document.getElementById('hero-video');
+  if (v && window.matchMedia('(prefers-reduced-motion: reduce)').matches) { v.removeAttribute('autoplay'); v.pause(); }
+})();
 /* the five lights: round robin a while, then random a while (never the same synth twice in a row) */
 (function () {
   var b = document.querySelectorAll('#lights b'), label = document.getElementById('lights-label');
