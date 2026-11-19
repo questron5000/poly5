@@ -1,0 +1,28 @@
+# the arpeggiator: ARP tapped = the style (UP), a chord held: its notes one after the other through the round robin;
+# then DOWN, UP-DOWN; ARP held = the play mode; ARP OFF again
+200 btn 10
+400 keys 0x4880
+500 shot
+2600 shot
+3000 keys 0
+3400 btn 10
+3600 keys 0x4880
+5600 keys 0
+5800 btn 10
+5900 btn 10
+6000 keys 0x84880
+6100 shot
+8000 keys 0
+8200 btndown 10
+9000 btnup 10
+9100 shot
+9300 keys 0x4880
+11000 keys 0
+11200 btn 10
+11300 btn 10
+11400 btn 10
+11500 btn 10
+11600 shot
+11800 keys 0x80
+12300 keys 0
+13000 end

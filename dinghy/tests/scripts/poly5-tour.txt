@@ -1,0 +1,161 @@
+# a tour of the eight factory patches: a line of five notes, a chord, then the tail; PRESETS to the next
+200 keys 0x80
+370 keys 0
+430 keys 0x800
+600 keys 0
+660 keys 0x4000
+830 keys 0
+890 keys 0x80000
+1060 keys 0
+1120 keys 0x4000
+1290 keys 0
+1350 keys 0x800
+1520 keys 0
+1580 keys 0x80
+1750 keys 0
+1810 keys 0x4
+1980 keys 0
+1100 shot
+2140 keys 0x4880
+3340 keys 0
+6050 enc 6 1
+6200 keys 0x80
+6370 keys 0
+6430 keys 0x800
+6600 keys 0
+6660 keys 0x4000
+6830 keys 0
+6890 keys 0x80000
+7060 keys 0
+7120 keys 0x4000
+7290 keys 0
+7350 keys 0x800
+7520 keys 0
+7580 keys 0x80
+7750 keys 0
+7810 keys 0x4
+7980 keys 0
+7100 shot
+8140 keys 0x4880
+9340 keys 0
+12050 enc 6 1
+12200 keys 0x80
+12370 keys 0
+12430 keys 0x800
+12600 keys 0
+12660 keys 0x4000
+12830 keys 0
+12890 keys 0x80000
+13060 keys 0
+13120 keys 0x4000
+13290 keys 0
+13350 keys 0x800
+13520 keys 0
+13580 keys 0x80
+13750 keys 0
+13810 keys 0x4
+13980 keys 0
+13100 shot
+14140 keys 0x4880
+15340 keys 0
+18050 enc 6 1
+18200 keys 0x80
+18370 keys 0
+18430 keys 0x800
+18600 keys 0
+18660 keys 0x4000
+18830 keys 0
+18890 keys 0x80000
+19060 keys 0
+19120 keys 0x4000
+19290 keys 0
+19350 keys 0x800
+19520 keys 0
+19580 keys 0x80
+19750 keys 0
+19810 keys 0x4
+19980 keys 0
+19100 shot
+20140 keys 0x4880
+21340 keys 0
+24050 enc 6 1
+24200 keys 0x80
+24370 keys 0
+24430 keys 0x800
+24600 keys 0
+24660 keys 0x4000
+24830 keys 0
+24890 keys 0x80000
+25060 keys 0
+25120 keys 0x4000
+25290 keys 0
+25350 keys 0x800
+25520 keys 0
+25580 keys 0x80
+25750 keys 0
+25810 keys 0x4
+25980 keys 0
+25100 shot
+26140 keys 0x4880
+27340 keys 0
+30050 enc 6 1
+30200 keys 0x80
+30370 keys 0
+30430 keys 0x800
+30600 keys 0
+30660 keys 0x4000
+30830 keys 0
+30890 keys 0x80000
+31060 keys 0
+31120 keys 0x4000
+31290 keys 0
+31350 keys 0x800
+31520 keys 0
+31580 keys 0x80
+31750 keys 0
+31810 keys 0x4
+31980 keys 0
+31100 shot
+32140 keys 0x4880
+33340 keys 0
+36050 enc 6 1
+36200 keys 0x80
+36370 keys 0
+36430 keys 0x800
+36600 keys 0
+36660 keys 0x4000
+36830 keys 0
+36890 keys 0x80000
+37060 keys 0
+37120 keys 0x4000
+37290 keys 0
+37350 keys 0x800
+37520 keys 0
+37580 keys 0x80
+37750 keys 0
+37810 keys 0x4
+37980 keys 0
+37100 shot
+38140 keys 0x4880
+39340 keys 0
+42050 enc 6 1
+42200 keys 0x80
+42370 keys 0
+42430 keys 0x800
+42600 keys 0
+42660 keys 0x4000
+42830 keys 0
+42890 keys 0x80000
+43060 keys 0
+43120 keys 0x4000
+43290 keys 0
+43350 keys 0x800
+43520 keys 0
+43580 keys 0x80
+43750 keys 0
+43810 keys 0x4
+43980 keys 0
+43100 shot
+44140 keys 0x4880
+45340 keys 0
+48200 end

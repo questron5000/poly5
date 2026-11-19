@@ -1,0 +1,17 @@
+# edit while it plays: SEQ, PLAY; SELECT to step 5 (the breath of KNUCKLES OF CHALK), a key puts a note there; a second note on step 2
+100 btn 11
+200 btn 12
+1500 enc 0 1
+1600 enc 0 1
+1700 enc 0 1
+1800 enc 0 1
+1900 shot
+2000 keys 0x80000
+2100 keys 0
+2300 shot
+2500 enc 0 -3
+2700 keys 0x4000
+2800 keys 0
+3500 shot
+5500 btn 12
+6000 end

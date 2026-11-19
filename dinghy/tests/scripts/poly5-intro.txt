@@ -1,0 +1,3 @@
+# switching on: the loading animation, then home
+100 keys 0
+3500 end

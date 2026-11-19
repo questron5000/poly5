@@ -1,0 +1,11 @@
+# ALGORITHM: alone on MAIN it does nothing now; with the delay on the screen it is the delay's time, with the reverb the room's size
+100 enc 1 5
+300 midi 0xB0 119 2
+500 enc 4 10
+600 enc 1 -6
+700 shot
+800 enc 1 -4
+4000 enc 5 10
+4100 enc 1 10
+4200 shot
+6000 end

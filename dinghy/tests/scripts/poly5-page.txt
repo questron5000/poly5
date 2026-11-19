@@ -1,0 +1,20 @@
+# synth 3's page: notes on it, its knobs turned, the other row
+200 btn 4
+400 keys 0x80
+700 shot
+900 keys 0
+1000 enc 4 8
+1100 enc 5 10
+1200 enc 1 15
+1400 keys 0x800
+1500 shot
+1800 keys 0
+1900 btn 8
+2000 keys 0x4000
+2100 shot
+2400 keys 0
+2500 btn 2
+2700 keys 0x80
+2800 shot
+3000 keys 0
+4000 end

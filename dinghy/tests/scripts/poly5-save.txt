@@ -1,0 +1,26 @@
+# patches: GLO (new sounds), SAVE, SAVE -> U01; PRESETS back to F01, forward to U01: the same sound again;
+# three keys held at once in the round robin: three bars
+300 btn 7
+600 midi 0xB0 119 2
+800 btn 9
+900 shot
+1000 enc 4 3
+1100 enc 5 2
+1200 shot
+1300 btn 9
+1500 shot
+1800 midi 0xB0 119 2
+2000 enc 6 -1
+2300 midi 0xB0 119 2
+2500 enc 6 -1
+2800 midi 0xB0 119 2
+3000 keys 0x80
+3100 keys 0x880
+3200 keys 0x4880
+3600 shot
+3700 keys 0
+4000 btn 9
+4100 enc 3 1
+4200 shot
+4300 btn 8
+6000 end

@@ -1,0 +1,51 @@
+# MAIN's pages (ALGORITHM turns them): a chord held on each, its dials turned; HOME: back to PLAY
+200 enc 1 1
+250 enc 2 30
+280 enc 3 2
+350 keys 0x4880
+1250 keys 0
+900 shot
+1350 enc 2 -30
+1500 enc 1 1
+1550 enc 2 -25
+1580 enc 3 30
+1650 keys 0x4880
+2550 keys 0
+2200 shot
+2650 enc 2 25
+2800 enc 1 1
+2850 enc 2 3
+2950 keys 0x4880
+4350 keys 0
+3700 shot
+4450 enc 2 -3
+4600 enc 1 1
+4650 enc 2 25
+4750 keys 0x80
+4900 keys 0
+5400 shot
+6000 enc 2 -25
+6100 enc 1 1
+6150 enc 2 30
+6180 enc 3 20
+6250 keys 0x80
+6400 keys 0
+6900 shot
+7500 enc 2 -30
+7600 enc 1 1
+7650 enc 2 35
+7680 enc 3 30
+7710 enc 4 50
+7800 keys 0x4880
+8700 keys 0
+8300 shot
+8800 enc 4 -50
+8900 enc 1 1
+8950 enc 2 40
+8980 enc 4 20
+9100 keys 0x4880
+10000 keys 0
+9600 shot
+10200 btn 8
+10400 shot
+10600 end

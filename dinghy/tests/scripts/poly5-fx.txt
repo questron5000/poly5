@@ -1,0 +1,158 @@
+# the performance knobs: a held chord; KNOB 1 the DJ filter down (lowpass) and up through open to highpass; KNOB 2 resonance;
+# KNOB 3 delay; KNOB 4 reverb: each takes the screen while it turns
+300 keys 0x4880
+500 enc 2 -2
+560 enc 2 -2
+620 enc 2 -2
+680 enc 2 -2
+740 enc 2 -2
+800 enc 2 -2
+860 enc 2 -2
+920 enc 2 -2
+980 enc 2 -2
+1040 enc 2 -2
+1100 enc 2 -2
+1160 enc 2 -2
+1220 enc 2 -2
+1280 enc 2 -2
+1340 enc 2 -2
+1400 enc 2 -2
+1460 enc 2 -2
+1520 enc 2 -2
+1580 enc 2 -2
+1640 enc 2 -2
+1500 shot
+1800 enc 3 3
+1850 enc 3 3
+1900 enc 3 3
+1950 enc 3 3
+2000 enc 3 3
+2050 enc 3 3
+2100 enc 3 3
+2150 enc 3 3
+2200 enc 3 3
+2250 enc 3 3
+2300 enc 3 3
+2350 enc 3 3
+2400 enc 3 3
+2450 enc 3 3
+2500 enc 3 3
+2500 shot
+2700 enc 2 2
+2740 enc 2 2
+2780 enc 2 2
+2820 enc 2 2
+2860 enc 2 2
+2900 enc 2 2
+2940 enc 2 2
+2980 enc 2 2
+3020 enc 2 2
+3060 enc 2 2
+3100 enc 2 2
+3140 enc 2 2
+3180 enc 2 2
+3220 enc 2 2
+3260 enc 2 2
+3300 enc 2 2
+3340 enc 2 2
+3380 enc 2 2
+3420 enc 2 2
+3460 enc 2 2
+3500 enc 2 2
+3540 enc 2 2
+3580 enc 2 2
+3620 enc 2 2
+3660 enc 2 2
+3700 enc 2 2
+3740 enc 2 2
+3780 enc 2 2
+3820 enc 2 2
+3860 enc 2 2
+3900 enc 2 2
+3940 enc 2 2
+3980 enc 2 2
+4020 enc 2 2
+4060 enc 2 2
+4100 enc 2 2
+4140 enc 2 2
+4180 enc 2 2
+4220 enc 2 2
+4260 enc 2 2
+4300 enc 2 2
+4340 enc 2 2
+4380 enc 2 2
+4420 enc 2 2
+4460 enc 2 2
+4450 shot
+4600 enc 2 -2
+4640 enc 2 -2
+4680 enc 2 -2
+4720 enc 2 -2
+4760 enc 2 -2
+4800 enc 2 -2
+4840 enc 2 -2
+4880 enc 2 -2
+4920 enc 2 -2
+4960 enc 2 -2
+5000 enc 2 -2
+5040 enc 2 -2
+5080 enc 2 -2
+5120 enc 2 -2
+5160 enc 2 -2
+5200 enc 2 -2
+5240 enc 2 -2
+5280 enc 2 -2
+5320 enc 2 -2
+5360 enc 2 -2
+5400 enc 2 -2
+5440 enc 2 -2
+5480 enc 2 -2
+5520 enc 2 -2
+5560 enc 2 -2
+5700 keys 0
+7200 enc 4 3
+7250 enc 4 3
+7300 enc 4 3
+7350 enc 4 3
+7400 enc 4 3
+7450 enc 4 3
+7500 enc 4 3
+7550 enc 4 3
+7600 enc 4 3
+7650 enc 4 3
+7700 enc 4 3
+7750 enc 4 3
+7750 shot
+8000 keys 0x80
+8120 keys 0
+8300 keys 0x800
+8420 keys 0
+8600 keys 0x8000
+8720 keys 0
+8900 keys 0x80000
+9020 keys 0
+10500 enc 5 3
+10550 enc 5 3
+10600 enc 5 3
+10650 enc 5 3
+10700 enc 5 3
+10750 enc 5 3
+10800 enc 5 3
+10850 enc 5 3
+10900 enc 5 3
+10950 enc 5 3
+11000 enc 5 3
+11050 enc 5 3
+11100 enc 5 3
+11150 enc 5 3
+11200 enc 5 3
+11200 shot
+11500 keys 0x80
+11620 keys 0
+11800 keys 0x800
+11920 keys 0
+12100 keys 0x8000
+12220 keys 0
+12400 keys 0x80000
+12520 keys 0
+15500 end

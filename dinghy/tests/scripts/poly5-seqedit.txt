@@ -1,0 +1,24 @@
+# the sequencer's page: a key is the note of the step under the cursor; SELECT moves on; a chord; its lights
+100 btn 11
+300 keys 0x80
+400 keys 0
+500 enc 0 1
+600 keys 0x800
+700 keys 0
+800 enc 0 1
+900 keys 0x4000
+1000 keys 0
+1100 enc 0 1
+1200 enc 0 1
+1300 keys 0x4880
+1400 keys 0
+1450 shot
+1500 enc 0 -2
+1600 keys 0x80000
+1700 keys 0
+1750 shot
+1800 enc 5 -8
+1900 btn 12
+2500 shot
+3500 btn 12
+4000 end

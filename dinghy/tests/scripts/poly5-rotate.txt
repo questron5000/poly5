@@ -1,0 +1,40 @@
+# KNUCKLES OF CHALK's sequence: three times round: who plays step 1 each time
+100 btn 12
+60 midi 0xB0 119 1
+220 midi 0xB0 119 2
+324 midi 0xB0 119 1
+474 midi 0xB0 119 2
+578 midi 0xB0 119 1
+728 midi 0xB0 119 2
+832 midi 0xB0 119 1
+982 midi 0xB0 119 2
+1086 midi 0xB0 119 1
+1236 midi 0xB0 119 2
+1341 midi 0xB0 119 1
+1491 midi 0xB0 119 2
+1595 midi 0xB0 119 1
+1745 midi 0xB0 119 2
+1849 midi 0xB0 119 1
+1999 midi 0xB0 119 2
+2103 midi 0xB0 119 1
+2253 midi 0xB0 119 2
+2358 midi 0xB0 119 1
+2508 midi 0xB0 119 2
+2612 midi 0xB0 119 1
+2762 midi 0xB0 119 2
+2866 midi 0xB0 119 1
+3016 midi 0xB0 119 2
+3120 midi 0xB0 119 1
+3270 midi 0xB0 119 2
+3375 midi 0xB0 119 1
+3525 midi 0xB0 119 2
+3629 midi 0xB0 119 1
+3779 midi 0xB0 119 2
+3883 midi 0xB0 119 1
+4033 midi 0xB0 119 2
+4137 midi 0xB0 119 1
+4287 midi 0xB0 119 2
+4392 midi 0xB0 119 1
+4542 midi 0xB0 119 2
+4676 btn 12
+4976 end

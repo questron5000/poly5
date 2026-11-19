@@ -1,0 +1,48 @@
+# a synth's page open (ENV = synth 3): keys, MIDI notes and the sequencer all play synth 3 only; HOME: back to the round robin
+100 btn 4
+300 midi 0xB0 119 1
+320 keys 0x80
+400 keys 0
+480 midi 0xB0 119 2
+1800 midi 0xB0 119 1
+1820 keys 0x80
+1900 keys 0
+1980 midi 0xB0 119 2
+3300 midi 0xB0 119 1
+3320 keys 0x80
+3400 keys 0
+3480 midi 0xB0 119 2
+4800 midi 0xB0 119 1
+4820 midi 0x90 64 100
+4900 midi 0x80 64 0
+4980 midi 0xB0 119 2
+6300 midi 0xB0 119 1
+6320 midi 0x90 64 100
+6400 midi 0x80 64 0
+6480 midi 0xB0 119 2
+7800 midi 0xB0 119 1
+7820 midi 0x90 64 100
+7900 midi 0x80 64 0
+7980 midi 0xB0 119 2
+9300 btn 8
+9600 midi 0xB0 119 1
+9620 keys 0x80
+9700 keys 0
+9780 midi 0xB0 119 2
+11100 midi 0xB0 119 1
+11120 keys 0x80
+11200 keys 0
+11280 midi 0xB0 119 2
+12600 midi 0xB0 119 1
+12620 keys 0x80
+12700 keys 0
+12780 midi 0xB0 119 2
+14100 midi 0xB0 119 1
+14120 keys 0x80
+14200 keys 0
+14280 midi 0xB0 119 2
+15600 midi 0xB0 119 1
+15620 keys 0x80
+15700 keys 0
+15780 midi 0xB0 119 2
+17100 end

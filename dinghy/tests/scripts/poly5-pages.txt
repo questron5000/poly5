@@ -1,0 +1,65 @@
+# a synth's ten pages (FX = synth 1; PRESETS turns them), a note on each, a knob or two turned
+100 btn 2
+300 enc 5 10
+400 keys 0x80
+1100 keys 0
+800 shot
+1400 enc 6 1
+1450 enc 3 20
+1480 enc 4 15
+1550 keys 0x80
+2250 keys 0
+1900 shot
+2500 enc 6 1
+2550 enc 2 15
+2580 enc 3 25
+2600 enc 4 15
+2650 keys 0x80
+3350 keys 0
+2850 shot
+3600 enc 6 1
+3650 enc 3 10
+3680 enc 4 1
+3750 keys 0x80
+4450 keys 0
+4100 shot
+4500 enc 4 -1
+4700 enc 6 1
+4750 enc 4 25
+4780 enc 3 25
+4850 keys 0x80
+6050 keys 0
+5400 shot
+6150 enc 4 -25
+6300 enc 6 1
+6350 enc 3 25
+6380 enc 4 30
+6450 keys 0x80
+7150 keys 0
+6800 shot
+7250 enc 3 -25
+7400 enc 6 1
+7450 enc 2 35
+7550 keys 0x80
+8250 keys 0
+7900 shot
+8500 enc 6 1
+8550 enc 2 1
+8570 enc 3 20
+8590 enc 4 30
+8610 enc 5 40
+8700 keys 0x80
+9900 keys 0
+9300 shot
+10200 enc 6 1
+10250 enc 2 30
+10350 keys 0x80
+10550 keys 0
+10800 shot
+11500 enc 6 1
+11550 enc 2 25
+11580 enc 3 15
+11650 keys 0x80
+11850 keys 0
+12100 shot
+13000 end

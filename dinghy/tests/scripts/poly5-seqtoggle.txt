@@ -1,0 +1,21 @@
+# the sequencer's page on KNUCKLES OF CHALK: step 1 holds A3; the A3 key takes it out, C4 and E4 go in, E4 out again; SAVE SAVE: the sequence is kept with the patch
+100 btn 11
+300 shot
+400 keys 0x10
+500 keys 0
+600 keys 0x80
+700 keys 0
+800 keys 0x800
+900 keys 0
+1000 shot
+1100 keys 0x800
+1200 keys 0
+1300 shot
+1500 btn 9
+1700 btn 9
+2200 enc 6 1
+2500 enc 6 -1
+2700 enc 6 -1
+2900 btn 11
+3100 shot
+3500 end

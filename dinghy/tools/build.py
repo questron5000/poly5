@@ -176,7 +176,7 @@ def build_app():
     cmds = [("cc", "-c", FW / "crt0.S", "-o", OUT / "crt0.o"),
             ("cc", "-c", FW / "hal" / "fm1_vec.S", "-o", OUT / "fm1_vec.o"),
             ("cc", "-c", FW / "hal" / "fm1_isr.S", "-o", OUT / "fm1_isr.o"),
-            ("cc", *flags, "-c", FW / "src" / "dinghy.c", "-o", OUT / "dinghy.o")]
+            ("cc", *flags, "-c", FW / "src" / (os.environ.get("APP", "dinghy") + ".c"), "-o", OUT / "dinghy.o")]   # APP=poly5 ./build.sh: another app file
     tc_all(*cmds)
     elf = OUT / "dinghy.elf"
     ld = FW / "app.ld"

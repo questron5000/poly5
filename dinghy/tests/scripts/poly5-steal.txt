@@ -1,0 +1,10 @@
+# UNISON (ARP twice): chords one after the other, each needing more voices than there are: no clicks where voices are taken
+50 btn 10
+70 btn 10
+300 keys 0x4880
+700 keys 0x1200
+1100 keys 0x4880
+1500 keys 0x91000
+1900 keys 0x4880
+2300 keys 0
+3500 end

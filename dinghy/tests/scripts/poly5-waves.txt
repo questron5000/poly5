@@ -1,0 +1,118 @@
+# the new sounds on a synth's page (FX = synth 1, of KNUCKLES OF CHALK): each wave in turn (SELECT), then FM with TONE up,
+# a sine with DROP and DECAY (a kick, a tom), a saw with DETUNE
+100 btn 2
+150 btn 8
+170 btn 8
+200 enc 4 -20
+210 enc 3 -10
+300 keys 0x80
+560 keys 0
+620 keys 0x800
+880 keys 0
+940 keys 0x4000
+1200 keys 0
+1260 keys 0x80000
+1520 keys 0
+1380 shot
+1620 enc 0 1
+1840 keys 0x80
+2100 keys 0
+2160 keys 0x800
+2420 keys 0
+2480 keys 0x4000
+2740 keys 0
+2800 keys 0x80000
+3060 keys 0
+2920 shot
+3160 enc 0 1
+3380 keys 0x80
+3640 keys 0
+3700 keys 0x800
+3960 keys 0
+4020 keys 0x4000
+4280 keys 0
+4340 keys 0x80000
+4600 keys 0
+4460 shot
+4700 enc 0 1
+4920 keys 0x80
+5180 keys 0
+5240 keys 0x800
+5500 keys 0
+5560 keys 0x4000
+5820 keys 0
+5880 keys 0x80000
+6140 keys 0
+6000 shot
+6240 enc 0 1
+6460 keys 0x80
+6720 keys 0
+6780 keys 0x800
+7040 keys 0
+7100 keys 0x4000
+7360 keys 0
+7420 keys 0x80000
+7680 keys 0
+7540 shot
+7780 enc 0 1
+8000 keys 0x80
+8260 keys 0
+8320 keys 0x800
+8580 keys 0
+8640 keys 0x4000
+8900 keys 0
+8960 keys 0x80000
+9220 keys 0
+9080 shot
+9320 enc 0 1
+9540 enc 0 4
+9640 keys 0x80
+9900 keys 0
+9960 keys 0x4000
+10220 keys 0
+10280 enc 2 10
+10400 keys 0x80
+10660 keys 0
+10720 keys 0x4000
+10980 keys 0
+11040 enc 2 10
+11160 keys 0x80
+11420 keys 0
+11480 keys 0x4000
+11740 keys 0
+11800 enc 2 10
+11920 keys 0x80
+12180 keys 0
+12240 keys 0x4000
+12500 keys 0
+12560 enc 2 10
+12680 keys 0x80
+12940 keys 0
+13000 keys 0x4000
+13260 keys 0
+13320 enc 2 10
+13440 enc 0 -1
+13460 enc 3 40
+13480 enc 4 14
+13640 keys 0x4
+13840 keys 0
+13900 keys 0x4
+14100 keys 0
+14160 keys 0x80
+14360 keys 0
+14420 keys 0x4
+14620 keys 0
+14580 shot
+14680 enc 0 -3
+14700 enc 3 -50
+14720 enc 4 -50
+14740 enc 5 15
+14980 keys 0x80
+15380 keys 0
+15440 keys 0x800
+15840 keys 0
+15900 keys 0x4000
+16300 keys 0
+16360 keys 0x80000
+16760 keys 0
+18320 end

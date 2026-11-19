@@ -1,0 +1,13 @@
+# the sustain pedal (MIDI CC 64): a note let go with the pedal down rings on; pedal up lets it go
+200 keys 0
+300 enc 6 1
+400 enc 6 1
+500 enc 6 1
+600 midi 0xB0 64 127
+700 midi 0x90 60 100
+900 midi 0x80 60 0
+1000 midi 0x90 64 100
+1200 midi 0x80 64 0
+2500 shot
+3000 midi 0xB0 64 0
+5000 end

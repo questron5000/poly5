@@ -1,0 +1,33 @@
+# the eight factory patches' sequences: PLAY for a while each, STOP, PRESETS to the next
+200 btn 12
+2200 shot
+4800 btn 12
+6100 enc 6 1
+6300 btn 12
+8300 shot
+10900 btn 12
+12200 enc 6 1
+12400 btn 12
+14400 shot
+17000 btn 12
+18300 enc 6 1
+18500 btn 12
+20500 shot
+25700 btn 12
+27000 enc 6 1
+27200 btn 12
+29200 shot
+31800 btn 12
+33100 enc 6 1
+33300 btn 12
+35300 shot
+37900 btn 12
+39200 enc 6 1
+39400 btn 12
+41400 shot
+46600 btn 12
+47900 enc 6 1
+48100 btn 12
+50100 shot
+52700 btn 12
+54000 end

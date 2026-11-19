@@ -1,0 +1,29 @@
+# LOFI (the tape): ALGORITHM backwards from PLAY wraps to MASTERING, once more to LOFI; a note held clean, then WOW, FLUTTER, AGE, FAIL
+# then DELAY: its fourth knob switches it off and on
+100 enc 1 -1
+200 shot
+300 enc 1 -1
+400 keys 0x10000
+1400 shot
+1500 enc 2 40
+3500 shot
+3600 enc 2 -40
+3700 enc 3 40
+5200 shot
+5300 enc 3 -40
+5400 enc 4 45
+6400 shot
+6500 enc 4 -45
+6600 enc 5 40
+8000 shot
+8200 keys 0
+8600 enc 1 -3
+8700 enc 2 30
+8900 keys 0x80
+9050 keys 0
+9900 shot
+10500 enc 5 -1
+10700 keys 0x80
+10850 keys 0
+11700 shot
+12500 end

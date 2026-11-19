@@ -1,0 +1,31 @@
+# the sequencer: REC (stopped): eight steps entered one by one (a rest by SELECT, a chord), length 8; REC off; PLAY: three passes;
+# then RANDOM mode (ARP) and another patch (PRESETS) while it runs: the same notes, other synths
+200 btn 13
+500 keys 0x80
+590 keys 0
+700 keys 0x800
+790 keys 0
+900 keys 0x4000
+990 keys 0
+1100 enc 0 1
+1250 keys 0x80000
+1340 keys 0
+1450 keys 0x4000
+1540 keys 0
+1650 keys 0x4880
+1740 keys 0
+1850 keys 0x4
+1940 keys 0
+2050 enc 5 -8
+2150 shot
+2250 btn 13
+2550 btn 12
+3250 shot
+3850 shot
+5550 btn 10
+7550 enc 6 1
+8150 shot
+9550 btn 12
+11050 btn 11
+11250 shot
+11550 end

@@ -1,0 +1,22 @@
+# UNISON (SEQ twice from ROUND ROBIN): synth 2 OFF, synth 5 SKIP: a key sounds 1, 3, 4
+50 btn 11
+70 btn 11
+100 enc 0 1
+200 enc 0 1
+300 enc 1 1
+400 enc 0 3
+500 enc 1 2
+2400 midi 0xB0 119 1
+2420 keys 0x80
+2520 keys 0
+2600 midi 0xB0 119 2
+# POLY (SEQ once more): SELECT to synth 3: the keys play synth 3
+3000 btn 11
+3100 enc 0 1
+3200 enc 0 2
+5200 midi 0xB0 119 1
+5220 keys 0x80
+5260 shot
+5320 keys 0
+5400 midi 0xB0 119 2
+5600 end

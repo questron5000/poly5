@@ -1,0 +1,58 @@
+# POLY5: the round robin on the keys; press ENV: synth 3's page, NOISE up, ATTACK, the other row; RANDOM all;
+# the line again; synth 2 out (SEL, PLAY, SEL); UNISON chord
+200 keys 0x80
+400 keys 0
+450 keys 0x800
+650 keys 0
+700 keys 0x4000
+900 keys 0
+950 keys 0x80000
+1000 shot
+1060 shot
+1150 keys 0
+1200 keys 0x4000
+1400 keys 0
+1800 btn 4
+1900 enc 1 20
+2000 enc 2 -10
+2050 enc 5 6
+2100 shot
+2150 btn 8
+2180 shot
+2200 keys 0x80
+2260 shot
+2290 keys 0
+2295 btn 4
+2300 enc 1 5
+2400 shot
+2500 btn 7
+2600 shot
+2700 keys 0x80
+2900 keys 0
+2950 keys 0x800
+3150 keys 0
+3200 keys 0x4000
+3400 keys 0
+3450 keys 0x80000
+3650 keys 0
+3700 keys 0x4000
+3900 keys 0
+4500 btn 3
+4600 btn 12
+4700 btn 3
+4800 shot
+5000 keys 0x80
+5200 keys 0
+5250 keys 0x800
+5450 keys 0
+5500 keys 0x4000
+5700 keys 0
+5750 keys 0x80000
+5950 keys 0
+6500 btn 11
+6520 btn 11
+6600 keys 0x4880
+6640 shot
+7000 shot
+7400 keys 0
+9000 end
