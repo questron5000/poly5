@@ -271,19 +271,58 @@
   <div class="wrap">
     <p class="eyebrow">Video manual</p>
     <h2>Learn it in eight minutes</h2>
-    <p>Eleven short chapters, made from the firmware itself: the screen and the sound are POLY5 running, the panel lights up what is pressed. Or watch them <a href="manual/videos/poly5-manual-full.mp4">all in one</a>.</p>
-    <div class="chapters">
-      <figure><div class="video"><video controls preload="none" playsinline poster="site/img/poster-01-welcome.jpg" src="manual/videos/01-welcome.mp4"></video></div><figcaption><b>01</b>Meet the five synths</figcaption></figure>
-      <figure><div class="video"><video controls preload="none" playsinline poster="site/img/poster-02-random.jpg" src="manual/videos/02-random.mp4"></video></div><figcaption><b>02</b>Random: the key to everything</figcaption></figure>
-      <figure><div class="video"><video controls preload="none" playsinline poster="site/img/poster-03-play-modes.jpg" src="manual/videos/03-play-modes.mp4"></video></div><figcaption><b>03</b>Play modes</figcaption></figure>
-      <figure><div class="video"><video controls preload="none" playsinline poster="site/img/poster-04-patches-and-random.jpg" src="manual/videos/04-patches-and-random.mp4"></video></div><figcaption><b>04</b>Patches and random sounds</figcaption></figure>
-      <figure><div class="video"><video controls preload="none" playsinline poster="site/img/poster-05-performance-knobs.jpg" src="manual/videos/05-performance-knobs.mp4"></video></div><figcaption><b>05</b>Performance knobs</figcaption></figure>
-      <figure><div class="video"><video controls preload="none" playsinline poster="site/img/poster-06-on-silent-skip.jpg" src="manual/videos/06-on-silent-skip.mp4"></video></div><figcaption><b>06</b>On, silent, skip</figcaption></figure>
-      <figure><div class="video"><video controls preload="none" playsinline poster="site/img/poster-07-a-synths-page.jpg" src="manual/videos/07-a-synths-page.mp4"></video></div><figcaption><b>07</b>A synth's page</figcaption></figure>
-      <figure><div class="video"><video controls preload="none" playsinline poster="site/img/poster-08-master-effects.jpg" src="manual/videos/08-master-effects.mp4"></video></div><figcaption><b>08</b>The effects pages</figcaption></figure>
-      <figure><div class="video"><video controls preload="none" playsinline poster="site/img/poster-09-sequencer.jpg" src="manual/videos/09-sequencer.mp4"></video></div><figcaption><b>09</b>The sequencer</figcaption></figure>
-      <figure><div class="video"><video controls preload="none" playsinline poster="site/img/poster-10-arpeggiator.jpg" src="manual/videos/10-arpeggiator.mp4"></video></div><figcaption><b>10</b>The arpeggiator</figcaption></figure>
-      <figure><div class="video"><video controls preload="none" playsinline poster="site/img/poster-11-saving.jpg" src="manual/videos/11-saving.mp4"></video></div><figcaption><b>11</b>Saving your patches</figcaption></figure>
+    <p>Eleven short chapters, made from the firmware itself: the screen and the sound are POLY5 running, the panel lights up what is pressed. Each one leads into the next; pick any chapter from the list. Or download them <a href="manual/videos/poly5-manual-full.mp4">all in one</a>.</p>
+    <div class="player">
+      <div class="pl-main">
+        <div class="video"><video id="pl-video" controls preload="metadata" playsinline poster="site/img/poster-01-welcome.jpg" src="manual/videos/01-welcome.mp4"></video></div>
+        <p class="pl-now"><b id="pl-num">01</b><span id="pl-title">Meet the five synths</span><span class="pl-next" id="pl-next">Next: Random: the key to everything</span></p>
+      </div>
+      <ol class="pl-list" id="pl-list" aria-label="Chapters">
+        <li><button type="button" class="pl-item on" data-src="manual/videos/01-welcome.mp4" data-poster="site/img/poster-01-welcome.jpg" aria-current="true">
+          <img src="site/img/poster-01-welcome.jpg" width="640" height="360" alt="" loading="lazy">
+          <span class="pl-text"><b>01</b><span class="pl-title">Meet the five synths</span><span class="pl-dur">0:44</span></span>
+        </button></li>
+        <li><button type="button" class="pl-item" data-src="manual/videos/02-random.mp4" data-poster="site/img/poster-02-random.jpg">
+          <img src="site/img/poster-02-random.jpg" width="640" height="360" alt="" loading="lazy">
+          <span class="pl-text"><b>02</b><span class="pl-title">Random: the key to everything</span><span class="pl-dur">1:11</span></span>
+        </button></li>
+        <li><button type="button" class="pl-item" data-src="manual/videos/03-play-modes.mp4" data-poster="site/img/poster-03-play-modes.jpg">
+          <img src="site/img/poster-03-play-modes.jpg" width="640" height="360" alt="" loading="lazy">
+          <span class="pl-text"><b>03</b><span class="pl-title">Play modes</span><span class="pl-dur">0:45</span></span>
+        </button></li>
+        <li><button type="button" class="pl-item" data-src="manual/videos/04-patches-and-random.mp4" data-poster="site/img/poster-04-patches-and-random.jpg">
+          <img src="site/img/poster-04-patches-and-random.jpg" width="640" height="360" alt="" loading="lazy">
+          <span class="pl-text"><b>04</b><span class="pl-title">Patches and random sounds</span><span class="pl-dur">0:47</span></span>
+        </button></li>
+        <li><button type="button" class="pl-item" data-src="manual/videos/05-performance-knobs.mp4" data-poster="site/img/poster-05-performance-knobs.jpg">
+          <img src="site/img/poster-05-performance-knobs.jpg" width="640" height="360" alt="" loading="lazy">
+          <span class="pl-text"><b>05</b><span class="pl-title">Performance knobs</span><span class="pl-dur">0:53</span></span>
+        </button></li>
+        <li><button type="button" class="pl-item" data-src="manual/videos/06-on-silent-skip.mp4" data-poster="site/img/poster-06-on-silent-skip.jpg">
+          <img src="site/img/poster-06-on-silent-skip.jpg" width="640" height="360" alt="" loading="lazy">
+          <span class="pl-text"><b>06</b><span class="pl-title">On, silent, skip</span><span class="pl-dur">0:32</span></span>
+        </button></li>
+        <li><button type="button" class="pl-item" data-src="manual/videos/07-a-synths-page.mp4" data-poster="site/img/poster-07-a-synths-page.jpg">
+          <img src="site/img/poster-07-a-synths-page.jpg" width="640" height="360" alt="" loading="lazy">
+          <span class="pl-text"><b>07</b><span class="pl-title">A synth's page</span><span class="pl-dur">0:40</span></span>
+        </button></li>
+        <li><button type="button" class="pl-item" data-src="manual/videos/08-master-effects.mp4" data-poster="site/img/poster-08-master-effects.jpg">
+          <img src="site/img/poster-08-master-effects.jpg" width="640" height="360" alt="" loading="lazy">
+          <span class="pl-text"><b>08</b><span class="pl-title">The effects pages</span><span class="pl-dur">0:51</span></span>
+        </button></li>
+        <li><button type="button" class="pl-item" data-src="manual/videos/09-sequencer.mp4" data-poster="site/img/poster-09-sequencer.jpg">
+          <img src="site/img/poster-09-sequencer.jpg" width="640" height="360" alt="" loading="lazy">
+          <span class="pl-text"><b>09</b><span class="pl-title">The sequencer</span><span class="pl-dur">0:50</span></span>
+        </button></li>
+        <li><button type="button" class="pl-item" data-src="manual/videos/10-arpeggiator.mp4" data-poster="site/img/poster-10-arpeggiator.jpg">
+          <img src="site/img/poster-10-arpeggiator.jpg" width="640" height="360" alt="" loading="lazy">
+          <span class="pl-text"><b>10</b><span class="pl-title">The arpeggiator</span><span class="pl-dur">0:35</span></span>
+        </button></li>
+        <li><button type="button" class="pl-item" data-src="manual/videos/11-saving.mp4" data-poster="site/img/poster-11-saving.jpg">
+          <img src="site/img/poster-11-saving.jpg" width="640" height="360" alt="" loading="lazy">
+          <span class="pl-text"><b>11</b><span class="pl-title">Saving your patches</span><span class="pl-dur">0:31</span></span>
+        </button></li>
+      </ol>
     </div>
   </div>
 </section>
@@ -313,6 +352,28 @@ python3 tools/fm1_install.py build/dinghy.fwsc --port FM-1 --yes</code></pre>
 </footer>
 
 <script>
+/* the manual's player: a chapter from the list plays in the big player; when one ends, the next starts */
+(function () {
+  var v = document.getElementById('pl-video'), list = document.getElementById('pl-list');
+  if (!v || !list) return;
+  var items = [].slice.call(list.querySelectorAll('.pl-item')), cur = 0;
+  function show(i, play) {
+    cur = i;
+    var it = items[i];
+    items.forEach(function (x, k) { x.classList.toggle('on', k === i); if (k === i) x.setAttribute('aria-current', 'true'); else x.removeAttribute('aria-current'); });
+    v.poster = it.dataset.poster;
+    v.src = it.dataset.src;
+    document.getElementById('pl-num').textContent = it.querySelector('b').textContent;
+    document.getElementById('pl-title').textContent = it.querySelector('.pl-title').textContent;
+    var nx = items[i + 1];
+    document.getElementById('pl-next').textContent = nx ? 'Next: ' + nx.querySelector('.pl-title').textContent : 'Last chapter';
+    list.scrollTo({ top: it.parentNode.offsetTop - list.offsetTop - 8, behavior: 'smooth' });
+    if (play) { var p = v.play(); if (p && p.catch) p.catch(function () {}); }
+  }
+  items.forEach(function (it, i) { it.addEventListener('click', function () { show(i, true); }); });
+  v.addEventListener('ended', function () { if (cur + 1 < items.length) show(cur + 1, true); });
+})();
+
 /* the hero loop: still for anyone who asked for less motion */
 (function () {
   var v = document.getElementById('hero-video');
