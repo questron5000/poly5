@@ -154,8 +154,18 @@ def fm1_panel(screen_png, out, lit_keys=()):
     p.draw(im, Image.open(screen_png).convert("RGB"), keys=keys, btn_leds=0xFC)   # the five synths and GLO lit
     im.save(out, optimize=True)
 
+
+def bump_css():
+    """index.html asks for site.css?v=<its hash>, so no browser keeps an old copy after a change"""
+    import hashlib, re
+    page = ROOT.parent / "index.html"
+    h = hashlib.sha1((ROOT / "site.css").read_bytes()).hexdigest()[:8]
+    page.write_text(re.sub(r'href="site/site\.css[^"]*"', f'href="site/site.css?v={h}"', page.read_text()))
+    print("index.html: site.css?v=" + h)
+
 if __name__ == "__main__":
     main()
     hero()
     fm1_panel(IMG / "screen-home-chord.png", IMG / "panel.png", lit_keys=(4, 7, 11, 14))
     print("img/panel.png (the FM-1)")
+    bump_css()
