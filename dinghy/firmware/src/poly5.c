@@ -2487,14 +2487,14 @@ static void intro(void)
                 cv_text(x - text_w(&FONT_L, L[c]) / 2, 130, &FONT_L, L[c], shade(c, k));
             }
         }
-        if (t > 500u) {                         /* the version, under the letters: in with them, out with them */
-            uint32_t k = t < 700u ? (t - 500u) * 255u / 200u : t > 1100u ? 255u - (t - 1100u) * 255u / 200u : 255u;
-            const char *v = "v" POLY5_VER;
-            cv_text(120 - text_w(&FONT_S, v) / 2, 156, &FONT_S, v, RGB(k * 150u / 255u, k * 156u / 255u, k * 170u / 255u));
-        }
         part_step_draw();
         cv_blit(0, MAIN_Y);
+        if (t > 500u) {                         /* the version, on the screen's bottom line: in with the letters, out with them */
+            uint32_t k = t < 700u ? (t - 500u) * 255u / 200u : t > 1100u ? 255u - (t - 1100u) * 255u / 200u : 255u;
+            draw_text_box(0, 220, 240, &FONT_S, "v" POLY5_VER, RGB(k * 150u / 255u, k * 156u / 255u, k * 170u / 255u), 1);
+        }
     }
+    draw_text_box(0, 220, 240, &FONT_S, "", C_BLACK, 1);   /* (gone: the home screen's line) */
 }
 static void app_main(void)
 {
