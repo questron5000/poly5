@@ -71,12 +71,10 @@ h3 { font-size: clamp(21px, 2.2vw, 26px); font-weight: 600; margin: 1.8em 0 0.5e
 
 /* hero */
 .hero { padding: 72px 0 40px; position: relative; overflow: hidden; }
-.hero::before {  /* the home screen's floor grid */
-  content: ""; position: absolute; inset: 45% -20% -10% -20%; pointer-events: none;
-  background-image: linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px);
-  background-size: 64px 64px; transform: perspective(500px) rotateX(62deg); transform-origin: top; opacity: 0.55;
-  mask-image: linear-gradient(to bottom, transparent, #000 30%, #000 70%, transparent);
-  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 30%, #000 70%, transparent);
+.hero-grid {  /* POLY5's PLAY background, drawn live (index.html) */
+  position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; display: block;
+  mask-image: radial-gradient(ellipse 85% 75% at 50% 50%, #000 40%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 85% 75% at 50% 50%, #000 40%, transparent 100%);
 }
 .hero .wrap { position: relative; display: grid; gap: 40px; align-items: center; }
 @media (min-width: 900px) { .hero .wrap { grid-template-columns: 1.15fr 0.85fr; } }

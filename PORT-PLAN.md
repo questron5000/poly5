@@ -1,4 +1,4 @@
-# POLY5 on the M-VAVE FM-1 — port plan
+# POLY5 on the M-VAVE FM-1: the port plan
 
 Goal: turn [poly5.html](poly5.html), the 5-channel Web Audio synth, into firmware for the FM-1, built on
 [Dinghy](dinghy/) (zvenson/dinghy v0.5, GPL-3.0, cloned at commit ea1b6bf).

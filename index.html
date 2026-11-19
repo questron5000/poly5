@@ -30,11 +30,12 @@
 </nav>
 
 <header class="hero" id="top">
+  <canvas class="hero-grid" id="hero-grid" aria-hidden="true"></canvas>
   <div class="wrap">
     <div>
       <div class="stripes" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
       <h1 class="word" aria-label="POLY5"><span>P</span><span>O</span><span>L</span><span>Y</span><span>5</span></h1>
-      <p class="lede">Five synths in one, for the M&#8209;VAVE FM&#8209;1. Every note you play goes to the next synth&nbsp;&mdash; or to a random one.</p>
+      <p class="lede">Five synths in one, for the M&#8209;VAVE FM&#8209;1. Every note you play goes to the next synth, or to a random one.</p>
       <p class="sub">Lofi and melodic, with worn tape, wow and flutter, and noise used on purpose. 24 factory patches, each with its own sequence. An arpeggiator, a step sequencer and eight effects on everything. Open firmware, GPL-3.0.</p>
       <div class="lights" id="lights" aria-hidden="true"><b></b><b></b><b></b><b></b><b></b><span class="label" id="lights-label">ROUND ROBIN</span></div>
       <div class="btns">
@@ -372,6 +373,69 @@ python3 tools/fm1_install.py build/dinghy.fwsc --port FM-1 --yes</code></pre>
   }
   items.forEach(function (it, i) { it.addEventListener('click', function () { show(i, true); }); });
   v.addEventListener('ended', function () { if (cur + 1 < items.length) show(cur + 1, true); });
+})();
+
+/* the hero's background: POLY5's PLAY screen. A floor and a ceiling of faint lines meeting near one point,
+   drifting towards you; stars that twinkle; every 5 s a streak of light runs down a line to the vanishing point */
+(function () {
+  var c = document.getElementById('hero-grid');
+  if (!c || !c.getContext) return;
+  var g = c.getContext('2d'), still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var w = 0, h = 0, dpr = 1, running = true, stars = [];
+  function size() {
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    w = c.clientWidth; h = c.clientHeight;
+    c.width = Math.round(w * dpr); c.height = Math.round(h * dpr);
+    g.setTransform(dpr, 0, 0, dpr, 0, 0);
+    stars = [];
+    for (var i = 0; i < 22; i++) stars.push({ x: Math.random(), y: 0.32 + Math.random() * 0.36, p: Math.random() * 6.28, s: 0.6 + Math.random() * 1.4 });
+  }
+  function frame(ms) {
+    var t = ms / 1000, vx = w * 0.5, vy = h * 0.5, gap = Math.max(10, h * 0.03), half = h / 2 - gap;
+    g.clearRect(0, 0, w, h);
+    var spread = Math.max(w, h) * 1.2, N = 16, i, j;
+    for (var side = -1; side <= 1; side += 2) {                // -1 the ceiling, +1 the floor
+      var y0 = vy + side * gap, y1 = side > 0 ? h : 0;
+      for (i = -N; i <= N; i++) {                              // the lines to the vanishing point
+        g.strokeStyle = 'rgba(190,205,255,' + (0.08 + 0.08 * (1 - Math.abs(i) / N)) + ')';
+        g.lineWidth = 1;
+        g.beginPath(); g.moveTo(vx + i * 6, y0); g.lineTo(vx + i * spread / N, y1); g.stroke();
+      }
+      var ph = (t / 1.9) % 1;                                  // the lines across: a cell every 1.9 s, as the device
+      for (j = 0; j < 14; j++) {
+        var z = j + 1 - ph, f = 1 / (z * 0.55 + 0.45), y = vy + side * (gap + half * f * f * 0.9);
+        if (f > 1.05) continue;
+        g.strokeStyle = 'rgba(190,205,255,' + (0.05 + 0.17 * f) + ')';
+        g.beginPath(); g.moveTo(0, y); g.lineTo(w, y); g.stroke();
+      }
+    }
+    for (i = 0; i < stars.length; i++) {                       // the stars
+      var st = stars[i], a = 0.25 + 0.55 * Math.max(0, Math.sin(t * st.s + st.p));
+      g.fillStyle = 'rgba(235,235,255,' + a + ')';
+      g.fillRect(st.x * w, st.y * h, 1.6, 1.6);
+    }
+    var k = (t % 5) / 2.8;                                     // the streak: 2.8 s down a line, every 5 s
+    if (k < 1) {
+      var line = ((Math.floor(t / 5) * 7) % 13) - 6, sd = Math.floor(t / 5) % 2 ? 1 : -1;
+      var ex = vx + line * spread / N, ey = sd > 0 ? h : 0, sx = vx + line * 6, sy = vy + sd * gap;
+      var e = 1 - Math.pow(1 - k, 2), hx = ex + (sx - ex) * e, hy = ey + (sy - ey) * e;
+      var tx = ex + (sx - ex) * Math.max(0, e - 0.18), ty = ey + (sy - ey) * Math.max(0, e - 0.18);
+      var gr = g.createLinearGradient(tx, ty, hx, hy);
+      gr.addColorStop(0, 'rgba(240,160,48,0)'); gr.addColorStop(1, 'rgba(255,214,150,' + (0.8 * (1 - k)) + ')');
+      g.strokeStyle = gr; g.lineWidth = 2;
+      g.beginPath(); g.moveTo(tx, ty); g.lineTo(hx, hy); g.stroke();
+    }
+  }
+  function loop(ms) { if (running) { frame(ms); requestAnimationFrame(loop); } }
+  size(); window.addEventListener('resize', function () { size(); if (still) frame(2000); });
+  if (still) { frame(2000); return; }
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(function (es) {
+      var on = es[0].isIntersecting && !document.hidden;
+      if (on && !running) { running = true; requestAnimationFrame(loop); } else if (!on) running = false;
+    }).observe(c);
+  }
+  requestAnimationFrame(loop);
 })();
 
 /* the UI loops: each plays while it is on screen (and not at all for anyone who asked for less motion) */
