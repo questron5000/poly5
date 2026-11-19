@@ -156,12 +156,23 @@ def fm1_panel(screen_png, out, lit_keys=()):
 
 
 def bump_css():
-    """index.html asks for site.css?v=<its hash>, so no browser keeps an old copy after a change"""
+    """index.html asks for site.css, every picture, poster and video by name?v=<hash of the file>, so a browser
+    never shows an old copy after a change"""
     import hashlib, re
     page = ROOT.parent / "index.html"
-    h = hashlib.sha1((ROOT / "site.css").read_bytes()).hexdigest()[:8]
-    page.write_text(re.sub(r'href="site/site\.css[^"]*"', f'href="site/site.css?v={h}"', page.read_text()))
-    print("index.html: site.css?v=" + h)
+    cache = {}
+    def tag(m):
+        attr, path = m.group(1), m.group(2)
+        f = ROOT.parent / path
+        if not f.exists():
+            return m.group(0)
+        if path not in cache:
+            cache[path] = hashlib.sha1(f.read_bytes()).hexdigest()[:8]
+        return f'{attr}="{path}?v={cache[path]}"'
+    text = re.sub(r'(href|src|poster|data-src|data-poster)="((?:site|manual)/[^"?]+)(?:\?v=[^"]*)?"', tag, page.read_text())
+    page.write_text(text)
+    print("index.html:", len(cache), "files fingerprinted")
+
 
 if __name__ == "__main__":
     main()
