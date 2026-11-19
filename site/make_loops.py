@@ -61,6 +61,9 @@ def loops():
     s = [ev(1500, "btn", 9)] + [ev(2400 + i * 500, "enc", 2, 1) for i in range(3)] + [ev(4000 + i * 450, "enc", 4, 1) for i in range(4)]
     s += [ev(6000 + i * 450, "enc", 5, 1) for i in range(4)]
     L["save"] = (s, 2000, 8200)
+    # the master effects: ALGORITHM turns through the eight pages while the sequence plays, 2.4 s a page
+    s = [ev(1500, "btn", 12)] + [ev(2400 + i * 2400, "enc", 1, 1) for i in range(8)]
+    L["master-pages"] = (s, 2450, 2400 + 8 * 2400)
     # switch-on, then a chord in round robin
     s = [ev(1700, "keys", hex(A3)), ev(1800, "keys", hex(A3 | C4)), ev(1900, "keys", hex(A3 | C4 | E4)), ev(2000, "keys", hex(A3 | C4 | E4 | G4)), ev(3400, "keys", 0)]
     L["intro"] = (s, 0, 4600)
