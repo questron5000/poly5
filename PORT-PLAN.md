@@ -122,6 +122,7 @@ Levels in the simulation (a played line): about -17 to -20 dB RMS each, peaks un
 
 Simulation, all 24: no hard clipping on a held five-note chord; played lines at about -17 to -22 dB. Not yet heard on the device.
 
+- **Version number (2026-11-19):** `POLY5_VER` in `poly5.c` (now "1.0") shows as `v1.0` under the letters of the startup animation; raise it with every release.
 - **Sequences, fixed and with more chords (2026-11-19):** F09-F24 never loaded their sequences: `sq_from_patch()` still took only the first 8 as factory (`i < 8`), so they got an empty one, and your patches read their saved sequence from the wrong slot (`i - 8`, not `i - 24`). Both now use `NFACTORY`. Six more sequences have chords (the user's wish): F02 (C, A minor, G swells, each answered by a note), F03 (a fifth struck, then two notes), F05 (E minor and D hammered: 3 notes x 3 layers = 9 voices), F09 (chord stabs and climbing plucks), F13 (D minor, B flat), F18 (F, D minor lullaby). With F04, F08, F11, F12, F14, F20 and F22 that is 13 of 24 with chords; F01 is kept as the user likes it. Simulation, each patch's sequence for 12 s: -13 to -25 dB RMS, peaks under -2.6 dB, nothing clipped. Built and installed on the FM-1 2026-11-19, with the new LOFI tape picture; not yet heard there.
 - **Sustain pedal (2026-11-19):** MIDI CC 64. Notes from MIDI let go while the pedal is down ring on until it comes up (test: `tests/scripts/poly5-pedal.txt`). The FM-1's own keys and the sequencer are not held by it. MIDI velocity already scales each note's level.
 

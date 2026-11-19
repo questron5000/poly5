@@ -72,6 +72,7 @@ typedef struct {
  * patch's 15 letters: FACTORY_NAME.) */
 #include "poly5_patches.h"
 #define NFACTORY (sizeof FACTORY / sizeof FACTORY[0])
+#define POLY5_VER "1.0"                        /* shown on the startup animation: raise it with every release */
 static volatile chan_t chan[NCH];
 static volatile uint32_t master_q15 = 22282;   /* MASTER.vol/100 * 0.85 */
 
@@ -2485,6 +2486,11 @@ static void intro(void)
                 uint32_t k = t > 1100u ? 255u - (t - 1100u) * 255u / 200u : 255u;   /* the letters go as the numbers come */
                 cv_text(x - text_w(&FONT_L, L[c]) / 2, 130, &FONT_L, L[c], shade(c, k));
             }
+        }
+        if (t > 500u) {                         /* the version, under the letters: in with them, out with them */
+            uint32_t k = t < 700u ? (t - 500u) * 255u / 200u : t > 1100u ? 255u - (t - 1100u) * 255u / 200u : 255u;
+            const char *v = "v" POLY5_VER;
+            cv_text(120 - text_w(&FONT_S, v) / 2, 156, &FONT_S, v, RGB(k * 150u / 255u, k * 156u / 255u, k * 170u / 255u));
         }
         part_step_draw();
         cv_blit(0, MAIN_Y);
