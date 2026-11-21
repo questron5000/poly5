@@ -144,24 +144,27 @@ async function fetchPackage() {
     ready();
   } catch (_) { st.textContent = ""; say($("install-err"), "package"); }
 }
-function progress(label, pct, warn) {
+function progress(label, pct, warn, wait) {     // wait: nothing to count yet: a spinner, and the bar runs to and fro
   $("prog").hidden = false;
-  $("prog-label").textContent = label;
+  $("prog-label").textContent = "";
+  if (wait) { const s = document.createElement("span"); s.className = "spin"; $("prog-label").append(s); }
+  $("prog-label").append(label);
+  $("prog-bar").parentElement.classList.toggle("is-wait", !!wait);
   $("prog-bar").style.width = pct + "%";
   $("prog-bar").parentElement.setAttribute("aria-valuenow", String(Math.round(pct)));
   $("prog-warn").hidden = !warn;
 }
 function onStep(total) {
   return (what, n) => {
-    if (what === "start") { progress("Starting the update", 2, false); $("install-h").textContent = "Installing"; }
-    else if (what === "verify") progress("The FM‑1 is checking the package", 4, false);
-    else if (what === "loader") { progress("Switching to update mode", 6, true); screen("update", "Connected: installing", "UPDATE MODE", "WAITING FOR THE INSTALL"); }
+    if (what === "start") progress("Waking the updater on your FM‑1", 2, false, true);
+    else if (what === "verify") progress("Your FM‑1 is checking the package", 4, false, true);
+    else if (what === "loader") { progress("Switching to update mode", 6, true, true); screen("update", "Connected: installing", "UPDATE MODE", "WAITING FOR THE INSTALL"); }
     else if (what === "write") {
       const p = Math.min(99, Math.floor(n * 100 / total));
       progress("Writing " + p + "%", 6 + p * 0.9, true);
       screen("update", "Connected: installing", "WRITING", "DO NOT SWITCH OFF", p);
     }
-    else if (what === "reboot") { progress("Restarting", 97, true); screen("update", "Connected: installing", "WRITING", "DO NOT SWITCH OFF", 100); }
+    else if (what === "reboot") { progress("Restarting your FM‑1", 97, true, true); screen("update", "Connected: installing", "WRITING", "DO NOT SWITCH OFF", 100); }
     else if (what === "done") progress("Done", 100, false);
   };
 }
@@ -171,6 +174,9 @@ async function install() {
   busy = true; btn.disabled = true; $("agree").disabled = true; err.hidden = true;
   $("agree-row").hidden = true; $("install-back").hidden = true; $("install-from").hidden = true;
   const total = Math.ceil(image.length / 512), step = onStep(total);
+  $("install-h").textContent = "Installing";
+  btn.hidden = true;
+  progress("Preparing to start", 0, false, true);     // at once: the first answer from the FM-1 takes a few seconds
   try {
     if (DEMO) {
       step("start"); await sleep(700); step("verify"); await sleep(700); step("loader"); await sleep(1000);
@@ -178,7 +184,8 @@ async function install() {
       step("reboot"); await sleep(1000); step("done");
     } else {
       // an FM-1 already in update mode (an install that was cut off): finish that write; else the whole install
-      const resumed = await updater.resume(image, step, { product: PKG.product });
+      // (only looked for when the connection test found it in update mode: the search itself takes seconds)
+      const resumed = /^ota-/i.test(found.text) && await updater.resume(image, step, { product: PKG.product });
       if (!resumed) await updater.install(image, PKG.product, step);
     }
     busy = false;
@@ -186,7 +193,8 @@ async function install() {
     open("done");
   } catch (e) {
     busy = false; $("agree").disabled = false; ready();
-    btn.textContent = "Try again";
+    btn.hidden = false; btn.textContent = "Try again";
+    $("prog-bar").parentElement.classList.remove("is-wait"); $("prog-label").textContent = "";
     $("install-h").textContent = "It stopped";
     $("prog-warn").hidden = true; $("install-back").hidden = false;
     say(err, e.code || "stopped", e.code ? "" : String(e.message || e));

@@ -117,3 +117,59 @@
 @media (prefers-reduced-motion: reduce) { .pane, .five i, .dev[data-state="idle"] .dev-outline { animation: none; } .bar i, .dev-screen > *, .tabs i { transition: none; } }
 .inst-page [hidden] { display: none !important; }
 .inst-card { border: 0; padding-top: 0; }
+
+/* ---- one screen, no scrolling: the page is as tall as the window; the steps sit in the middle */
+.inst-page { display: flex; flex-direction: column; min-height: 100vh; min-height: 100dvh; }
+.inst-top { padding: 14px clamp(18px, 4vw, 44px); flex: none; }
+.inst-main { flex: 1; display: flex; align-items: center; padding: 0 clamp(18px, 4vw, 44px) 18px; }
+.inst-grid { width: 100%; gap: clamp(20px, 4vw, 56px); }
+.inst-card .eyebrow { display: none; }
+.inst-h { font-size: clamp(26px, 3.2vw, 40px); margin: 0 0 6px; }
+.inst-lede { font-size: 16px; color: var(--dim); margin: 0 0 16px; }
+.tabs { margin: 0 0 12px; }
+.tabs i { margin-bottom: 7px; }
+.pane { padding: clamp(18px, 2.4vw, 28px); min-height: 0; height: clamp(320px, 52vh, 400px); border-radius: 20px; }
+.pane-h { font-size: clamp(21px, 2.4vw, 27px); margin: 0 0 8px; }
+.pane-p { margin: 0 0 12px; font-size: 16px; }
+.pane-foot { padding-top: 12px; }
+.pane .btn.primary { padding: 12px 22px; font-size: 16px; }
+.status { font-size: 16.5px; margin: 0 0 8px; }
+.browsers { margin: 4px 0 14px; gap: 8px; }
+.browsers li { padding: 12px 6px; }
+.browsers b { font-size: 16px; }
+.checks { gap: 0; }
+.checks label { padding: 7px 10px; gap: 12px; }
+.checks input { width: 24px; height: 24px; }
+.checks b { font-size: 15.5px; }
+.checks small { font-size: 13.5px; margin-top: 0; }
+.agree { padding: 10px 14px; margin: 2px 0 10px; font-size: 15.5px; }
+.five { margin: 2px 0 14px; }
+.help { margin: 12px 0 0; padding: 9px 16px; font-size: 15px; position: relative; }
+.help[open] { position: absolute; z-index: 5; background: #10131d; max-width: 620px; box-shadow: 0 30px 80px rgba(0,0,0,.6); }
+.inst-card { position: relative; }
+.inst-small { font-size: 13px; margin: 10px 0 0; }
+.dev-cap { margin: 10px 0 0; }
+@media (max-width: 1039px) {   /* stacked: the device small above the steps */
+  .inst-main { align-items: flex-start; }
+  .inst-device { max-width: min(420px, 62vh); }
+  .inst-grid { gap: 14px; }
+  .pane { height: auto; min-height: 300px; }
+}
+@media (max-height: 700px) and (min-width: 1040px) { .inst-lede { display: none; } .pane { height: clamp(300px, 56vh, 360px); } }
+
+/* ---- getting ready: something moves the moment Install is pressed */
+.spin { display: inline-block; width: 1em; height: 1em; vertical-align: -0.14em; margin-right: .55em; border-radius: 50%;
+  border: 2.5px solid rgba(240,160,48,.25); border-top-color: var(--amber); animation: spin .8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.bar.is-wait i { width: 32% !important; animation: bar-wait 1.3s ease-in-out infinite; }
+@keyframes bar-wait { 0% { margin-left: -32%; } 100% { margin-left: 100%; } }
+@media (prefers-reduced-motion: reduce) { .spin, .bar.is-wait i { animation-duration: 4s; } }
+
+/* ---- simpler: the card has no padding of the page's sections; a step is as tall as it needs, within one screen */
+.inst-card { padding: 0; }
+.pane { height: auto; min-height: clamp(300px, 46vh, 360px); }
+.checks label { padding: 9px 10px; }
+.help { display: inline-block; border: 0; padding: 6px 2px; margin: 10px 0 0; color: var(--dim); }
+.help summary { font-weight: 500; color: var(--dim); font-size: 14.5px; }
+.help summary:hover { color: var(--cream); }
+.help[open] { display: block; left: 0; right: 0; bottom: 0; padding: 18px 22px; border: 1px solid var(--line); border-radius: 18px; color: var(--text); }

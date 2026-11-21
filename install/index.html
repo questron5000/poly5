@@ -71,12 +71,11 @@
 
       <div class="pane" id="step-ready" hidden>
         <h2 class="pane-h">Get ready</h2>
-        <p class="pane-p">Tick these off before the page talks to your FM&#8209;1.</p>
+        <p class="pane-p">Tick these off, then we look for your FM&#8209;1.</p>
         <ul class="checks" id="checks">
-          <li><label><input type="checkbox"><span><b>Connect the FM&#8209;1 to this computer by USB, and switch it on.</b><small>Straight into the computer if you can: a hub can hide it. The cable must carry data.</small></span></label></li>
-          <li><label><input type="checkbox"><span><b>Close anything else that uses the FM&#8209;1.</b><small>Ableton or another music app, the Firmware Hub, other installer tabs.</small></span></label></li>
-          <li><label><input type="checkbox"><span><b>On a laptop, plug in the charger.</b><small>So it does not go to sleep halfway.</small></span></label></li>
-          <li><label><input type="checkbox"><span><b>Coming from another firmware? Its saves may be lost.</b><small>Patches you saved in POLY5 stay when you update POLY5.</small></span></label></li>
+          <li><label><input type="checkbox"><span><b>Connect your FM&#8209;1 to this computer by USB, and switch it on.</b><small>Straight into the computer if you can: a hub can hide it.</small></span></label></li>
+          <li><label><input type="checkbox"><span><b>Close any other program that uses your FM&#8209;1.</b><small>Ableton, the Firmware Hub, other installer tabs.</small></span></label></li>
+          <li><label><input type="checkbox"><span><b>On a laptop, plug in the charger.</b></span></label></li>
         </ul>
         <div class="pane-foot"><button type="button" class="btn quiet" data-back="browser">&larr; Back</button><button type="button" class="btn primary" id="to-connect" disabled>Test connection &rarr;</button></div>
       </div>
@@ -111,16 +110,16 @@
       </div>
 
       <details class="help">
-        <summary>If it gets stuck</summary>
+        <summary>Help, if it gets stuck</summary>
         <ul>
           <li><b>Nothing found.</b> Try another USB cable or port, switch the FM&#8209;1 off and on, and close other apps and tabs that use it.</li>
           <li><b>It stopped while writing.</b> Leave the FM&#8209;1 as it is, plug the cable in again, reload this page and install again: the update carries on.</li>
           <li><b>The FM&#8209;1 does not start.</b> Switch it off, hold <span class="k">OCT&minus;</span> and switch it on: the USB rescue. Then install again.</li>
           <li><b>Back to the official firmware</b> at any time with the <a href="https://thefirmwarehub.com">FM&#8209;1 Firmware Hub</a>.</li>
+          <li><b>Coming from another firmware?</b> Saves made with it may be lost. Patches you saved in POLY5 stay when you update POLY5.</li>
         </ul>
-        <p class="note">Both FM&#8209;1 flash chips are supported; a unit with any other chip is refused before anything is erased. The file is checked before it is sent and every block is verified as it is written.</p>
+        <p class="note">Both FM&#8209;1 flash chips are supported; any other chip is refused before anything is erased. The file is checked before it is sent and every block is verified as it is written. Rather a file? <a href="https://github.com/questron5000/poly5/releases/latest">POLY5 on GitHub</a>. The installer is Felucca's, by Leo Kuroshita, GPL&#8209;3.0.</p>
       </details>
-      <p class="inst-small">Rather a file? <a href="https://github.com/questron5000/poly5/releases/latest">POLY5 on GitHub</a>, with its checksum and the source. The installer is Felucca's, by Leo Kuroshita, GPL&#8209;3.0.</p>
     </section>
 
   </div>
