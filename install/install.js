@@ -65,7 +65,7 @@ function open(name) {
 }
 document.querySelectorAll("[data-back]").forEach((b) => { b.onclick = () => { if (!busy) open(b.dataset.back); }; });
 
-let access = null, updater = null, image = null, busy = false, found = null;
+let access = null, updater = null, image = null, busy = false, found = null, retry = false;
 
 // ---- 1: the browser
 function checkBrowser() {
@@ -187,7 +187,8 @@ async function install() {
     } else {
       // an FM-1 already in update mode (an install that was cut off): finish that write; else the whole install
       // (only looked for when the connection test found it in update mode: the search itself takes seconds)
-      const resumed = /^ota-/i.test(found.text) && await updater.resume(image, step, { product: PKG.product });
+      // After a try that stopped, the FM-1 may be waiting in update mode now: then that is looked for first, always.
+      const resumed = (retry || /^ota-/i.test(found.text)) && await updater.resume(image, step, { product: PKG.product });
       if (!resumed) await updater.install(image, PKG.product, step);
     }
     busy = false;
@@ -195,6 +196,7 @@ async function install() {
     open("done");
   } catch (e) {
     busy = false; $("agree").disabled = false; ready();
+    retry = true;
     btn.hidden = false; btn.textContent = "Try again";
     $("prog-bar").parentElement.classList.remove("is-wait"); $("prog-label").textContent = "";
     $("install-h").textContent = "It stopped";
