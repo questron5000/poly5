@@ -205,7 +205,7 @@ class FM1:
     KNOBS = {"MASTER": (155, 165), "SELECT": (340, 165), "PRESETS": (155, 348), "ALGORITHM": (340, 348),
              "KNOB1": (990, 165), "KNOB2": (1185, 165), "KNOB3": (1380, 165), "KNOB4": (1575, 165)}
     DOES = {"MASTER": "VOLUME", "SELECT": "CURSOR", "PRESETS": "PATCHES", "ALGORITHM": "PAGES",
-            "KNOB1": "FILTER", "KNOB2": "RESONANCE", "KNOB3": "DELAY", "KNOB4": "REVERB"}
+            "KNOB1": "FILTER", "KNOB2": "LENGTH", "KNOB3": "DELAY", "KNOB4": "REVERB"}
     ROWS = [("FX", "SEL", "ENV", "LFO", "EDIT", "GLO"), ("HOME", "SAVE", "ARP", "SEQ", "PLAY", "REC")]
     SUB = {"GLO": "RANDOM", "PLAY": "START", "HOME": "BACK"}
     SCREEN = (481, 101, 372)

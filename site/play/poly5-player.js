@@ -8,7 +8,7 @@
   const COL = ['#6aa8f0', '#f08a70', '#7dd498', '#f0c870', '#d890a8'], AMBER = '#f0a030';
   const KNOBS = [ // name, x, y, encoder (null: MASTER, the volume), what it does on the home screen
     ['MASTER', 155, 165, null, 'VOLUME'], ['SELECT', 340, 165, 0, 'CURSOR'], ['PRESETS', 155, 348, 6, 'PATCHES'],
-    ['ALGORITHM', 340, 348, 1, 'PAGES'], ['KNOB1', 990, 165, 2, 'FILTER'], ['KNOB2', 1185, 165, 3, 'RESONANCE'],
+    ['ALGORITHM', 340, 348, 1, 'PAGES'], ['KNOB1', 990, 165, 2, 'FILTER'], ['KNOB2', 1185, 165, 3, 'LENGTH'],
     ['KNOB3', 1380, 165, 4, 'DELAY'], ['KNOB4', 1575, 165, 5, 'REVERB']];
   const ROWS = [['FX', 'SEL', 'ENV', 'LFO', 'EDIT', 'GLO'], ['HOME', 'SAVE', 'ARP', 'SEQ', 'PLAY', 'REC']];
   const BTN = { 'OCT-': 0, 'OCT+': 1, FX: 2, SEL: 3, ENV: 4, LFO: 5, EDIT: 6, GLO: 7, HOME: 8, SAVE: 9, ARP: 10, SEQ: 11, PLAY: 12, REC: 13 };
