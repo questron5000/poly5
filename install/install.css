@@ -197,3 +197,8 @@
 .conn[data-state="bad"] .conn-bad { display: block; }
 @keyframes conn-pop { from { transform: scale(.4); opacity: 0; } to { transform: none; opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { .conn[data-state="ok"] { animation: none; } }
+
+/* the report: a quiet button beside Help; what it copied, or (no clipboard) the text to copy by hand */
+.report-btn { background: none; border: 0; padding: 6px 2px; margin: 10px 0 0 18px; color: var(--dim); font: inherit; font-size: 14.5px; cursor: pointer; text-decoration: underline; text-decoration-color: var(--line); text-underline-offset: 4px; }
+.report-btn:hover { color: var(--cream); }
+.report-text { width: 100%; margin-top: 8px; background: var(--panel); color: var(--text); border: 1px solid var(--line); border-radius: 10px; padding: 10px; font: 12px/1.5 "JetBrains Mono", monospace; }

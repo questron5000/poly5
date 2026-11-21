@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../site/site.css">
-<link rel="stylesheet" href="install.css?v=8dbdff61">
+<link rel="stylesheet" href="install.css?v=15964704">
 </head>
 <body class="inst-page">
 
@@ -116,15 +116,19 @@
           <li><b>It stopped while writing.</b> Leave the FM&#8209;1 as it is, plug the cable in again, reload this page and install again: the update carries on.</li>
           <li><b>The FM&#8209;1 does not start.</b> Switch it off, hold <span class="k">OCT&minus;</span> and switch it on: the USB rescue. Then install again.</li>
           <li><b>Back to the official firmware</b> at any time with the <a href="https://thefirmwarehub.com">FM&#8209;1 Firmware Hub</a>.</li>
+          <li><b>Still stuck?</b> Press Copy report under this box and send it to whoever gave you this page, with a photo of the FM&#8209;1's screen. It lists what happened here step by step: nothing personal, and it goes nowhere unless you paste it.</li>
           <li><b>Coming from another firmware?</b> Saves made with it may be lost. Patches you saved in POLY5 stay when you update POLY5.</li>
         </ul>
         <p class="note">Both FM&#8209;1 flash chips are supported; any other chip is refused before anything is erased. The file is checked before it is sent and every block is verified as it is written. Rather a file? <a href="https://github.com/questron5000/poly5/releases/latest">POLY5 on GitHub</a>. The installer is Felucca's, by Leo Kuroshita, GPL&#8209;3.0.</p>
       </details>
+      <button type="button" class="report-btn" id="report-btn">Copy report</button>
+      <p class="inst-small" id="report-note" hidden></p>
+      <textarea id="report-text" class="report-text" rows="6" readonly hidden aria-label="The install report"></textarea>
     </section>
 
   </div>
 </main>
 
-<script type="module" src="install.js?v=7bfa838e"></script>
+<script type="module" src="install.js?v=a40a77d7"></script>
 </body>
 </html>

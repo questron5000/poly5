@@ -34,9 +34,34 @@ const ERR = {
   package: "The firmware file did not arrive whole, so nothing was sent to the FM-1. Reload the page and try again.",
 };
 function say(el, code, detail) {
+  rec("shown: [" + code + "] " + (detail || ""));
   el.textContent = (ERR[code] || "Something went wrong: " + code) + (detail ? " " + detail : "");
   el.hidden = false;
 }
+
+// ---- the record: what happened, step by step, with the seconds since the page opened. Nothing leaves the page:
+// "Copy report" puts it on the clipboard, for whoever wants to send it to the person who can read it
+const T0 = Date.now(), LOG = [];
+function rec(text) { LOG.push(((Date.now() - T0) / 1000).toFixed(1).padStart(6) + " s  " + text); }
+function ports() {
+  if (!access) return "MIDI: not asked yet";
+  const names = (m) => [...m.values()].map((p) => (p.name || "?") + (p.state === "disconnected" ? " (gone)" : "")).join(" | ") || "none";
+  return "MIDI in: " + names(access.inputs) + "  /  out: " + names(access.outputs);
+}
+function report() {
+  return ["POLY5 install report", "page: " + location.href, "package: " + PKG.file + " " + PKG.sha256.slice(0, 16),
+          "when: " + new Date(T0).toISOString(), "browser: " + navigator.userAgent,
+          "system: " + ((navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || "?"),
+          "web MIDI: " + (typeof navigator.requestMIDIAccess === "function" ? "yes" : "no"), ports(), "", ...LOG].join("\n");
+}
+addEventListener("error", (e) => rec("page error: " + e.message));
+addEventListener("unhandledrejection", (e) => rec("page error: " + String(e.reason && e.reason.message || e.reason)));
+$("report-btn").onclick = async () => {
+  const text = report(), note = $("report-note");
+  try { await navigator.clipboard.writeText(text); note.textContent = "Copied. Paste it into a message to the person who sent you here."; }
+  catch (_) { const t = $("report-text"); t.hidden = false; t.value = text; t.focus(); t.select(); note.textContent = "Select all of it and copy."; }
+  note.hidden = false;
+};
 
 // ---- the FM-1's screen beside the steps: what the real one shows at each moment
 const SEGS = 20;
@@ -56,6 +81,7 @@ function screen(state, cap, what, sub, pct) {
 const STEPS = ["browser", "ready", "connect", "install", "done"];
 function open(name) {
   const at = STEPS.indexOf(name);
+  rec("step: " + name);
   STEPS.forEach((s, i) => {
     $("step-" + s).hidden = i !== at;
     $("tab-" + s).classList.toggle("is-open", i === at);
@@ -104,11 +130,13 @@ async function connect() {
   try {
     if (DEMO) { await sleep(1100); found = { text: "FM-1_015" }; }
     else {
-      try { await midi(); } catch (_) { fail("nomidi"); return; }
+      try { await midi(); } catch (e) { rec("MIDI refused: " + String(e && e.message || e)); fail("nomidi"); return; }
+      rec(ports());
       const dev = await updater.find(null, false) || await updater.find((id) => /^ota-/i.test(id.text), true);
       if (!dev) { fail("notfound", updater.seen()); return; }
       dev.link.close();
       found = dev.id;
+      rec("found: " + found.text + " on port \"" + dev.name + "\"");
     }
   } catch (e) { fail(e.code || "notfound", e.detail); return; }
   const ota = /^ota-/i.test(found.text);
@@ -141,10 +169,11 @@ async function fetchPackage() {
     if (!r.ok) throw new Error("http " + r.status);
     const raw = new Uint8Array(await r.arrayBuffer());
     if (await sha256hex(raw) !== PKG.sha256 || productOf(raw) !== PKG.product) throw new Error("checksum");
+    rec("package fetched and checked: " + raw.length + " bytes");
     image = logicalImage(raw);
     st.textContent = "POLY5 " + PKG.version + " with its 24 patches, " + Math.round(raw.length / 1024) + " KB. Checked: it is the file of the release.";
     ready();
-  } catch (_) { st.textContent = ""; say($("install-err"), "package"); }
+  } catch (e) { rec("package: " + String(e && e.message || e)); st.textContent = ""; say($("install-err"), "package"); }
 }
 function progress(label, pct, warn, wait) {     // wait: nothing to count yet: a spinner, and the bar runs to and fro
   $("prog").hidden = false;
@@ -157,7 +186,11 @@ function progress(label, pct, warn, wait) {     // wait: nothing to count yet: a
   $("prog-warn").hidden = !warn;
 }
 function onStep(total) {
+  let tenth = -1, checks = 0;
   return (what, n) => {
+    if (what === "verify") checks = n || checks;
+    else if (what === "write") { const t = Math.floor(n * 10 / total); if (t !== tenth) { tenth = t; rec("writing: " + n + " of about " + total + " blocks"); } }
+    else rec("installer: " + what + (n !== undefined ? " " + n : "") + (what === "loader" ? " (after " + checks + " checks)" : ""));
     if (what === "start") progress("Waking the updater on your FM‑1", 2, false, true);
     else if (what === "verify") progress("Your FM‑1 is checking the package", 4, false, true);
     else if (what === "loader") { progress("Switching to update mode", 6, true, true); screen("update", "Connected: installing", "UPDATE MODE", "WAITING FOR THE INSTALL"); }
@@ -178,6 +211,7 @@ async function install() {
   const total = Math.ceil(image.length / 512), step = onStep(total);
   $("install-h").textContent = "Installing";
   btn.hidden = true;
+  rec("install pressed" + (retry ? " (again)" : "") + "; the FM-1 was: " + found.text);
   progress("Preparing to start", 0, false, true);     // at once: the first answer from the FM-1 takes a few seconds
   try {
     if (DEMO) {
@@ -192,9 +226,12 @@ async function install() {
       if (!resumed) await updater.install(image, PKG.product, step);
     }
     busy = false;
+    rec("finished");
     screen("done", "Connected: POLY5 is on it");
     open("done");
   } catch (e) {
+    rec("stopped: [" + (e.code || "?") + "] " + String(e.message || e) + (e.detail ? " " + e.detail : ""));
+    rec(ports());
     busy = false; $("agree").disabled = false; ready();
     retry = true;
     btn.hidden = false; btn.textContent = "Try again";
