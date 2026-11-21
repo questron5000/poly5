@@ -34,12 +34,12 @@ The videos are made from the firmware itself: Dinghy's host mode renders the scr
 
 ## Installing
 
-POLY5 1.0 is one file: [poly5-1.0.fwsc](https://github.com/questron5000/poly5/releases/download/v1.0/poly5-1.0.fwsc) ([release notes](https://github.com/questron5000/poly5/releases/tag/v1.0)). Connect the FM-1 by USB, then:
+The easy way: [install it from your browser](https://questron5000.github.io/poly5/install/) (Chrome or Edge). Or as a file: [poly5-1.1.fwsc](https://github.com/questron5000/poly5/releases/download/v1.1/poly5-1.1.fwsc) ([release notes](https://github.com/questron5000/poly5/releases/latest)). Connect the FM-1 by USB, then:
 
 ```sh
 curl -LO https://raw.githubusercontent.com/questron5000/poly5/main/dinghy/tools/fm1_install.py
 pip3 install mido python-rtmidi
-python3 fm1_install.py poly5-1.0.fwsc --yes
+python3 fm1_install.py poly5-1.1.fwsc --yes
 ```
 
 ### Your saves and other firmwares

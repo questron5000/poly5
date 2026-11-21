@@ -4,8 +4,8 @@
 import { Updater, OUR_LOADER } from "./fm1ota.js";
 import { productOf, logicalImage, sha256hex } from "./fm1pkg.js";
 
-const PKG = { file: "poly5-1.0.fwsc", version: "1.0", product: "FM-1_945",
-              sha256: "d7b1b63af283a95c32d02d5784187adfb401fb0607b4d854b8c3bdc4f4bf8936" };
+const PKG = { file: "poly5-1.1.fwsc", version: "1.1", product: "FM-1_945",
+              sha256: "ac629f327434e9216bb049ba6054ae1dd61842f6c61d74b42f7eb8047fc34208" };
 const DEMO = new URLSearchParams(location.search).has("demo");   // the page without a device: for looking at it only
 const $ = (id) => document.getElementById(id);
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
