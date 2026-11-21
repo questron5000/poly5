@@ -13,7 +13,10 @@
  * Integers only (no FPU, no libgcc): see docs/RULES.md. Constants: tools/gen_poly5_tables.py. */
 #define APP_NAME "POLY5"
 #define UA_SLOW_RENDER 1                        /* USB audio: a deep ring (usb.c): a chord takes ~3 ms to render */
-#define USB_PRODUCT_STR {12, 3, 'P', 0, 'O', 0, 'L', 0, 'Y', 0, '5', 0}   /* the USB name (usb.c): "POLY5" in Ableton's list, not "Felucca" */
+/* the USB name (usb.c): "POLY5 FM-1" in a computer's lists. It must keep "FM-1" in it: the installers and the
+ * Firmware Hub only speak to MIDI ports whose name looks like an FM-1 (tools/fm1_install.py PORT_RE), and a unit
+ * they cannot find cannot be updated or put back to the official firmware from a running state */
+#define USB_PRODUCT_STR {22, 3, 'P', 0, 'O', 0, 'L', 0, 'Y', 0, '5', 0, ' ', 0, 'F', 0, 'M', 0, '-', 0, '1', 0}
 #define STORE_MAGIC 0x35594C50u                 /* "PLY5": POLY5's own patches and settings in flash */
 static void app_idle(void);
 #define LCD_IDLE app_idle
