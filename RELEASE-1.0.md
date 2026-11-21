@@ -19,7 +19,8 @@ Manual, videos and a playable version in your browser: https://questron5000.gith
 `poly5-1.0.fwsc` (below) is the package. Once POLY5 is listed there, the FM-1 Firmware Hub installs it in one click:
 https://thefirmwarehub.com in Chrome or Edge, Connect FM-1, Install. From a terminal today: `python3 tools/fm1_install.py poly5-1.0.fwsc --yes`.
 
-Package identity: FM-1_945. SHA-256 of `poly5-1.0.fwsc`: see the release's asset list.
+Package identity: FM-1_945. SHA-256 of `poly5-1.0.fwsc`:
+`d7b1b63af283a95c32d02d5784187adfb401fb0607b4d854b8c3bdc4f4bf8936`
 
 ## Safe to try
 
