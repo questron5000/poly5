@@ -48,7 +48,7 @@ POLY5 keeps your patches, their sequences and its settings in the FM-1's storage
 
 ### What it was tested on
 
-One FM-1. Installed over ChoralRoot and Dinghy, and over itself many times. Both flash chips (Puya P25Q80, UC25HQ80) are accepted by the app and by the update loader; the newer chip is covered by a test, not by a second unit.
+One FM-1. Installed over Dinghy, and over itself many times. Not yet done on that unit: an install straight from the official V15, leaving POLY5 for another firmware, and an update cut off halfway. Both flash chips (Puya P25Q80, UC25HQ80) are accepted by the app and by the update loader; the newer chip is covered by a test, not by a second unit.
 
 ## Building
 
