@@ -86,6 +86,12 @@ h3 { font-size: clamp(21px, 2.2vw, 26px); font-weight: 600; margin: 1.8em 0 0.5e
 .btn.primary { background: var(--amber); border-color: var(--amber); color: #1A1206; }
 .btn.primary:hover { background: var(--cream); border-color: var(--cream); color: #1A1206; }
 .btn:hover { border-color: var(--cream); }
+/* one main button (Install); the rest are plain links beside it */
+.btn.quiet { border-color: transparent; padding: 12px 6px; font-weight: 500; color: var(--cream); opacity: .78; text-decoration: underline; text-decoration-color: var(--line); text-underline-offset: 5px; }
+.btn.quiet:hover { border-color: transparent; opacity: 1; text-decoration-color: var(--cream); }
+.btns { align-items: center; }
+.btns .btn.primary { margin-right: 10px; }
+button.btn { background: none; cursor: pointer; font-family: inherit; }
 
 /* the five lights: round robin, then random (site.js) */
 .lights { display: flex; gap: 12px; margin: 26px 0 6px; align-items: center; }
