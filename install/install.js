@@ -95,11 +95,12 @@ async function midi() {
 }
 async function connect() {
   const out = $("connect-out"), err = $("connect-err"), go = $("to-install"), again = $("connect-again"), h = $("connect-h");
-  const fail = (code, detail) => { h.textContent = "No FM‑1 found"; out.textContent = ""; say(err, code, detail); again.hidden = false; screen("idle", "Not connected"); };
+  const fail = (code, detail) => { h.textContent = "No FM‑1 found"; out.textContent = ""; say(err, code, detail); again.hidden = false; $("conn").dataset.state = "bad"; screen("idle", "Not connected"); };
   err.hidden = true; go.hidden = true; again.hidden = true; $("connect-ask").hidden = false;
   h.textContent = "Looking for your FM‑1";
   out.textContent = "";
   screen("idle", "Looking for your FM‑1");
+  $("conn").dataset.state = "look";
   try {
     if (DEMO) { await sleep(1100); found = { text: "FM-1_015" }; }
     else {
@@ -113,9 +114,10 @@ async function connect() {
   const ota = /^ota-/i.test(found.text);
   if (ota && !DEMO && !OUR_LOADER(found)) { fail("foreign", "(" + found.text + ")"); return; }
   $("connect-ask").hidden = true;
-  h.textContent = "Your FM‑1 is ready";
-  out.textContent = ota ? "It is waiting in update mode: Install will finish the update."
-                        : "It is running " + nameOf(found.text) + ".";
+  $("conn").dataset.state = "ok";
+  h.textContent = "Connected";
+  out.textContent = ota ? "Your FM‑1 is waiting in update mode: Install will finish the update."
+                        : "Your FM‑1 is ready. It is running " + nameOf(found.text) + ".";
   $("install-from").textContent = ota ? "An update is waiting to be finished." :
     found.text === PKG.product ? "POLY5 is already on it. Installing again puts version " + PKG.version + " on it and keeps your patches." :
     "POLY5 will replace " + nameOf(found.text) + ". You can go back at any time.";

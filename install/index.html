@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../site/site.css">
-<link rel="stylesheet" href="install.css">
+<link rel="stylesheet" href="install.css?v=8dbdff61">
 </head>
 <body class="inst-page">
 
@@ -81,6 +81,7 @@
       </div>
 
       <div class="pane" id="step-connect" hidden>
+        <div class="conn" id="conn" data-state="look" aria-hidden="true"><svg class="conn-ok" viewBox="0 0 48 48"><path d="M12 25l8.5 8.5L36 16" fill="none" stroke="#06140B" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></svg><svg class="conn-bad" viewBox="0 0 48 48"><path d="M15 15l18 18M33 15L15 33" fill="none" stroke="currentColor" stroke-width="5.5" stroke-linecap="round"/></svg></div>
         <h2 class="pane-h" id="connect-h">Looking for your FM&#8209;1</h2>
         <p class="pane-p" id="connect-ask">Your browser will ask to use your MIDI devices. Allow it: that is how the firmware reaches the FM&#8209;1.</p>
         <p id="connect-out" class="status" aria-live="polite"></p>
@@ -125,6 +126,6 @@
   </div>
 </main>
 
-<script type="module" src="install.js"></script>
+<script type="module" src="install.js?v=20d7aca2"></script>
 </body>
 </html>

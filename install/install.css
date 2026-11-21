@@ -183,3 +183,17 @@
 .browsers li.is-yours .b-chrome { background: #4C8BF5; } .browsers li.is-yours .b-edge { background: #2BA4E8; }
 .browsers li.is-yours .b-firefox { background: #FF7139; } .browsers li.is-yours .b-safari { background: #5AC8FA; }
 .browsers li { padding: 14px 6px 12px; }
+
+/* ---- test connection: a mark that says how it stands: looking (it turns), connected (a tick), not found (a cross) */
+#step-connect { align-items: center; text-align: center; }
+#step-connect .pane-p, #step-connect .status, #step-connect .bad { margin-left: auto; margin-right: auto; max-width: 30em; }
+#step-connect .pane-foot { align-self: stretch; }
+.conn { width: 84px; height: 84px; border-radius: 50%; display: grid; place-items: center; margin: 6px auto 16px; position: relative; transition: background .35s ease, box-shadow .35s ease; }
+.conn[data-state="look"] { border: 4px solid rgba(240,160,48,.2); border-top-color: var(--amber); animation: spin .9s linear infinite; }
+.conn[data-state="ok"] { background: var(--s3); box-shadow: 0 0 0 10px rgba(125,212,152,.14), 0 0 50px rgba(125,212,152,.35); animation: conn-pop .45s cubic-bezier(.2,1.5,.4,1) both; }
+.conn svg { width: 48px; height: 48px; display: none; }
+.conn[data-state="ok"] .conn-ok { display: block; }
+.conn[data-state="bad"] { background: rgba(240,138,112,.12); border: 3px solid var(--s2); color: var(--s2); animation: conn-pop .35s ease both; }
+.conn[data-state="bad"] .conn-bad { display: block; }
+@keyframes conn-pop { from { transform: scale(.4); opacity: 0; } to { transform: none; opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .conn[data-state="ok"] { animation: none; } }
