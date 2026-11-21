@@ -95,10 +95,11 @@ async function midi() {
 }
 async function connect() {
   const out = $("connect-out"), err = $("connect-err"), go = $("to-install"), again = $("connect-again"), h = $("connect-h");
-  const fail = (code, detail) => { h.textContent = "No FM‑1 found"; out.textContent = ""; say(err, code, detail); again.hidden = false; screen("idle", "Your FM‑1's screen"); };
+  const fail = (code, detail) => { h.textContent = "No FM‑1 found"; out.textContent = ""; say(err, code, detail); again.hidden = false; screen("idle", "Not connected"); };
   err.hidden = true; go.hidden = true; again.hidden = true; $("connect-ask").hidden = false;
   h.textContent = "Looking for your FM‑1";
   out.textContent = "";
+  screen("idle", "Looking for your FM‑1");
   try {
     if (DEMO) { await sleep(1100); found = { text: "FM-1_015" }; }
     else {
@@ -118,7 +119,9 @@ async function connect() {
   $("install-from").textContent = ota ? "An update is waiting to be finished." :
     found.text === PKG.product ? "POLY5 is already on it. Installing again puts version " + PKG.version + " on it and keeps your patches." :
     "POLY5 will replace " + nameOf(found.text) + ". You can go back at any time.";
-  if (ota) screen("update", "Your FM‑1 now", "UPDATE MODE", "WAITING FOR THE INSTALL"); else screen("found", "Found: " + found.text);
+  if (ota) screen("update", "Connected: in update mode", "UPDATE MODE", "WAITING FOR THE INSTALL");
+  else if (found.text === PKG.product) screen("found", "Connected: POLY5");
+  else { $("dev-other").textContent = found.text === "FM-1_015" ? "OFFICIAL V15" : found.text.replace("_", " "); screen("other", "Connected: " + nameOf(found.text)); }
   go.hidden = false;
 }
 $("connect-again").onclick = connect;
@@ -152,13 +155,13 @@ function onStep(total) {
   return (what, n) => {
     if (what === "start") { progress("Starting the update", 2, false); $("install-h").textContent = "Installing"; }
     else if (what === "verify") progress("The FM‑1 is checking the package", 4, false);
-    else if (what === "loader") { progress("Switching to update mode", 6, true); screen("update", "Your FM‑1 now", "UPDATE MODE", "WAITING FOR THE INSTALL"); }
+    else if (what === "loader") { progress("Switching to update mode", 6, true); screen("update", "Connected: installing", "UPDATE MODE", "WAITING FOR THE INSTALL"); }
     else if (what === "write") {
       const p = Math.min(99, Math.floor(n * 100 / total));
       progress("Writing " + p + "%", 6 + p * 0.9, true);
-      screen("update", "Your FM‑1 now", "WRITING", "DO NOT SWITCH OFF", p);
+      screen("update", "Connected: installing", "WRITING", "DO NOT SWITCH OFF", p);
     }
-    else if (what === "reboot") { progress("Restarting", 97, true); screen("update", "Your FM‑1 now", "WRITING", "DO NOT SWITCH OFF", 100); }
+    else if (what === "reboot") { progress("Restarting", 97, true); screen("update", "Connected: installing", "WRITING", "DO NOT SWITCH OFF", 100); }
     else if (what === "done") progress("Done", 100, false);
   };
 }
@@ -179,7 +182,7 @@ async function install() {
       if (!resumed) await updater.install(image, PKG.product, step);
     }
     busy = false;
-    screen("done", "POLY5, switched on");
+    screen("done", "Connected: POLY5 is on it");
     open("done");
   } catch (e) {
     busy = false; $("agree").disabled = false; ready();

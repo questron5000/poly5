@@ -23,9 +23,11 @@
 
     <!-- the FM-1's screen, as it will look at each step -->
     <aside class="inst-device" aria-hidden="true">
-      <div class="dev-frame">
-        <div class="dev-screen" id="dev-screen" data-state="idle">
-          <img class="dev-home" src="../site/img/screen-home-chord.png" alt="" width="480" height="480">
+      <div class="dev" id="dev-screen" data-state="idle">
+        <img class="dev-outline" src="fm1-outline.png" alt="" width="1760" height="1072">
+        <img class="dev-on" src="fm1-on.png" alt="" width="1760" height="1072">
+        <div class="dev-lcd">
+          <div class="dev-other"><span id="dev-other">FM-1</span><small>CONNECTED</small></div>
           <video class="dev-boot" id="dev-boot" muted playsinline preload="none" src="../site/img/loop-intro.mp4"></video>
           <div class="dev-update">
             <b class="word dev-name"><span>P</span><span>O</span><span>L</span><span>Y</span><span>5</span></b>
@@ -37,7 +39,7 @@
           </div>
         </div>
       </div>
-      <p class="dev-cap" id="dev-cap">Your FM&#8209;1's screen</p>
+      <p class="dev-cap" id="dev-cap">Not connected yet</p>
     </aside>
 
     <section class="inst-card" aria-labelledby="inst-title">

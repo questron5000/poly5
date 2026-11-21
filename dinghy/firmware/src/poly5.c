@@ -191,7 +191,10 @@ static volatile uint32_t fx_drv_type, fx_lofi_bits, fx_lofi_rate, fx_lofi_mix, f
 static int16_t tpb[2][TP_N] __attribute__((section(".pool")));   /* LOFI: a short piece of tape a side, read a little behind, the distance wandering */
 static volatile uint32_t fx_tp_wow, fx_tp_flut, fx_tp_age, fx_tp_fail;
 static struct { uint32_t w, rng, wow_cnt, fl_ph, drop; int32_t wow, wow_t, d_q8, lp[2], hp[2], gain, gain_t; } tp = {0, 0x2545F491u, 0, 0, 0, 0, 0, 300 << 8, {0, 0}, {0, 0}, 32768, 32768};
-static volatile uint32_t fx_gr = 32768;        /* the compressor's gain now, Q15 (the screen's meter) */
+static volatile uint32_t fx_gr = 32768;        /* the compressor's lowest gain in the last buffer, Q15 (the screen's meter) */
+static volatile uint32_t fx_lgr = 32768;       /* the limiter's */
+static struct { int32_t g; uint32_t hold; } lim = {32768, 0};
+#define LIM_CEIL 26000                          /* the limiter's ceiling: -2 dB of full scale; nothing leaves louder */
 static struct { uint32_t cnt; int32_t l, r, env, g; } lf = {0, 0, 0, 0, 32768};
 static int32_t cb0[CB0_N] __attribute__((section(".pool"))), cb1[CB1_N] __attribute__((section(".pool")));
 static int32_t cb2[CB2_N] __attribute__((section(".pool"))), cb3[CB3_N] __attribute__((section(".pool")));
@@ -230,6 +233,7 @@ static void fx_render(int32_t *out, uint32_t n, uint32_t master)
     int32_t dj_open;
     int32_t a1 = 0, a2 = 0, a3 = 0, tp_, ch_base, ch_swing, ch_mixq, lmix, cthr, cratio, cmk, crel, twow, tflut, tlp, thp;
     uint32_t i, hp = dj > 0, ch_on, ch_fb, ch_inc, dtype, lbits, lhold, camt, cgain, tp_on, tfail;
+    int32_t cmin = 32768, lmin = 32768;
     tp_ = dj < 0 ? (128 + 511 * (100 + dj) / 100) * 64 : dj > 0 ? dj * 448 / 100 * 64 : 639 * 64;
     if (hp != fx.hp) { fx.hp = hp; fx.p = tp_; }  /* (both ends are open: no sweep across the change) */
     dj_open = !dj && fx.p == tp_;               /* the DJ filter wide open: it is left out */
@@ -248,9 +252,15 @@ static void fx_render(int32_t *out, uint32_t n, uint32_t master)
     lhold = 1u + (fx_lofi_rate > 100u ? 100u : fx_lofi_rate) * 39u / 100u;  /* 44.1 kHz .. 1.1 kHz */
     camt = fx_cmp_amt > 100u ? 100u : fx_cmp_amt;
     cgain = fx_cmp_gain > 100u ? 100u : fx_cmp_gain;
-    cthr = 24000 - (int32_t)camt * 200;                                      /* down to 4000 */
+    /* the threshold falls fast at first, so that it bites on a single note too (a note peaks near 6000, a chord
+     * near 20000): 20800 at 0, 8000 at 40, 3000 at 70, 800 at 100. What it takes away it gives back by half (so
+     * turning COMP up makes the sound denser, not quieter), and GAIN on top */
+    cthr = 800 + (int32_t)((100u - camt) * (100u - camt)) * 2;
     cratio = 1 + (int32_t)camt / 12;                                         /* up to 9 : 1 */
-    cmk = 256 + (int32_t)cgain * 8;                                          /* up to 4 times */
+    {
+        int32_t ref = 16000, o = cthr < ref ? cthr + (ref - cthr) / cratio : ref, auto_q8 = camt ? (256 + ref * 256 / o) / 2 : 256;
+        cmk = auto_q8 * (256 + (int32_t)cgain * 8) >> 8;                     /* GAIN: up to 4 times */
+    }
     crel = 32768 - (int32_t)(5000u / (2u + (fx_cmp_spd > 100u ? 100u : fx_cmp_spd)));   /* a block: 30 ms .. 1 s to let go */
     {
         uint32_t ty = fx_ch_type, dp = fx_ch_depth > 100u ? 100u : fx_ch_depth, rt = fx_ch_rate > 100u ? 100u : fx_ch_rate;
@@ -387,6 +397,7 @@ static void fx_render(int32_t *out, uint32_t n, uint32_t master)
             fx.ic1[1] = 2 * v1 - fx.ic1[1]; fx.ic2[1] = 2 * v2 - fx.ic2[1];
             r = hp ? r - (int32_t)(MULS(k, v1) >> 12) - v2 : v2;
         }
+        if (!(camt | cgain)) lf.g = 32768;
         if (camt | cgain) {                     /* MASTERING: a compressor (what is over the threshold rises 1/ratio as fast), make-up gain */
             int32_t a = l < 0 ? -l : l, b2 = r < 0 ? -r : r;
             if (b2 > a) a = b2;
@@ -402,13 +413,33 @@ static void fx_render(int32_t *out, uint32_t n, uint32_t master)
             l = ((l * (lf.g >> 3)) >> 12) * cmk >> 8;
             r = ((r * (lf.g >> 3)) >> 12) * cmk >> 8;
         }
-        /* a soft ceiling: above 60 % the level rises a quarter as fast (five synths in unison stay clean): the limiter */
-        if (l > 20000) l = 20000 + ((l - 20000) >> 2); else if (l < -20000) l = -20000 + ((l + 20000) >> 2);
-        if (r > 20000) r = 20000 + ((r - 20000) >> 2); else if (r < -20000) r = -20000 + ((r + 20000) >> 2);
+        if (lf.g < cmin) cmin = lf.g;
+        /* THE LIMITER, always on: it maximizes. Everything goes into it 3 dB up; a peak over the ceiling pulls the
+         * gain down at once, to exactly the ceiling, and it comes back over a fifth of a second. So chords and all
+         * five synths in unison stay clean and loud, and nothing clips. */
+        {
+            int32_t a, b2;
+            l = l * 181 >> 7; r = r * 181 >> 7;
+            if (l > 250000) l = 250000; else if (l < -250000) l = -250000;
+            if (r > 250000) r = 250000; else if (r < -250000) r = -250000;
+            a = l < 0 ? -l : l; b2 = r < 0 ? -r : r;
+            if (b2 > a) a = b2;
+            if (((a * (lim.g >> 3)) >> 12) > LIM_CEIL) {
+                lim.g = (int32_t)(((uint32_t)LIM_CEIL << 15) / (uint32_t)a);
+                lim.hold = 12;                  /* (4 ms held before it lets go: a low note's next half wave) */
+            } else if (!(i & (P5_BLK - 1u))) {
+                if (lim.hold) lim.hold--;
+                else lim.g += (32768 - lim.g + 255) >> 8;
+            }
+            if (lim.g < lmin) lmin = lim.g;
+            l = (l * (lim.g >> 3)) >> 12; r = (r * (lim.g >> 3)) >> 12;
+            if (l > LIM_CEIL) l = LIM_CEIL; else if (l < -LIM_CEIL) l = -LIM_CEIL;
+            if (r > LIM_CEIL) r = LIM_CEIL; else if (r < -LIM_CEIL) r = -LIM_CEIL;
+        }
         out[2u * i] += l;
         out[2u * i + 1u] += r;
     }
-    fx_gr = (uint32_t)lf.g;
+    fx_gr = (uint32_t)cmin; fx_lgr = (uint32_t)lmin;
 }
 
 static const uint32_t INC_C9[12] = {            /* MIDI 120..131; lower octaves shift right (Dinghy) */
@@ -1810,24 +1841,39 @@ static void g_tape(uint32_t t)                  /* LOFI: a tape loop, line art: 
     cv_frame(113, 135, 15, 9, 1, C_SILK);      /* the head, its light */
     cv_rect(119, 128, 3, 4, drop ? RGB(240, 60, 70) : C_AMBER);
 }
-static void g_master(uint32_t t)                /* mastering: in against out, bent at the threshold; and how hard it is pulling down, now */
+/* how far a gain (Q15) pulls down, in tenths of a dB */
+static int32_t gr_db10(uint32_t g) { return g >= 32768u || !g ? 0 : (15 * 4096 - log2_q12(g)) * 602 / 40960; }
+static void gr_meter(int32_t y, const char *name, int32_t db10, uint16_t col)   /* a name, a bar that grows to the right (12 dB across), the number */
 {
-    int32_t amt = cur.comp > 100u ? 100 : cur.comp, thr = 70 - amt * 56 / 100, ratio = 1 + amt / 12, x, gr = 32768 - (int32_t)fx_gr, i;
+    char s[10], *q;
+    int32_t w = db10 * 104 / 120;
+    cv_text(124, y, &FONT_S, name, db10 ? C_SILK : C_GREY);
+    q = s_put(s, "-"); q = s_num(q, db10 / 10); *q++ = '.'; *q++ = (char)('0' + db10 % 10); *q = 0;
+    cv_text(228 - text_w(&FONT_S, db10 ? s : "0"), y, &FONT_S, db10 ? s : "0", db10 ? col : C_GREY);
+    cv_rect(124, y + 18, 104, 8, C_SLOT);
+    cv_rect(124, y + 18, w > 104 ? 104 : w, 8, col);
+}
+static void g_master(uint32_t t)                /* mastering: in against out, bent at the threshold; how hard the compressor and the limiter pull down, now */
+{
+    static int32_t hold_c, hold_l;              /* the meters fall slowly: a short pull is seen */
+    int32_t amt = cur.comp > 100u ? 100 : cur.comp, thr, ratio = 1 + amt / 12, x, i, c = gr_db10(fx_gr), l2 = gr_db10(fx_lgr);
+    int on = !(cur.fx_off & 32u);
     (void)t;
+    thr = (800 + (100 - amt) * (100 - amt) * 2) * 84 / 20800;               /* (as the audio has it) */
+    if (!on) { amt = 0; thr = 84; ratio = 1; }
+    hold_c = c > hold_c ? c : hold_c > 2 ? hold_c - 2 : 0;
+    hold_l = l2 > hold_l ? l2 : hold_l > 2 ? hold_l - 2 : 0;
     cv_frame(20, 66, 86, 86, 1, C_SLOT);
     cv_line(20, 151, 105, 66, C_SLOT);                                      /* (1 : 1) */
     for (x = 0; x < 84; x += 2) {
         int32_t o = x <= thr ? x : thr + (x - thr) / ratio;
         cv_rect(21 + x, 150 - o, 2, 2, shade(2, 255));
     }
-    cv_rect(21 + thr, 150 - thr - 3, 2, 8, C_AMBER);                         /* the threshold */
-    cv_text(124, 70, &FONT_S, "GAIN REDUCTION", C_GREY);
-    cv_rect(124, 92, 104, 12, C_SLOT);
-    if (gr < 0) gr = 0;
-    cv_rect(124, 92, gr * 104 / 32768 * 2 > 104 ? 104 : gr * 104 / 32768 * 2, 12, shade(1, 255));
-    cv_text(124, 114, &FONT_S, "LIMITER ON", C_GREY);
+    if (thr < 84) cv_rect(21 + thr, 150 - thr - 3, 2, 8, C_AMBER);           /* the threshold */
+    gr_meter(64, "COMP", hold_c, shade(1, 255));
+    gr_meter(96, "LIMITER", hold_l, C_AMBER);
     for (i = 0; i < NCH; i++)                                                /* the five synths' levels, for company */
-        cv_rect(124 + (int32_t)i * 21, 150 - (int32_t)(lvl[i] * 16u / 255u), 17, (int32_t)(lvl[i] * 16u / 255u) + 1, shade((uint32_t)i, 200));
+        cv_rect(124 + (int32_t)i * 21, 152 - (int32_t)(lvl[i] * 14u / 255u), 17, (int32_t)(lvl[i] * 14u / 255u) + 1, shade((uint32_t)i, 200));
 }
 
 static void g_fenv(uint32_t c, uint32_t t, uint32_t l)    /* the filter where it rests, where the envelope throws it, and it falling back */
