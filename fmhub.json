@@ -1,0 +1,11 @@
+{
+  "what": "Five synths in one. Every note you play goes to the next synth, or to a random one. Lofi and melodic, with worn tape, wow and flutter. 24 patches, each with its own sequence, an arpeggiator, a step sequencer and eight master effects. One button rolls five new sounds.",
+  "author": "B. Danos",
+  "kinds": [
+    "synth"
+  ],
+  "play": "https://questron5000.github.io/poly5/#play",
+  "cheat": "https://questron5000.github.io/poly5/#playing",
+  "image": "docs/card.png",
+  "color": "#F0A030"
+}

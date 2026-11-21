@@ -42,6 +42,14 @@ pip3 install mido python-rtmidi
 python3 fm1_install.py poly5-1.0.fwsc --yes
 ```
 
+### Your saves and other firmwares
+
+POLY5 keeps your patches, their sequences and its settings in the FM-1's storage, the same part of the flash other firmwares use for theirs. POLY5 does not read another firmware's saves, and another firmware does not read POLY5's. Switching firmware can erase the saves of the one you leave: if your patches matter, do not count on finding them after a visit to another firmware.
+
+### What it was tested on
+
+One FM-1. Installed over ChoralRoot and Dinghy, and over itself many times. Both flash chips (Puya P25Q80, UC25HQ80) are accepted by the app and by the update loader; the newer chip is covered by a test, not by a second unit.
+
 ## Building
 
 ```sh
