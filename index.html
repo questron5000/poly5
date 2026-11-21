@@ -82,7 +82,7 @@
   <div class="wrap">
     <p class="eyebrow">Video manual &middot; 11 chapters &middot; 8 minutes</p>
     <h2>Learn POLY5 in eight minutes</h2>
-    <p class="lede" style="font-size:clamp(20px,2.3vw,26px)">Eleven short chapters, made from the firmware itself: the screen and the sound are POLY5 running, the panel lights up what is pressed. Each one leads into the next; pick any chapter from the list. Or download them <a href="manual/videos/poly5-manual-full.mp4?v=886f298f">all in one</a>.</p>
+    <p class="lede" style="font-size:clamp(20px,2.3vw,26px)">Eleven short chapters, made from the firmware itself: the screen and the sound are POLY5 running, the panel lights up what is pressed. Each one leads into the next; pick any chapter from the list. Or download them <a href="manual/videos/poly5-manual-full.mp4?v=0cb5f6cc">all in one</a>.</p>
     <p><button type="button" class="btn manual-start" id="manual-start">&#9654;&ensp;Start the manual</button></p>
     <div class="player">
       <div class="pl-main">
@@ -118,9 +118,9 @@
           <img src="site/img/poster-07-a-synths-page.jpg?v=c6cd6037" width="640" height="360" alt="" loading="lazy">
           <span class="pl-text"><b>07</b><span class="pl-title">A synth's page</span><span class="pl-dur">0:40</span></span>
         </button></li>
-        <li><button type="button" class="pl-item" data-src="manual/videos/08-master-effects.mp4?v=30fc76ff" data-poster="site/img/poster-08-master-effects.jpg?v=be661c09">
-          <img src="site/img/poster-08-master-effects.jpg?v=be661c09" width="640" height="360" alt="" loading="lazy">
-          <span class="pl-text"><b>08</b><span class="pl-title">The effects pages</span><span class="pl-dur">0:56</span></span>
+        <li><button type="button" class="pl-item" data-src="manual/videos/08-master-effects.mp4?v=319d57e8" data-poster="site/img/poster-08-master-effects.jpg?v=f7bd9726">
+          <img src="site/img/poster-08-master-effects.jpg?v=f7bd9726" width="640" height="360" alt="" loading="lazy">
+          <span class="pl-text"><b>08</b><span class="pl-title">The effects pages</span><span class="pl-dur">1:01</span></span>
         </button></li>
         <li><button type="button" class="pl-item" data-src="manual/videos/09-sequencer.mp4?v=ac70a43e" data-poster="site/img/poster-09-sequencer.jpg?v=d6a2e894">
           <img src="site/img/poster-09-sequencer.jpg?v=d6a2e894" width="640" height="360" alt="" loading="lazy">
@@ -173,7 +173,7 @@
     <p class="eyebrow">Play it here</p>
     <h2>Try POLY5 in your browser</h2>
     <p class="lede" style="font-size:clamp(20px,2.3vw,26px)">This is the real firmware, the same code the FM&#8209;1 runs, compiled for your browser. Switch it on and play.</p>
-    <div class="p5" id="p5" data-wasm="site/play/poly5.wasm?v=cc2bb1b3" data-worklet="site/play/poly5-worklet.js?v=bdee7d7f"></div>
+    <div class="p5" id="p5" data-wasm="site/play/poly5.wasm?v=207ff7e4" data-worklet="site/play/poly5-worklet.js?v=bdee7d7f"></div>
     <div class="p5-help">
       <div><b>Play</b> click or tap the keys, or your keyboard: <span class="k">A</span> is C, <span class="k">W</span> <span class="k">S</span> <span class="k">E</span> <span class="k">D</span> &hellip; up to <span class="k">'</span>. A MIDI keyboard plays it too (Chrome, Edge).</div>
       <div><b>Knobs</b> drag up or down, or scroll over them.</div>
@@ -242,13 +242,14 @@
       <div>
         <p class="eyebrow">Effects on everything</p>
         <h2>Master effects</h2>
-        <p>On the home screen, <span class="k r">ALGORITHM</span> turns through eight effects pages, each with four dials and its own picture. <span class="k">HOME</span> jumps back to PLAY.</p>
+        <p>On the home screen, <span class="k r">ALGORITHM</span> turns through nine pages of effects on everything, each with its dials and its own picture. <span class="k">HOME</span> jumps back to PLAY.</p>
         <div class="table">
           <table>
             <thead><tr><th>Page</th><th>The four dials</th></tr></thead>
             <tbody>
               <tr><td>Saturation</td><td>drive, type (soft, hard, fold), volume, on/off</td></tr>
               <tr><td>Filter</td><td>sweep (lowpass, open, highpass), resonance, on/off</td></tr>
+              <tr><td>Length</td><td>every synth longer or shorter than its patch; 0 is the patch (the same as KNOB2 on the home screen)</td></tr>
               <tr><td>Modulation</td><td>type (chorus, flanger, phaser), speed, depth, mix</td></tr>
               <tr><td>Delay</td><td>amount, time, repeats, on/off</td></tr>
               <tr><td>Reverb</td><td>amount, size, damping, on/off</td></tr>
@@ -260,8 +261,8 @@
         </div>
       </div>
       <figure class="screen">
-        <video class="ui-loop" muted loop playsinline preload="none" width="480" height="480" poster="site/img/screen-master-pages.png?v=a09bc861" aria-label="POLY5 running with its sequence while ALGORITHM turns through the eight master effects pages: saturation, filter, modulation, delay, reverb, bit reduction, lofi and mastering, each with four dials and its own picture."><source src="site/img/loop-master-pages.mp4?v=bf710da4" type="video/mp4"></video>
-        <figcaption>ALGORITHM turning through all eight pages while the sequence plays. Each has its own picture: the drive bending a wave, the filter's ridges, the delay's echoes, the hall, and LOFI's tape loop with its reels.</figcaption>
+        <video class="ui-loop" muted loop playsinline preload="none" width="480" height="480" poster="site/img/screen-master-pages.png?v=a09bc861" aria-label="POLY5 running with its sequence while ALGORITHM turns through the nine master pages: saturation, filter, length, modulation, delay, reverb, bit reduction, lofi and mastering, each with four dials and its own picture."><source src="site/img/loop-master-pages.mp4?v=9093f4e9" type="video/mp4"></video>
+        <figcaption>ALGORITHM turning through all nine pages while the sequence plays. Each has its own picture: the drive bending a wave, the filter's ridges, the delay's echoes, the hall, and LOFI's tape loop with its reels.</figcaption>
       </figure>
     </div>
     <h3>The quick knobs</h3>
@@ -353,10 +354,10 @@
     <p class="note">Works in Chrome and Edge. Connect the FM&#8209;1 by USB, press Install, and the page does the rest.</p>
     <details class="build">
       <summary>From a terminal</summary>
-      <p>Download <a href="https://github.com/questron5000/poly5/releases/download/v1.1/poly5-1.1.fwsc">poly5-1.1.fwsc</a>, then in the folder it went to:</p>
+      <p>Download <a href="https://github.com/questron5000/poly5/releases/download/v1.2/poly5-1.2.fwsc">poly5-1.2.fwsc</a>, then in the folder it went to:</p>
 <pre><code>curl -LO https://raw.githubusercontent.com/questron5000/poly5/main/dinghy/tools/fm1_install.py
 pip3 install mido python-rtmidi
-python3 fm1_install.py poly5-1.1.fwsc --yes</code></pre>
+python3 fm1_install.py poly5-1.2.fwsc --yes</code></pre>
     </details>
     <details class="build">
       <summary>Build it yourself</summary>
