@@ -5,7 +5,7 @@
 900 keys 0
 1000 enc 4 8
 1100 enc 5 10
-1200 enc 1 15
+1200 enc 6 15
 1400 keys 0x800
 1500 shot
 1800 keys 0

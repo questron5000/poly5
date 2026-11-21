@@ -12,6 +12,8 @@
  *
  * Integers only (no FPU, no libgcc): see docs/RULES.md. Constants: tools/gen_poly5_tables.py. */
 #define APP_NAME "POLY5"
+#define UA_SLOW_RENDER 1                        /* USB audio: a deep ring (usb.c): a chord takes ~3 ms to render */
+#define USB_PRODUCT_STR {12, 3, 'P', 0, 'O', 0, 'L', 0, 'Y', 0, '5', 0}   /* the USB name (usb.c): "POLY5" in Ableton's list, not "Felucca" */
 #define STORE_MAGIC 0x35594C50u                 /* "PLY5": POLY5's own patches and settings in flash */
 static void app_idle(void);
 #define LCD_IDLE app_idle
@@ -74,6 +76,10 @@ typedef struct {
 #define NFACTORY (sizeof FACTORY / sizeof FACTORY[0])
 #define POLY5_VER "1.0"                        /* shown on the startup animation: raise it with every release */
 static volatile chan_t chan[NCH];
+/* LENGTH (KNOB 2 on PLAY): every synth's release, and its decay if it has one, this much longer or shorter than the
+ * patch says: -100 .. 0 (as the patch) .. +100. Each stops at its own end (0, 100): some get there sooner */
+static volatile int32_t len_off;
+static uint32_t len_of(uint32_t v) { int32_t x = (int32_t)v + len_off; return (uint32_t)(x < 0 ? 0 : x > 100 ? 100 : x); }
 static volatile uint32_t master_q15 = 22282;   /* MASTER.vol/100 * 0.85 */
 
 /* ---- note events: the main loop posts, the audio interrupt takes (one writer each side) */
@@ -423,7 +429,8 @@ static void voice_start(voice_t *v, uint32_t ch, uint32_t note, uint32_t vel)
     {
         /* FM: the modulator's ratio: 1 2 3 4 (clean), then 1.5 3.5 1.41 2.76 5.33 7.1 (bells, clangs), Q12 */
         static const uint16_t FM_RATIO[10] = {4096, 8192, 12288, 16384, 6144, 14336, 5793, 11305, 21832, 29082};
-        uint32_t tone = chan[ch].tone > 100u ? 100u : chan[ch].tone, dec = chan[ch].decay;
+        uint32_t tone = chan[ch].tone > 100u ? 100u : chan[ch].tone, dec = chan[ch].decay ? len_of(chan[ch].decay) : 0u;
+        if (chan[ch].decay && !dec) dec = 1;     /* (it still dies by itself) */
         v->r2_q12 = chan[ch].wave == W_FM ? FM_RATIO[tone * 10u / 101u]
                   : chan[ch].wave == W_METAL ? 4915u + tone * 131u          /* 1.2 .. 4.4 */
                   : 4096u + chan[ch].detune;                                /* up to 2.4 %: 42 cents */
@@ -453,7 +460,7 @@ static void voice_start(voice_t *v, uint32_t ch, uint32_t note, uint32_t vel)
 
 static void voice_release(voice_t *v)
 {
-    uint32_t c = v->ch, rel = chan[c].release * P5_REL_PER_UNIT_Q8 >> 8;
+    uint32_t c = v->ch, rel = len_of(chan[c].release) * P5_REL_PER_UNIT_Q8 >> 8;
     int32_t lv, step;
     if (rel < P5_REL_MIN_BLOCKS) rel = P5_REL_MIN_BLOCKS;
     /* Poly5: an exponential ramp from the level now to 0.0001 over the release time */
@@ -870,7 +877,7 @@ static void all_off(void)
 /* ---- the parameters the knobs reach */
 typedef struct { const char *name, *abbr; uint8_t off, max, step; } param_t;
 #define OFF(f) ((uint8_t)__builtin_offsetof(chan_t, f))
-/* a synth's pages (PRESETS turns them): up to four dials each. A dial is a setting of the synth, one of the
+/* a synth's pages (ALGORITHM turns them, as it turns MAIN's): up to four dials each. A dial is a setting of the synth, one of the
  * patch's (the delay's time, the room's size: the same for all five), or one of the LFO's two switches */
 enum { K_NONE, K_CH, K_FX, K_SHAPE, K_SYNC, K_LFOSPD, K_TIME, K_WAVE, K_OCT, K_FTYPE, K_CHTYPE, K_DJ, K_DRVTYPE, K_ONOFF };
 #define IT_SW(bit) {"ON/OFF", K_ONOFF, bit, 1, 1}   /* the page's effect, on or off: the fourth knob */
@@ -1108,6 +1115,7 @@ static void patch_load(uint32_t i)
     fx_apply();
     mode = p->mode < M_N ? p->mode : M_RR;
     arp_set(p->arp);
+    len_off = 0;                                 /* LENGTH: as the patch */
     rr_idx = 0; rand_next = NCH; last_mask = 0;
     patch_i = i;
     if (!sq_play) sq_from_patch(i);              /* its sequence too; while one plays, that one goes on: the same notes, new sounds */
@@ -1116,6 +1124,11 @@ static void patch_load(uint32_t i)
 static int patch_store(uint32_t u, const char *name)   /* the working copy into user slot u */
 {
     uint32_t c;
+    for (c = 0; c < NCH; c++) {                  /* LENGTH is kept: what you hear is what is saved; the knob is at 12 again */
+        chan[c].release = (uint8_t)len_of(chan[c].release);
+        if (chan[c].decay) chan[c].decay = (uint8_t)(len_of(chan[c].decay) ? len_of(chan[c].decay) : 1u);
+    }
+    len_off = 0;
     for (c = 0; c < NCH; c++) cur.ch[c] = chan[c];
     cur.mode = (uint8_t)mode;
     cur.arp = (uint8_t)arp;
@@ -1889,7 +1902,7 @@ static void draw_edit(uint32_t c, uint32_t row, uint32_t count, uint32_t t)
         if (it->kind != K_NONE)
             dial(30 + (int32_t)i * 60, 21, item_get(c, it), it->max, col, it->name, item_text(s, c, it));
     }
-    for (i = 0; i < NPAGE; i++)                 /* which page (PRESETS turns them): at the bottom, in the middle */
+    for (i = 0; i < NPAGE; i++)                 /* which page (ALGORITHM turns them): at the bottom, in the middle */
         cv_rect(120 - (int32_t)NPAGE * 6 + (int32_t)i * 12, 171, 9, 2, i == row ? col : C_SLOT);
 
     if (seen_hit[c] != hit_ms[c]) {             /* played: sparks, on every page */
@@ -1938,23 +1951,67 @@ static void say(const char *a, const char *b, const char *d)
  * The filter and its resonance: the sound's spectrum as a landscape of ridges, one behind the other, in the five
  * synths' colours, cut where the filter cuts. The delay: the repeats as pillars marching off, a pulse running along
  * them at the delay's own time. The reverb: a hall you fly into, wider and deeper the more there is. */
-enum { T_FILTER, T_RESO, T_DELAY, T_REVERB };
-static uint32_t take, take_ms;
+enum { T_FILTER, T_LEN, T_DELAY, T_REVERB };
+static uint32_t take, take_ms, len_stop_ms;
 static int32_t dj_kind(void) { int32_t d = (int8_t)cur.dj; return d < 0 ? 1 : d > 0 ? 2 : 0; }
 static int32_t dj_fc(void) { int32_t d = (int8_t)cur.dj; return d < 0 ? (100 + d) * 256 / 100 : d * 256 / 100; }
+/* LENGTH: five tails, one a synth, in its colour: how long its note rings out. A white tick on each is where the patch
+ * has it: the tail's end leaves the tick as you turn, and meets it again at 12 o'clock. Below, the knob as a scale:
+ * a pointer, and the middle as a target that lights when you are back (the knob rests there for a moment, too). */
+static void g_length(uint32_t t)
+{
+    const int32_t off = len_off, X0 = 26, SY = 156;
+    uint32_t c;
+    int32_t x, px;
+    char s[8], *q = s;
+    int home = !off;
+    cv_text(4, 4, &FONT_S, "LENGTH", C_SILK);
+    cv_text(4, 22, &FONT_S, home ? "AS THE PATCH" : off > 0 ? "LONGER" : "SHORTER", home ? C_AMBER : C_GREY);
+    if (off > 0) *q++ = '+';
+    if (off < 0) *q++ = '-';
+    s_num(q, off < 0 ? -off : off);
+    cv_text(236 - text_w(&FONT_L, s), 2, &FONT_L, s, home ? C_AMBER : C_SILK);
+    for (c = 0; c < NCH; c++) {
+        int32_t mid = 52 + (int32_t)c * 20, was = chan[c].release, now = (int32_t)len_of(chan[c].release), w = now * 2, wx;
+        int on = chan[c].enabled == E_ON, end = !home && (now == 0 || now == 100) && was + off != now;
+        char num[2] = {(char)('1' + c), 0};
+        cv_text(6, mid - 8, &FONT_S, num, on ? shade(c, 255) : C_GREY);
+        cv_rect(X0, mid, 201, 1, C_SLOT);                                   /* its track: nothing .. the longest */
+        for (wx = 0; wx <= w; wx++) {                                       /* the tail: full at the start, dying away */
+            int32_t r = w - wx, h = w ? 1 + 7 * r / w * r / w : 1;
+            cv_rect(X0 + wx, mid - h, 1, 2 * h + 1, shade(c, on ? (home ? 150u : 215u) - (uint32_t)(wx * 70 / (w + 1)) : 60u));
+        }
+        if (end) cv_rect(X0 + w + (now ? 2 : -3), mid - 6, 2, 13, C_AMBER); /* at its end: it goes no further */
+        px = X0 + was * 2;                                                  /* where the patch has it */
+        cv_rect(px, mid - 8, 1, 17, home ? C_AMBER : C_SILK);
+        cv_rect(px - 1, mid - 8, 3, 1, home ? C_AMBER : C_SILK); cv_rect(px - 1, mid + 8, 3, 1, home ? C_AMBER : C_SILK);
+    }
+    /* the knob: -100 .. +100 across; the middle is the patch */
+    cv_rect(20, SY + 6, 201, 1, C_GREY);
+    for (x = -100; x <= 100; x += 25) cv_rect(120 + x, SY + 4, 1, x ? 5 : 0, C_GREY);
+    if (off) cv_rect(off > 0 ? 120 : 120 + off, SY + 5, off > 0 ? off : -off, 3, C_SILK);   /* how far from the patch */
+    {
+        uint16_t tc = home ? C_AMBER : shade(3, 110u + (uint32_t)((t >> 3) & 63u));          /* the target: it calls you back */
+        cv_rect(119, SY - 2, 3, 17, tc);
+        cv_rect(113, SY - 2, 15, 1, tc); cv_rect(113, SY + 14, 15, 1, tc);
+        if (home) { cv_rect(112, SY - 2, 1, 17, tc); cv_rect(128, SY - 2, 1, 17, tc); }      /* back: the frame closes */
+    }
+    px = 120 + off;                                                          /* the pointer */
+    if (!home) { cv_rect(px - 1, SY, 3, 13, C_SILK); cv_rect(px - 3, SY, 7, 2, C_SILK); }
+}
 static void draw_take(uint32_t t)               /* PLAY: one of the four quick knobs turned: its picture for a moment, its number big */
 {
     int32_t dj = (int8_t)cur.dj, v;
     const char *l1, *l2 = "";
     char s[8];
     cv_begin(240, MAIN_H, C_BLACK);
+    if (take == T_LEN) { g_length(t); cv_blit(0, MAIN_Y); return; }
     switch (take) {
     case T_FILTER: v = dj < 0 ? -dj : dj; l1 = "FILTER"; l2 = dj < 0 ? "LOWPASS" : dj > 0 ? "HIGHPASS" : "OPEN"; break;
-    case T_RESO: v = cur.dj_reso; l1 = "RESONANCE"; break;
     case T_DELAY: v = cur.del_all; l1 = "DELAY"; break;
     default: v = cur.rev_all; l1 = "REVERB"; break;
     }
-    if (take == T_FILTER || take == T_RESO) g_ridges(t, dj_kind(), dj_fc(), (int32_t)cur.dj_reso * 24 / 100, NCH);
+    if (take == T_FILTER) g_ridges(t, dj_kind(), dj_fc(), (int32_t)cur.dj_reso * 24 / 100, NCH);
     else if (take == T_DELAY) g_echoes(t, v, NCH);
     else g_hall(t, ((int32_t)cur.rev_all * 2 + (int32_t)cur.rev_size) / 3, v, NCH);
     cv_text(4, 4, &FONT_S, l1, C_SILK);
@@ -2000,20 +2057,81 @@ enum { A_SAVE, A_LOAD, A_ERASE, A_N };
 static const char *const ACT_NAME[A_N] = {"SAVE", "LOAD", "ERASE"};
 static uint32_t sv_open, sv_slot, sv_act, sv_confirm, sv_adj, sv_noun;
 static char sv_name[16];
+/* The name, three ways, quickest first. GLO: a random one (two words), as often as you like. KNOB 3 and 4: its two
+ * words. The keys: letters, A on the lowest key up to Z, the top key a space (the screen shows which); OCT- takes
+ * the last letter away, OCT+ all of it; ALGORITHM moves the cursor, SELECT turns the letter under it (digits too).
+ * A name that came whole (random, words, the patch's own) is "fresh": the first letter typed replaces it. */
+static uint32_t sv_cur, sv_fresh, sv_key_ms, sv_key = 99, sv_typed;
+static uint32_t sv_len(void) { uint32_t n = 0; while (n < 15u && sv_name[n]) n++; return n; }
 static void sv_words(void)
 {
     char *p = s_put(sv_name, ADJ[sv_adj & 15u]);
     *p++ = ' ';
     s_put(p, NOUN[sv_noun & 15u]);
+    sv_cur = sv_len(); sv_fresh = 1;
+}
+static void sv_type(uint32_t k)                 /* key k of the 27: a letter at the cursor */
+{
+    uint32_t n, i;
+    char ch = k < 26u ? (char)('A' + k) : ' ';
+    sv_key = k; sv_key_ms = fm1_ms | 1u;
+    if (sv_fresh) { sv_name[0] = 0; sv_cur = 0; sv_fresh = 0; }
+    n = sv_len();
+    if (n >= 15u || (ch == ' ' && !sv_cur)) return;
+    for (i = n + 1u; i > sv_cur; i--) sv_name[i] = sv_name[i - 1u];
+    sv_name[sv_cur++] = ch;
+}
+static void sv_back(void)                       /* the letter before the cursor goes */
+{
+    uint32_t n = sv_len(), i;
+    sv_fresh = 0;
+    if (!sv_cur) return;
+    for (i = sv_cur - 1u; i < n; i++) sv_name[i] = sv_name[i + 1u];
+    sv_cur--;
+}
+static void sv_turn(int32_t d)                  /* the letter under the cursor: A..Z, 0..9, a space, round */
+{
+    static const char SET[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 ";
+    uint32_t n = sv_len(), at = sv_cur < n ? sv_cur : n, i;
+    int32_t v;
+    sv_fresh = 0;
+    if (at >= 15u) return;
+    if (at == n) { sv_name[n] = d > 0 ? 'A' : ' '; sv_name[n + 1u] = 0; d += d > 0 ? -1 : 0; }
+    for (i = 0; SET[i] && SET[i] != sv_name[at]; i++) {}
+    v = ((int32_t)i + d) % 37; if (v < 0) v += 37;
+    sv_name[at] = SET[v];
+    sv_cur = at;
+}
+static void sv_tidy(void)                       /* before it is saved: no spaces at the ends; never empty */
+{
+    uint32_t n = sv_len(), i;
+    while (n && sv_name[n - 1u] == ' ') sv_name[--n] = 0;
+    while (sv_name[0] == ' ') for (i = 0; i < n; i++) sv_name[i] = sv_name[i + 1u];
+    if (!sv_name[0]) sv_words();
 }
 static void draw_save(void)
 {
     int32_t r, x = 0;
-    uint32_t a;
+    uint32_t a, k, n = sv_len();
     char s[32], *p;
+    int naming = sv_act == A_SAVE;
     cv_begin(240, MAIN_H, C_BLACK);
-    for (r = -3; r <= 3; r++) {
-        int32_t u = (int32_t)sv_slot + r, y = 4 + (r + 3) * 20;
+    if (naming) {                               /* the name, big; fresh: on amber (the next letter replaces it); else a cursor */
+        const felucca_font_t *f = text_w(&FONT_L, sv_name) <= 228 ? &FONT_L : &FONT_S;
+        int32_t w = text_w(f, sv_name), x0 = 120 - w / 2, y0 = f == &FONT_L ? 2 : 10, hgt = f == &FONT_L ? 32 : 16, cx;
+        char part[16];
+        if (sv_fresh && n) cv_rect(x0 - 5, y0 - 1, w + 10, hgt + 3, C_AMBER);
+        cv_text(x0, y0, f, sv_name, sv_fresh ? C_BLACK : C_SILK);
+        for (k = 0; k < sv_cur && k < n; k++) part[k] = sv_name[k];
+        part[k] = 0;
+        cx = x0 + text_w(f, part);
+        if (!sv_fresh && (fm1_ms >> 8 & 1u)) cv_rect(cx, y0 + hgt + 1, sv_cur < n ? (f == &FONT_L ? 14 : 8) : 8, 2, C_AMBER);
+    } else {
+        const char *t = sv_act == A_LOAD ? "LOAD A PATCH" : "ERASE A PATCH";
+        cv_text(120 - text_w(&FONT_S, t) / 2, 10, &FONT_S, t, C_GREY);
+    }
+    for (r = -1; r <= 1; r++) {                 /* the slots: the one it goes to in the middle */
+        int32_t u = (int32_t)sv_slot + r, y = 46 + (r + 1) * 20;
         int here = u >= 0 && (uint32_t)u == patch_i - NFACTORY && patch_i >= NFACTORY;
         if (u < 0 || u >= (int32_t)NUSER) continue;
         p = patch_tag(s, NFACTORY + (uint32_t)u);
@@ -2026,8 +2144,29 @@ static void draw_save(void)
     for (a = 0; a < A_N; a++) {                 /* what SAVE does */
         int32_t w = text_w(&FONT_S, ACT_NAME[a]);
         x = 28 + (int32_t)a * 72;
-        if (a == sv_act) cv_frame(x - 6, 149, w + 12, 22, 1, C_AMBER);
-        cv_text(x, 152, &FONT_S, ACT_NAME[a], a == sv_act ? C_AMBER : C_GREY);
+        if (a == sv_act) cv_frame(x - 6, 109, w + 12, 22, 1, C_AMBER);
+        cv_text(x, 112, &FONT_S, ACT_NAME[a], a == sv_act ? C_AMBER : C_GREY);
+    }
+    {                                           /* the FM-1's 27 keys, F to G, and the letter each one types */
+        const int32_t KY = 136;
+        int32_t wi = 0;
+        for (k = 0; k < 27u; k++) {
+            static const uint8_t BLACK[12] = {0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0};   /* from F */
+            char ch[2] = {k < 26u ? (char)('A' + k) : '_', 0};
+            int hit = sv_key == k && sv_key_ms && fm1_ms - sv_key_ms < 220u;
+            uint16_t ink = !naming ? C_SLOT : hit ? C_BLACK : BLACK[k % 12u] ? C_AMBER : C_SILK;
+            if (BLACK[k % 12u]) {               /* a black key: above, between its neighbours */
+                int32_t bx = wi * 15 - 6;
+                cv_rect(bx, KY, 12, 17, hit ? C_AMBER : C_SLOT);
+                cv_text(bx + 6 - text_w(&FONT_S, ch) / 2, KY, &FONT_S, ch, ink);
+            } else {
+                int32_t wx = wi * 15;
+                if (hit) cv_rect(wx + 1, KY + 19, 13, 18, C_AMBER);
+                cv_frame(wx, KY + 18, 15, 20, 1, naming ? C_GREY : C_SLOT);
+                cv_text(wx + 8 - text_w(&FONT_S, ch) / 2, KY + 20, &FONT_S, ch, ink);
+                wi++;
+            }
+        }
     }
     cv_blit(0, MAIN_Y);
 }
@@ -2058,11 +2197,10 @@ static void draw_text(uint32_t hold, uint32_t first)   /* POLY5 left, the mode r
     }
     if (sv_open) {
         draw_text_box(90, 2, 150, &FONT_S, "SAVE", C_AMBER, 2);
-        if (sv_act == A_SAVE) { p = s_put(s, "NAME  "); s_put(p, sv_name); }
-        else s[0] = 0;
-        draw_text_box(0, 200, 240, &FONT_S, s, C_SILK, 1);
+        (void)p;
+        draw_text_box(0, 200, 240, &FONT_S, sv_act == A_SAVE ? "GLO RANDOM NAME  KEYS TYPE" : "K1 SLOT  K2 WHAT  HOME BACK", sv_act == A_SAVE ? RGB(150, 150, 142) : C_GREY, 1);
         if (popup[0]) draw_text_box(0, 220, 240, &FONT_S, popup, C_AMBER, 1);
-        else draw_text_box(0, 220, 240, &FONT_S, sv_act == A_SAVE ? "K1 SLOT K2 WHAT K3 K4 NAME" : "K1 SLOT  K2 WHAT  HOME BACK", C_GREY, 1);
+        else draw_text_box(0, 220, 240, &FONT_S, sv_act == A_SAVE ? "K3 K4 WORDS  OCT- DELETE" : "", C_GREY, 1);
         return;
     }
     if (hold) {
@@ -2086,7 +2224,12 @@ static void draw_text(uint32_t hold, uint32_t first)   /* POLY5 left, the mode r
         draw_text_box(0, 200, 240, &FONT_S, s, RGB(150, 150, 142), 1);
     }
     if (popup[0]) draw_text_box(0, 220, 240, &FONT_S, popup, C_AMBER, 1);
-    else draw_text_box(0, 220, 240, &FONT_S, hold ? "PRESETS PAGE GLO NEW HOME BACK" : "", C_GREY, 1);
+    else if (!hold && len_off && !sq_open && !sv_open) {   /* LENGTH is off the patch: said, so it is not forgotten */
+        char t2[20], *q = s_put(t2, len_off > 0 ? "LENGTH +" : "LENGTH -");
+        s_num(q, len_off < 0 ? -len_off : len_off);
+        draw_text_box(0, 220, 240, &FONT_S, t2, RGB(150, 100, 30), 1);
+    }
+    else draw_text_box(0, 220, 240, &FONT_S, hold ? "ALG PAGE  GLO NEW  HOME BACK" : "", C_GREY, 1);
 }
 
 /* ---- the sequencer, as the FM-1's other firmwares have it (SEQ: its page; PLAY; REC stopped: step by step, REC
@@ -2381,7 +2524,7 @@ static void note_in(uint32_t note, uint32_t vel, int down, int from_keys, uint32
 /* ---- MIDI and the keys: from the main loop, and from app_idle while the screen draws (a frame takes some ms, and
  * a percussive synth must not wait for it). Notes for the MIDI out wait in a queue for the main loop. */
 #define KEY0 53u                                /* key 0 = F3 */
-static uint32_t idle_ok, dbg_max[NCH], dbg_dump, k_prev, outq_w, outq_r;
+static uint32_t idle_ok, dbg_max[NCH], dbg_dump, dbg_full, k_prev, outq_w, outq_r;
 static int32_t k_oct;
 static uint8_t k_held[27], outq[32][2];
 static void keys_in(void)
@@ -2391,6 +2534,12 @@ static void keys_in(void)
     k_prev = keys;
     if (!(down | up)) return;
     for (k = 0; k < 27u; k++) {
+        if (down >> k & 1u && sv_open && sv_act == A_SAVE) {   /* naming a patch: the keys are letters, and silent */
+            sv_type(k); sv_typed = 1;
+            k_held[k] = 0;
+            continue;
+        }
+        if (up >> k & 1u && !k_held[k]) continue;   /* (a letter's key let go) */
         if (down >> k & 1u) {
             k_held[k] = (uint8_t)(base + k);
             note_in(k_held[k], 127, 1, 1, 0);
@@ -2415,6 +2564,7 @@ static void midi_in(void)
         if (ty == 0xB0u && d1 == 119u) {         /* diagnosis: 1 = forget the peaks, 2 = report (app_main sends) */
             if (d2 == 1u) { uint32_t c; for (c = 0; c < NCH; c++) dbg_max[c] = 0; }
             if (d2 == 2u) dbg_dump = 1;
+            if (d2 == 3u) dbg_full = 1;          /* 3 = the whole patch as it sounds now, and its sequence (app_main sends) */
             continue;
         }
         if (ty == 0xB0u && d1 == 64u) {          /* the sustain pedal: notes let go while it is down ring on until it comes up */
@@ -2453,7 +2603,8 @@ static void app_idle(void)
  * A SYNTH'S PAGE (press FX / SEL / ENV / LFO / EDIT = synth 1..5; it stays; the same button again: back to MAIN):
  *   keys         play this synth only
  *   GLO          RANDOM: a new sound for this synth only
- *   ALGORITHM    its NOISE
+ *   ALGORITHM    its pages, round and round (as MAIN's)
+ *   PRESETS      its NOISE, on every page
  *   SELECT       its wave
  *   KNOB 1-4     cutoff, reso, attack, release; HOME: the other row: envelope -> filter, volume, delay, reverb
  *   PLAY         ON -> OFF (a rest in the cycle) -> SKIP (not in the cycle)
@@ -2623,6 +2774,7 @@ web_step: ;
                 if (patch_i >= NFACTORY) {
                     sv_slot = patch_i - NFACTORY;
                     s_put(sv_name, cur.name);
+                    sv_cur = sv_len(); sv_fresh = 1;
                 } else {
                     for (sv_slot = 0; sv_slot < NUSER - 1u && B_USED(sv_slot); sv_slot++) {}
                     sv_adj = rnd(16); sv_noun = rnd(16);
@@ -2635,6 +2787,7 @@ web_step: ;
                 } else {
                     char t[4];
                     patch_tag(t, NFACTORY + sv_slot);
+                    sv_tidy();
                     if (patch_store(sv_slot, sv_name)) say("NOT SAVED: FLASH ERROR", 0, 0);
                     else { say("SAVED ", t, 0); set_dirty = 1; set_ms = fm1_ms; }
                     sv_open = 0;
@@ -2706,17 +2859,29 @@ web_step: ;
             if ((d = fm1_enc_take(ENC_KNOB1) + fm1_enc_take(ENC_PRESETS)) != 0) {
                 int32_t v = (int32_t)sv_slot + d;
                 sv_slot = (uint32_t)(v < 0 ? 0 : v > (int32_t)NUSER - 1 ? (int32_t)NUSER - 1 : v);
-                if (B_USED(sv_slot) && sv_act == A_SAVE && patch_i == NFACTORY + sv_slot) s_put(sv_name, cur.name);
+                if (B_USED(sv_slot) && sv_act == A_SAVE && patch_i == NFACTORY + sv_slot) { s_put(sv_name, cur.name); sv_cur = sv_len(); sv_fresh = 1; }
                 sv_confirm = 0; ui++;
             }
-            if ((d = fm1_enc_take(ENC_KNOB2) + fm1_enc_take(ENC_SELECT)) != 0) {
+            if ((d = fm1_enc_take(ENC_KNOB2)) != 0) {
                 int32_t v = (int32_t)sv_act + d;
                 sv_act = (uint32_t)(v < 0 ? 0 : v > (int32_t)A_N - 1 ? (int32_t)A_N - 1 : v);
                 sv_confirm = 0; ui++;
             }
             if ((d = fm1_enc_take(ENC_KNOB3)) != 0) { sv_adj = (sv_adj + (uint32_t)d) & 15u; sv_words(); ui++; }
             if ((d = fm1_enc_take(ENC_KNOB4)) != 0) { sv_noun = (sv_noun + (uint32_t)d) & 15u; sv_words(); ui++; }
-            (void)fm1_enc_take(ENC_ALGORITHM);
+            if (sv_act == A_SAVE) {             /* the name: random; a letter back, all of it; the cursor, the letter under it */
+                if (b & (1u << BTN_GLO)) { sv_adj = rnd(16); sv_noun = rnd(16); sv_words(); rnd_ms = fm1_ms | 1u; ui++; }
+                if (b & (1u << BTN_OCT_DOWN)) { sv_back(); ui++; }
+                if (b & (1u << BTN_OCT_UP)) { sv_name[0] = 0; sv_cur = 0; sv_fresh = 0; ui++; }
+                if ((d = fm1_enc_take(ENC_ALGORITHM)) != 0) {
+                    int32_t v = (int32_t)sv_cur + d, n2 = (int32_t)sv_len();
+                    sv_cur = (uint32_t)(v < 0 ? 0 : v > n2 ? n2 : v); sv_fresh = 0; ui++;
+                }
+                if ((d = fm1_enc_take(ENC_SELECT)) != 0) { sv_turn(d); ui++; }
+                if (sv_typed) { sv_typed = 0; ui++; }
+                if (sv_key_ms && fm1_ms - sv_key_ms > 240u) { sv_key_ms = 0; ui++; }
+                if (!sv_fresh) { static uint32_t bl; if ((fm1_ms >> 8) != bl) { bl = fm1_ms >> 8; ui++; } }   /* (the cursor blinks) */
+            } else { (void)fm1_enc_take(ENC_ALGORITHM); (void)fm1_enc_take(ENC_SELECT); }
         } else {
             if (b & (1u << BTN_OCT_DOWN) || b & (1u << BTN_OCT_UP)) {
                 int32_t d = b & (1u << BTN_OCT_UP) ? 1 : -1;
@@ -2770,9 +2935,9 @@ web_step: ;
                     rand_next = NCH;
                     sel_ms = fm1_ms | 1u;
                     dirty = 1;
-                } else if (hold) {
-                    padd(hold, &P_NOISE, e);    /* its NOISE, on every page */
-                    dirty = 1;
+                } else if (hold) {              /* on a synth's page: its pages, as on MAIN: round and round */
+                    int32_t v = ((int32_t)row + e) % (int32_t)NPAGE;
+                    row = (uint32_t)(v < 0 ? v + (int32_t)NPAGE : v);
                 } else if (!sq_open) {          /* MAIN: its pages: PLAY, then the effects on everything */
                     int32_t v = ((int32_t)mpage + e) % (int32_t)NMPAGE;   /* round and round */
                     mpage = (uint32_t)(v < 0 ? v + (int32_t)NMPAGE : v);
@@ -2801,8 +2966,17 @@ web_step: ;
                     else {                      /* PLAY: the four quick knobs; the screen shows the one you turn */
                         int32_t v;
                         if (k == T_FILTER) { v = (int8_t)cur.dj + e * 2; cur.dj = (uint8_t)(int8_t)(v < -100 ? -100 : v > 100 ? 100 : v); }
+                        else if (k == T_LEN) {  /* LENGTH: every synth longer or shorter. It never passes 12 o'clock in one
+                                                 * go, and rests there 0.4 s: back to the patch by feel, not by eye */
+                            int32_t was = len_off;
+                            v = was + e * 2;
+                            if ((was < 0 && v > 0) || (was > 0 && v < 0)) v = 0;
+                            if (!was && len_stop_ms && fm1_ms - len_stop_ms < 400u) v = 0;
+                            if (!v && was) len_stop_ms = fm1_ms | 1u;
+                            len_off = v < -100 ? -100 : v > 100 ? 100 : v;
+                        }
                         else {
-                            uint8_t *f = k == T_RESO ? &cur.dj_reso : k == T_DELAY ? &cur.del_all : &cur.rev_all;
+                            uint8_t *f = k == T_DELAY ? &cur.del_all : &cur.rev_all;
                             v = (int32_t)*f + e * 2;
                             *f = (uint8_t)(v < 0 ? 0 : v > 100 ? 100 : v);
                         }
@@ -2812,9 +2986,9 @@ web_step: ;
                     dirty = 1; ui++;
                 }
             if ((e = fm1_enc_take(ENC_PRESETS)) != 0) {
-                if (hold) {                     /* on a synth's page: its pages */
-                    int32_t v = ((int32_t)row + e) % (int32_t)NPAGE;      /* round and round */
-                    row = (uint32_t)(v < 0 ? v + (int32_t)NPAGE : v);
+                if (hold) {                     /* on a synth's page: its NOISE, on every page */
+                    padd(hold, &P_NOISE, e);
+                    dirty = 1;
                 } else {
                     patch_step(e);
                     set_dirty = 1; set_ms = fm1_ms;
@@ -2825,6 +2999,27 @@ web_step: ;
 
         midi_in();
         for (c = 0; c < NCH; c++) { uint32_t l = ch_level[c]; if (l > dbg_max[c]) dbg_max[c] = l; }
+        if (dbg_full) {                         /* the working patch, byte for byte, then its sequence: pitch bends on channel
+                                                 * 15 (7 bits, then the eighth), one every 2 ms; CC 118 = 127 ends it.
+                                                 * So a sound made on the FM-1 can be read off it (tools/poly5_read.py) */
+            static uint8_t full[sizeof(preset_t) + sizeof(seq_t)];
+            static uint32_t full_ms;
+            uint32_t n;
+            if (dbg_full == 1u) {
+                const uint8_t *a = (const uint8_t *)&cur, *b2 = (const uint8_t *)&sq;
+                for (c = 0; c < NCH; c++) cur.ch[c] = chan[c];
+                cur.mode = (uint8_t)mode; cur.arp = (uint8_t)arp;
+                for (k = 0; k < sizeof(preset_t); k++) full[k] = a[k];
+                for (k = 0; k < sizeof(seq_t); k++) full[sizeof(preset_t) + k] = b2[k];
+                midi_send(0xBFu, 117, sizeof(preset_t)); midi_send(0xBFu, 116, sizeof(seq_t));
+                dbg_full = 2; full_ms = fm1_ms;
+            } else if (fm1_ms - full_ms >= 2u) {    /* one every 2 ms: four a millisecond lost a third of them on the device */
+                full_ms = fm1_ms;
+                for (n = 0; n < 1u && dbg_full - 2u < sizeof full; n++, dbg_full++)
+                    midi_send(0xEEu, full[dbg_full - 2u] & 127u, full[dbg_full - 2u] >> 7);
+                if (dbg_full - 2u >= sizeof full) { midi_send(0xBFu, 118, 127); dbg_full = 0; }
+            }
+        }
         if (dbg_dump) {                         /* each synth on its MIDI channel: the peak as a pitch bend, the patch as CCs */
             dbg_dump = 0;
             for (c = 0; c < NCH; c++) {
@@ -2840,6 +3035,18 @@ web_step: ;
             {                                   /* the audio's time since the last report: the worst and the average, in 50 us (a buffer: 116) */
                 uint32_t mx = perf_max_us / 50u, av = perf_n ? perf_sum_us / perf_n / 50u : 0u;
                 midi_send(0xBFu, 40, mx > 127u ? 127u : mx); midi_send(0xBFu, 41, av > 127u ? 127u : av);
+#ifndef DINGHY_HOST
+                {
+                static uint32_t ua_seen[3];
+                /* USB audio since the last clear: the ring ran empty (a click), blocks dropped, packets missed; its low point now */
+                midi_send(0xBFu, 42, uac.underruns - ua_seen[0] > 127u ? 127u : uac.underruns - ua_seen[0]);
+                midi_send(0xBFu, 43, uac.overruns - ua_seen[1] > 127u ? 127u : uac.overruns - ua_seen[1]);
+                midi_send(0xBFu, 44, uac.missed - ua_seen[2] > 127u ? 127u : uac.missed - ua_seen[2]);
+                midi_send(0xBFu, 45, uac.fill_min / 4u > 127u ? 127u : uac.fill_min / 4u);
+                midi_send(0xBFu, 46, (uint32_t)uac.alt | (uint32_t)uac.r48 << 1 | (uint32_t)uac.flowing << 2);
+                ua_seen[0] = uac.underruns; ua_seen[1] = uac.overruns; ua_seen[2] = uac.missed;
+                }
+#endif
                 perf_max_us = 0; perf_sum_us = 0; perf_n = 0;
             }
         }

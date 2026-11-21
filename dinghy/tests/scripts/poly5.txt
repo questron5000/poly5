@@ -13,7 +13,7 @@
 1200 keys 0x4000
 1400 keys 0
 1800 btn 4
-1900 enc 1 20
+1900 enc 6 20
 2000 enc 2 -10
 2050 enc 5 6
 2100 shot
@@ -23,7 +23,7 @@
 2260 shot
 2290 keys 0
 2295 btn 4
-2300 enc 1 5
+2300 enc 6 5
 2400 shot
 2500 btn 7
 2600 shot

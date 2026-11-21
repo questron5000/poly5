@@ -1,0 +1,7 @@
+# the full read-out: F01, a knob turned, then CC 119 = 3
+200 keys 0
+400 btn 3
+500 enc 2 5
+600 btn 3
+900 midi 0xB0 119 3
+2200 end

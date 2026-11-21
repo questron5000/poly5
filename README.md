@@ -22,7 +22,7 @@ Eleven short chapters in [manual/videos](manual/videos), or all of them in one: 
 | 02 | **Random: the key to everything** (random synths, random sounds, random arpeggios) |
 | 03 | Play modes: round robin, random, unison, poly |
 | 04 | Patches and random sounds |
-| 05 | Performance knobs: filter, resonance, delay, reverb |
+| 05 | Performance knobs: filter, length, delay, reverb |
 | 06 | On, silent, skip |
 | 07 | A synth's page |
 | 08 | The effects pages |

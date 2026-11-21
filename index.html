@@ -64,12 +64,12 @@
     <div>
       <p class="eyebrow">A synth's page</p>
       <h2>Five synths, each its own</h2>
-      <p>Press a synth's button and its page opens: the keys play only that synth, and the four dials at the top follow <span class="k r">KNOB1</span> to <span class="k r">KNOB4</span>. <span class="k r">PRESETS</span> turns its ten pages, round and round:</p>
+      <p>Press a synth's button and its page opens: the keys play only that synth, and the four dials at the top follow <span class="k r">KNOB1</span> to <span class="k r">KNOB4</span>. <span class="k r">ALGORITHM</span> turns its ten pages, round and round, just as it turns the pages on the home screen:</p>
       <ol class="pages">
         <li>Wave</li><li>Amp envelope</li><li>Filter envelope</li><li>Filter</li><li>LFO</li>
         <li>Noise</li><li>Saturation</li><li>Modulation</li><li>Delay</li><li>Reverb</li>
       </ol>
-      <p><span class="k r">ALGORITHM</span> is its <b>noise</b> on every page: a little breath, hiss or static in the sound. Chance and noise are POLY5's two secret weapons.</p>
+      <p><span class="k r">PRESETS</span> is its <b>noise</b> on every page: a little breath, hiss or static in the sound. Chance and noise are POLY5's two secret weapons.</p>
     </div>
     <figure class="screen">
       <video class="ui-loop" muted loop playsinline preload="none" width="480" height="480" poster="site/img/screen-synth-page.png?v=f654d8cf" aria-label="Synth 1's WAVE page."><source src="site/img/loop-synth-page.mp4?v=3473388e" type="video/mp4"></video>
@@ -173,7 +173,7 @@
     <p class="eyebrow">Play it here</p>
     <h2>Try POLY5 in your browser</h2>
     <p class="lede" style="font-size:clamp(20px,2.3vw,26px)">This is the real firmware, the same code the FM&#8209;1 runs, compiled for your browser. Switch it on and play.</p>
-    <div class="p5" id="p5" data-wasm="site/play/poly5.wasm?v=47a6fff7" data-worklet="site/play/poly5-worklet.js?v=bdee7d7f"></div>
+    <div class="p5" id="p5" data-wasm="site/play/poly5.wasm?v=4c1b5be4" data-worklet="site/play/poly5-worklet.js?v=bdee7d7f"></div>
     <div class="p5-help">
       <div><b>Play</b> click or tap the keys, or your keyboard: <span class="k">A</span> is C, <span class="k">W</span> <span class="k">S</span> <span class="k">E</span> <span class="k">D</span> &hellip; up to <span class="k">'</span>. A MIDI keyboard plays it too (Chrome, Edge).</div>
       <div><b>Knobs</b> drag up or down, or scroll over them.</div>
@@ -222,10 +222,10 @@
       <table>
         <thead><tr><th>Rotary</th><th>Home screen</th><th>A synth's page</th><th>Sequencer page</th></tr></thead>
         <tbody>
-          <tr><td><span class="k r">KNOB1&ndash;4</span></td><td>Filter (left lowpass, right highpass), resonance, delay, reverb. On an effects page: its four dials.</td><td>The page's four dials</td><td>Tempo, step length, gate, length</td></tr>
-          <tr><td><span class="k r">ALGORITHM</span></td><td>Turn the effects pages. With the cursor showing: that synth ON, SILENT or SKIP.</td><td><b>Noise</b>, on every page</td><td>The step's note</td></tr>
+          <tr><td><span class="k r">KNOB1&ndash;4</span></td><td>Filter (left lowpass, right highpass), length (every synth's release, longer or shorter; 12 o'clock is the patch), delay, reverb. On an effects page: its four dials.</td><td>The page's four dials</td><td>Tempo, step length, gate, length</td></tr>
+          <tr><td><span class="k r">ALGORITHM</span></td><td>Turn the effects pages. With the cursor showing: that synth ON, SILENT or SKIP.</td><td>Its ten pages</td><td>The step's note</td></tr>
           <tr><td><span class="k r">SELECT</span></td><td>A cursor on the synths (in POLY, the one the keys play)</td><td>The wave: saw, square, triangle, sine, FM, metal</td><td>The step</td></tr>
-          <tr><td><span class="k r">PRESETS</span></td><td>The patches: F01&ndash;F24, then yours, U01&ndash;U32</td><td>Its ten pages</td><td></td></tr>
+          <tr><td><span class="k r">PRESETS</span></td><td>The patches: F01&ndash;F24, then yours, U01&ndash;U32</td><td><b>Noise</b>, on every page</td><td></td></tr>
           <tr><td><span class="k r">MASTER</span></td><td colspan="3">Volume</td></tr>
         </tbody>
       </table>
@@ -265,7 +265,7 @@
       </figure>
     </div>
     <h3>The quick knobs</h3>
-    <p>On PLAY, the four knobs are filter, resonance, delay and reverb for the whole mix. The one you turn takes the screen for a moment.</p>
+    <p>On PLAY, the four knobs are filter, length, delay and reverb for the whole mix. The one you turn takes the screen for a moment. Length makes every synth ring longer or shorter than its patch says; the knob stops at 12 o'clock on the way back, so the patch's own lengths are easy to find again. The filter's resonance is on the FILTER page.</p>
     <div class="cards">
       <div class="card"><span class="n">KNOB1 &middot; FILTER</span><p>The spectrum as ridges in the five colours, cut where the filter cuts.</p><video class="ui-loop" muted loop playsinline preload="none" width="480" height="480" poster="site/img/screen-filter.png?v=7c9d847d" aria-label="The filter takeover: LOWPASS 60, coloured ridges."><source src="site/img/loop-filter.mp4?v=dfda70d2" type="video/mp4"></video></div>
       <div class="card"><span class="n">KNOB3 &middot; DELAY</span><p>Each note you play as its synth's shape, and its echoes one delay time apart.</p><video class="ui-loop" muted loop playsinline preload="none" width="480" height="480" poster="site/img/screen-delay.png?v=ad545f71" aria-label="The delay takeover: a shape and its fading echoes."><source src="site/img/loop-delay.mp4?v=fccbb925" type="video/mp4"></video></div>
@@ -296,7 +296,7 @@
       <p class="eyebrow">Saving</p>
       <h2>Keep what you love</h2>
       <p>Nothing saves itself. What you play is a working copy, and a <code>*</code> after the patch name means unsaved changes.</p>
-      <p><span class="k">SAVE</span> opens the save page: <span class="k r">KNOB1</span> picks the slot (U01&ndash;U32), <span class="k r">KNOB2</span> what to do (save, load, erase), <span class="k r">KNOB3</span> and <span class="k r">KNOB4</span> the name's two words. <span class="k">SAVE</span> again stores it. So <span class="k">SAVE</span> <span class="k">SAVE</span> always keeps what you hear; overwriting another patch or erasing asks once more.</p>
+      <p><span class="k">SAVE</span> opens the save page: <span class="k r">KNOB1</span> picks the slot (U01&ndash;U32), <span class="k r">KNOB2</span> what to do (save, load, erase), The name is ready at once, a random one: <span class="k">GLO</span> rolls another, <span class="k r">KNOB3</span> and <span class="k r">KNOB4</span> turn its two words, or type your own on the keys (the lowest is A, the top one a space; the page shows which). <span class="k">OCT&minus;</span> takes a letter away. <span class="k">SAVE</span> again stores it. So <span class="k">SAVE</span> <span class="k">SAVE</span> always keeps what you hear; overwriting another patch or erasing asks once more.</p>
       <p>Your patch keeps its sequence. The patch and octave you were on are kept when you switch off.</p>
     </div>
     <figure class="screen small">

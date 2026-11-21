@@ -72,16 +72,34 @@ static struct {
  * band: ~5.8 ms). Measured under load (65 % CPU): a 64..112 band started renders at
  * 48..119 with no glitch; one render was once seen 29 frames under the floor: a packet (46) must
  * still be in hand then. */
+/* POLY5 (2026-11-21): the band above is for a render that is done in well under 1.8 ms. POLY5's takes up to
+ * ~3 ms with twelve voices and the effects, and all 256 frames reach the ring only when it is done: the ring ran
+ * empty in every heavy render (a repeated frame: a click in the recording, worst with chords). An app with a long
+ * render sets UA_SLOW_RENDER: the low point is then kept at 264..312 frames: 6 ms in hand, more than a whole half
+ * buffer's time, at the price of 4 ms more delay on the USB audio. */
+#ifdef UA_SLOW_RENDER
+#define UA_N 1024u
+#define UA_PRIME 288u
+#define UA_LO 264u
+#define UA_HI 312u
+#else
 #define UA_N 512u                /* ring, frames (16-bit L | R << 16); a power of two */
 #define UA_PRIME 104u            /* silence ahead of the first rendered frame */
 #define UA_LO 80u                /* a render may start late: keep a packet and more in hand */
 #define UA_HI 128u
+#endif
 #define UAC_RATE 44100u
 #if FELUCCA_UAC_48K
 /* 48 kHz: the same times in 48 kHz frames (x 160 / 147); a render of HALF_FRAMES gives 139..140 frames */
+#ifdef UA_SLOW_RENDER
+#define UA_PRIME48 313u
+#define UA_LO48 287u
+#define UA_HI48 340u
+#else
 #define UA_PRIME48 113u
 #define UA_LO48 87u
 #define UA_HI48 139u
+#endif
 #define UA_REND48 ((HALF_FRAMES * 160u + 146u) / 147u)
 #define UA_MAXF 49u              /* frames in the largest packet: 48 + 1 */
 _Static_assert(UA_HI48 + UA_REND48 + UA_MAXF < UA_N, "the ring holds the band, a render and a packet (48 kHz)");
@@ -272,6 +290,8 @@ static const uint8_t STR1[] = {42, 3, 'H', 0, 0xFC, 0, 'g', 0, 'e', 0, 'l', 0, '
 #ifdef FELUCCA_LOADER
 static const uint8_t STR2[] = {30, 3, 'F', 0, 'e', 0, 'l', 0, 'u', 0, 'c', 0, 'c', 0, 'a', 0, ' ', 0, 'U', 0, 'p', 0,
                                'd', 0, 'a', 0, 't', 0, 'e', 0};
+#elif defined USB_PRODUCT_STR                    /* the app's own name: what a computer calls its audio and MIDI */
+static const uint8_t STR2[] = USB_PRODUCT_STR;
 #else
 static const uint8_t STR2[] = {16, 3, 'F', 0, 'e', 0, 'l', 0, 'u', 0, 'c', 0, 'c', 0, 'a', 0};
 #endif

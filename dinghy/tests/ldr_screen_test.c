@@ -106,12 +106,33 @@ static int palette_only(void)
     for (y = 0; y < 240u; y++)
         for (x = 0; x < 240u; x++) {
             uint16_t c = fb[y][x];
-            if (c != LDR_BG && c != LDR_INK && c != LDR_SUB && c != LDR_DIM && c != LDR_HUB && c != LDR_COLOUR && c != LDR_TAIL)
+            if (c != LDR_BG && c != LDR_INK && c != LDR_SUB && c != LDR_DIM && c != LDR_HUB && c != LDR_COLOUR && c != LDR_TAIL) {
+#ifdef LDR_COLOURS                              /* (the name's letters, each its own colour) */
+                static const uint16_t cols[] = LDR_COLOURS;
+                uint32_t k, hit = 0;
+                for (k = 0; k < sizeof cols / sizeof cols[0]; k++)
+                    hit |= c == cols[k];
+                if (hit)
+                    continue;
+#endif
                 return 0;
+            }
         }
     return 1;
 }
 
+static uint32_t name_px(void)                   /* the name's dots: in its colour, or (LDR_COLOURS) in its letters' colours */
+{
+#ifdef LDR_COLOURS
+    static const uint16_t cols[] = LDR_COLOURS;
+    uint32_t k, n = 0;
+    for (k = 0; k < sizeof cols / sizeof cols[0]; k++)
+        n += count(0, 20, 240, 76, cols[k]);
+    return n;
+#else
+    return count(0, 20, 240, 76, LDR_COLOUR);
+#endif
+}
 int main(int argc, char **argv)
 {
     const char *dir = argc > 1 ? argv[1] : NULL;
@@ -119,7 +140,7 @@ int main(int argc, char **argv)
     ldr_screen();
     ppm(dir, "ldr_update_mode");
     check("UPDATE MODE: the name in its colour, the status, the hub's address in lila, 20 segments off",
-          count(0, 20, 240, 76, LDR_COLOUR) > 300u && count(0, 92, 240, 112, LDR_INK) > 200u &&
+          name_px() > 300u && count(0, 92, 240, 112, LDR_INK) > 200u &&
           count(0, 220, 240, 230, LDR_HUB) > 80u && lit_segs(LDR_DIM) == LDR_SEGS);
     check("only the screen's colours, the background the hub's", palette_only() && count(0, 0, 240, 10, LDR_BG) == 2400u);
     for (ms = 0; ms < 60u * 60u; ms += 60u) {        /* an hour of steps: the light goes to and fro, one segment lit */

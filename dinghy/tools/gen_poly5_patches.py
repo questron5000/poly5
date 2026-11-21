@@ -21,7 +21,7 @@ CH_DEF = dict(midi_ch=1, on="ON", wave="SAW", octave=0, noise=0, env_filt=0, cut
               dly=0, rev=0, vol=80, tone=0, drop=0, decay=0, detune=0, env_rate=0, lfo_depth=0, lfo_rate=30,
               filt="LP", lfo_shape="SINE", lfo_sync=0, nz_depth=0, nz_rate=50, sat=0, sus=0)
 FX_DEF = dict(mode="RR", mvol=80, dj=0, del_time=14, del_fb=35, del_all=0, rev_size=45, rev_damp=45, rev_all=0, drive=0,
-              dj_reso=0, comp=0, mod="OFF", ch_rate=30, ch_depth=50, ch_mix=0, drv="SOFT", lofi_bits=0, lofi_rate=0,
+              dj_reso=30, comp=0, mod="OFF", ch_rate=30, ch_depth=50, ch_mix=0, drv="SOFT", lofi_bits=0, lofi_rate=0,
               lofi_mix=0, cmp_spd=30, cmp_gain=0, tp_wow=0, tp_flut=0, tp_age=0, tp_fail=0, arp=0)
 
 # delay times at 118 to the minute (0.04 s + 0.025 s each): 9 = an eighth, 14 = a dotted eighth, 19 = a quarter
@@ -39,8 +39,8 @@ PATCHES = [
          ch=[
              dict(wave="FM", tone=0, env_filt=50, env_rate=40, cutoff=72, attack=1, decay=62, sus=45, release=50,
                   nz_depth=8, nz_rate=30, dly=15, rev=30, vol=82),
-             dict(wave="SAW", detune=26, cutoff=46, reso=6, env_filt=35, env_rate=50, attack=3, decay=60, sus=55, release=55,
-                  nz_depth=14, nz_rate=35, dly=20, rev=35, vol=66),
+             dict(wave="SQUARE", octave=-1, noise=35, detune=26, cutoff=54, reso=1, env_filt=55, env_rate=50, attack=3, decay=60,
+                  sus=55, release=55, nz_depth=14, nz_rate=35, dly=20, rev=35, vol=66),   # (as the user set it on the FM-1: low, hollow, breathy)
              dict(wave="SQUARE", detune=12, cutoff=44, reso=4, env_filt=30, env_rate=45, attack=2, decay=58, sus=50, release=50,
                   nz_depth=10, nz_rate=25, dly=20, rev=30, vol=60),
              dict(wave="TRI", detune=20, cutoff=64, env_filt=20, attack=2, decay=64, sus=60, release=55, lfo_depth=6,

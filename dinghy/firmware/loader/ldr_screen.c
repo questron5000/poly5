@@ -16,6 +16,8 @@
 #ifndef LDR_COLOUR
 #define LDR_COLOUR 0xB47Fu               /* Dinghy's lilac, #B48CFF (tools/build.py: LOADER_COLOUR) */
 #endif
+/* LDR_COLOURS (optional): {c1, c2, ...}: the name's letters in these colours, one after the other, and the line
+ * under it in as many pieces (POLY5: a letter a synth) */
 #define LDR_BG 0x1082u                   /* the hub's background, #151213 */
 #define LDR_INK 0xEF5Cu                  /* its text, #EFE8E1 */
 #define LDR_SUB 0xA4D2u                  /* its grey, #A39A94 */
@@ -60,6 +62,8 @@ static const uint8_t LDR_FONT[sizeof LDR_CH - 1u][7] = {         /* rows, bit 4 
 #define LDR_SEG_Y 150u
 #define LDR_SEG_H 10u
 
+static const uint16_t *ldr_cols;                   /* while set: each letter its own colour (ldr_ncols of them, round) */
+static uint32_t ldr_ncols;
 static uint32_t ldr_missing;                        /* letters drawn as gaps: 0 (ldr_screen_test) */
 static uint32_t ldr_len(const char *t)
 {
@@ -70,10 +74,12 @@ static uint32_t ldr_len(const char *t)
 }
 static void ldr_text(uint32_t y, uint32_t s, uint16_t c, const char *t)   /* centred, a dot s x s px */
 {
-    uint32_t n = ldr_len(t), x, r, k, i, b;
+    uint32_t n = ldr_len(t), x, r, k, i, b, at = 0;
     if (!n)
         return;
     for (x = (240u - (n * 6u - 1u) * s) / 2u; *t; t++, x += 6u * s) {
+        if (ldr_cols)
+            c = ldr_cols[at++ % ldr_ncols];
         for (k = 0; LDR_CH[k] && LDR_CH[k] != *t; k++)
             ;
         if (!LDR_CH[k]) {
@@ -128,8 +134,20 @@ static void ldr_screen(void)
     uint32_t i, s = ldr_len(LDR_NAME) <= 9u ? 4u : ldr_len(LDR_NAME) <= 12u ? 3u : 2u;
     lcd_init();                                     /* (the panel cleared, on) */
     lcd_fill(0, 0, 240, 240, LDR_BG);
+#ifdef LDR_COLOURS
+    {
+        static const uint16_t cols[] = LDR_COLOURS;
+        const uint32_t nc = sizeof cols / sizeof cols[0];
+        ldr_cols = cols; ldr_ncols = nc;
+        ldr_text(48u - 7u * s / 2u, s, LDR_COLOUR, LDR_NAME);
+        ldr_cols = 0;
+        for (i = 0; i < nc; i++)                     /* the line: a piece a colour */
+            lcd_fill(60u + i * 120u / nc, 76, 120u / nc - 2u, 2, cols[i]);
+    }
+#else
     ldr_text(48u - 7u * s / 2u, s, LDR_COLOUR, LDR_NAME);
     lcd_fill(60, 76, 120, 2, LDR_COLOUR);
+#endif
     ldr_say("UPDATE MODE", "WAITING FOR THE INSTALL");
     for (i = 0; i < LDR_SEGS; i++)
         ldr_seg(i, LDR_DIM);

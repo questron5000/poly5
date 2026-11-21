@@ -61,6 +61,9 @@ MODELS = {"pro": "SMK-37 Pro", "elite": "SMK-37 Elite", "mke": "MKE-P37"}   # sm
 DATA_FAMILY = "POLY5"              # the SMK store's owner tag (store.h): 1..7 of A-Z 0-9. Your fork: your own
 SCREEN_NAME = "POLY5"               # the update loader's screen (FM-1, ldr_screen.c): the name and its colour (RGB565)
 SCREEN_COLOUR = 0xF506              # POLY5's amber, #F0A030
+# the name's letters, one a synth, as the logo (poly5.c CH_RGB), RGB565
+SCREEN_COLOURS = [(r >> 3) << 11 | (g >> 2) << 5 | b >> 3 for r, g, b in
+                  ((106, 168, 240), (240, 138, 112), (125, 212, 152), (240, 200, 112), (216, 144, 168))]
 PRODUCT = "FM-1_945"                # POLY5 (Dinghy was FM-1_99N). FM-1_9NN so the installers resume a cut-off install;
                                     # 945 was free in thefirmwarehub.com/catalog.json on 2026-11-19 (940 and 943 are not)
 POLY5_ID = "FM-1_945"               # the FM-1 build always says this, dev or release: the version is on the screen
@@ -139,7 +142,8 @@ def build_loader():
     LDR.mkdir(parents=True, exist_ok=True)
     src = FW / "loader"
     flags = [*CFLAGS, *BOARD_DEFS[BOARD], "-Ifirmware/hal", "-Ifirmware/src", f'-DLDR_NAME="{SCREEN_NAME}"',
-             f"-DLDR_COLOUR={SCREEN_COLOUR:#x}u"]
+             f"-DLDR_COLOUR={SCREEN_COLOUR:#x}u",
+             "-DLDR_COLOURS={" + ",".join(f"{c:#x}u" for c in SCREEN_COLOURS) + "}"]
     tc_all(("cc", "-c", src / "crt0_ldr.S", "-o", LDR / "crt0_ldr.o"),
            ("cc", *flags, "-c", src / "loader.c", "-o", LDR / "loader.o"))
     elf = LDR / "loader.elf"
