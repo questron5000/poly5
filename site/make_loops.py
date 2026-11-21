@@ -57,10 +57,23 @@ def loops():
     # the sequencer playing (six steps of 1/8 at 118: four passes)
     s = [ev(1500, "btn", 11), ev(1600, "btn", 12)]
     L["sequencer"] = (s, 2618, 2618 + 4 * 1525)
-    # the save page: the slot and the name's words turn
-    s = [ev(1500, "btn", 9)] + [ev(2400 + i * 500, "enc", 2, 1) for i in range(3)] + [ev(4000 + i * 450, "enc", 4, 1) for i in range(4)]
-    s += [ev(6000 + i * 450, "enc", 5, 1) for i in range(4)]
-    L["save"] = (s, 2000, 8200)
+    # the save page: a random name, GLO for another, the two word knobs, then a name typed on the keys, a letter taken back
+    def typed(t0, text, step=260):
+        out, t = [], t0
+        for ch in text:
+            out.append(ev(t, "keys", hex(1 << (26 if ch == " " else ord(ch) - 65)))); out.append(ev(t + 120, "keys", 0)); t += step
+        return out
+    s = [ev(1500, "btn", 9), ev(2700, "btn", 7), ev(3500, "btn", 7), ev(4400, "enc", 4, 1), ev(4900, "enc", 4, 1), ev(5500, "enc", 5, 1)]
+    s += typed(6600, "WARM TAPES") + [ev(9900, "btn", 0)]
+    L["save"] = (s, 2000, 11000)
+    # LENGTH (KNOB 2 on PLAY) with the sequence playing: longer, back (it stops at 12 o'clock), shorter, back
+    s = [ev(1500, "btn", 12)]
+    t = 2400
+    for d, n, gap in ((1, 30, 70), (-1, 34, 45), (-1, 26, 70), (1, 30, 45)):
+        for _ in range(n):
+            s.append(ev(t, "enc", 3, d)); t += gap
+        t += 900
+    L["length"] = (s, 2450, t + 600)
     # the master effects: ALGORITHM turns through the eight pages while the sequence plays, 2.4 s a page
     s = [ev(1500, "btn", 12)] + [ev(2400 + i * 2400, "enc", 1, 1) for i in range(8)]
     L["master-pages"] = (s, 2450, 2400 + 8 * 2400)
