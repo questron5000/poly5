@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="site/site.css?v=dabbf7d5">
+<link rel="stylesheet" href="site/site.css?v=99345fc2">
 </head>
 <body>
 
@@ -348,12 +348,25 @@
   <div class="wrap">
     <p class="eyebrow">Install</p>
     <h2>Put it on your FM&#8209;1</h2>
-    <p>POLY5 runs on <a href="https://github.com/zvenson/dinghy">Dinghy</a>, an open platform for the FM&#8209;1. Build the firmware and send it over USB:</p>
+    <p class="lede" style="font-size:clamp(20px,2.3vw,26px)">POLY5 1.0 is one file. Download it and send it to your FM&#8209;1 over USB; nothing to build.</p>
+    <p><a class="btn primary" href="https://github.com/questron5000/poly5/releases/download/v1.0/poly5-1.0.fwsc">Download POLY5 1.0</a> <a class="btn quiet" href="https://github.com/questron5000/poly5/releases/tag/v1.0">Release notes and checksum</a></p>
+    <ol class="steps">
+      <li>Connect the FM&#8209;1 by USB and switch it on.</li>
+      <li>In a terminal, in the folder the download went to, get the installer (a small Python script) and what it needs:
+<pre><code>curl -LO https://raw.githubusercontent.com/questron5000/poly5/main/dinghy/tools/fm1_install.py
+pip3 install mido python-rtmidi</code></pre></li>
+      <li>Send POLY5 to the FM&#8209;1. It takes about a minute; the screen shows the progress, and the FM&#8209;1 restarts by itself:
+<pre><code>python3 fm1_install.py poly5-1.0.fwsc --yes</code></pre></li>
+    </ol>
+    <p class="note">One click is on its way: the <a href="https://thefirmwarehub.com">FM&#8209;1 Firmware Hub</a> installs open firmwares from Chrome or Edge with no download and no script. POLY5 is not listed there yet.</p>
+    <details class="build">
+      <summary>Build it yourself</summary>
+      <p>POLY5 runs on <a href="https://github.com/zvenson/dinghy">Dinghy</a>, an open platform for the FM&#8209;1. Building needs Docker, the JieLi toolchain (<code>tools/get_toolchain.sh</code>) and the AC79 SDK.</p>
 <pre><code>git clone https://github.com/questron5000/poly5.git
 cd poly5/dinghy
-APP=poly5 ./build.sh
-python3 tools/fm1_install.py build/dinghy.fwsc --port FM-1 --yes</code></pre>
-    <p>Building needs Docker, the JieLi toolchain (<code>tools/get_toolchain.sh</code>) and the AC79 SDK. Hold <span class="k">OCT&minus;</span> while switching on to get back to the update mode if anything goes wrong.</p>
+APP=poly5 ./build.sh --release 1.0
+python3 tools/fm1_install.py build/dinghy-1.0.fwsc --yes</code></pre>
+    </details>
     <h3>Safe to try</h3>
     <ul class="safe">
       <li><b>Older and newer FM&#8209;1s.</b> Both flash chips are supported: the Puya P25Q80 of older units and the UC25HQ80 of newer ones. A unit with any other chip is refused before anything is erased.</li>

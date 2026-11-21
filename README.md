@@ -32,7 +32,17 @@ Eleven short chapters in [manual/videos](manual/videos), or all of them in one: 
 
 The videos are made from the firmware itself: Dinghy's host mode renders the screen and the sound, and [manual/manual.py](manual/manual.py) adds the panel picture and the captions. To change a chapter, edit [manual/chapters.py](manual/chapters.py), then run `python3 manual/manual.py` (add a chapter number to make only that one).
 
-## Building and installing
+## Installing
+
+POLY5 1.0 is one file: [poly5-1.0.fwsc](https://github.com/questron5000/poly5/releases/download/v1.0/poly5-1.0.fwsc) ([release notes](https://github.com/questron5000/poly5/releases/tag/v1.0)). Connect the FM-1 by USB, then:
+
+```sh
+curl -LO https://raw.githubusercontent.com/questron5000/poly5/main/dinghy/tools/fm1_install.py
+pip3 install mido python-rtmidi
+python3 fm1_install.py poly5-1.0.fwsc --yes
+```
+
+## Building
 
 ```sh
 cd dinghy
