@@ -39,7 +39,7 @@ def loops():
     s = [ev(1500, "btn", 2)] + notes(1900, [A3, E4] * 18, 400, 0.85) + [ev(2700 + i * 1200, "enc", 0, 1) for i in range(6)]
     L["synth-page"] = (s, 2200, 9400)
     # LOFI: the tape loop running with the sequence; wow up and back, then a little failing
-    s = [ev(1500, "enc", 1, 7), ev(1600, "btn", 12)]
+    s = [ev(1500, "enc", 1, 8), ev(1600, "btn", 12)]
     s += [ev(3000 + i * 60, "enc", 2, 1) for i in range(20)] + [ev(5500 + i * 60, "enc", 2, -1) for i in range(20)]
     s += [ev(7000 + i * 50, "enc", 5, 1) for i in range(25)] + [ev(9000 + i * 30, "enc", 5, -1) for i in range(25)]
     L["lofi"] = (s, 2500, 10000)
@@ -74,9 +74,10 @@ def loops():
             s.append(ev(t, "enc", 3, d)); t += gap
         t += 900
     L["length"] = (s, 2450, t + 600)
-    # the master effects: ALGORITHM turns through the eight pages while the sequence plays, 2.4 s a page
-    s = [ev(1500, "btn", 12)] + [ev(2400 + i * 2400, "enc", 1, 1) for i in range(8)]
-    L["master-pages"] = (s, 2450, 2400 + 8 * 2400)
+    # the master effects: ALGORITHM turns through the nine pages while the sequence plays, 2.4 s a page
+    s = [ev(1500, "btn", 12)] + [ev(2400 + i * 2400, "enc", 1, 1) for i in range(9)]
+    s += [ev(2400 + 2 * 2400 + 500 + i * 60, "enc", 2, 1) for i in range(14)] + [ev(2400 + 2 * 2400 + 1500 + i * 40, "enc", 2, -1) for i in range(14)]   # on LENGTH: the dial out and back
+    L["master-pages"] = (s, 2450, 2400 + 9 * 2400)
     # switch-on, then a chord in round robin
     s = [ev(1700, "keys", hex(A3)), ev(1800, "keys", hex(A3 | C4)), ev(1900, "keys", hex(A3 | C4 | E4)), ev(2000, "keys", hex(A3 | C4 | E4 | G4)), ev(3400, "keys", 0)]
     L["intro"] = (s, 0, 4600)

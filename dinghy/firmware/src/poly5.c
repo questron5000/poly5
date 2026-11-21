@@ -82,6 +82,16 @@ static volatile chan_t chan[NCH];
 /* LENGTH (KNOB 2 on PLAY): every synth's release, and its decay if it has one, this much longer or shorter than the
  * patch says: -100 .. 0 (as the patch) .. +100. Each stops at its own end (0, 100): some get there sooner */
 static volatile int32_t len_off;
+static uint32_t len_stop_ms;                    /* when the knob came to 12 o'clock: it rests there a moment */
+static void len_turn(int32_t e)                 /* it never passes 12 o'clock in one go, and rests there 0.4 s: back to the patch by feel */
+{
+    int32_t was = len_off, v = was + e * 2;
+    uint32_t now = fm1_ms;
+    if ((was < 0 && v > 0) || (was > 0 && v < 0)) v = 0;
+    if (!was && len_stop_ms && now - len_stop_ms < 400u) v = 0;
+    if (!v && was) len_stop_ms = now | 1u;
+    len_off = v < -100 ? -100 : v > 100 ? 100 : v;
+}
 static uint32_t len_of(uint32_t v) { int32_t x = (int32_t)v + len_off; return (uint32_t)(x < 0 ? 0 : x > 100 ? 100 : x); }
 static volatile uint32_t master_q15 = 22282;   /* MASTER.vol/100 * 0.85 */
 
@@ -913,7 +923,7 @@ typedef struct { const char *name, *abbr; uint8_t off, max, step; } param_t;
 #define OFF(f) ((uint8_t)__builtin_offsetof(chan_t, f))
 /* a synth's pages (ALGORITHM turns them, as it turns MAIN's): up to four dials each. A dial is a setting of the synth, one of the
  * patch's (the delay's time, the room's size: the same for all five), or one of the LFO's two switches */
-enum { K_NONE, K_CH, K_FX, K_SHAPE, K_SYNC, K_LFOSPD, K_TIME, K_WAVE, K_OCT, K_FTYPE, K_CHTYPE, K_DJ, K_DRVTYPE, K_ONOFF };
+enum { K_NONE, K_CH, K_FX, K_SHAPE, K_SYNC, K_LFOSPD, K_TIME, K_WAVE, K_OCT, K_FTYPE, K_CHTYPE, K_DJ, K_DRVTYPE, K_ONOFF, K_LEN };
 #define IT_SW(bit) {"ON/OFF", K_ONOFF, bit, 1, 1}   /* the page's effect, on or off: the fourth knob */
 typedef struct { const char *name; uint8_t kind, off, max, step; } item_t;
 #define OFX(f) ((uint8_t)__builtin_offsetof(preset_t, f))
@@ -933,12 +943,13 @@ static const item_t PAGES[NPAGE][4] = {
     {{"SEND", K_CH, OFF(rev), 100, 2}, {"SIZE", K_FX, OFX(rev_size), 100, 2}, {"DAMP", K_FX, OFX(rev_damp), 100, 2}, IT_NONE},
 };
 /* the pages of MAIN (ALGORITHM turns them): PLAY, then the effects on everything, four dials each */
-enum { MP_PLAY, MP_SAT, MP_FILTER, MP_MOD, MP_DELAY, MP_REVERB, MP_BITS, MP_LOFI, MP_MASTER, NMPAGE };
-static const char *const MPAGE_NAME[NMPAGE] = {"PLAY", "SATURATION", "FILTER", "MODULATION", "DELAY", "REVERB", "BIT REDUCTION", "LOFI", "MASTERING"};
+enum { MP_PLAY, MP_SAT, MP_FILTER, MP_LENGTH, MP_MOD, MP_DELAY, MP_REVERB, MP_BITS, MP_LOFI, MP_MASTER, NMPAGE };
+static const char *const MPAGE_NAME[NMPAGE] = {"PLAY", "SATURATION", "FILTER", "LENGTH", "MODULATION", "DELAY", "REVERB", "BIT REDUCTION", "LOFI", "MASTERING"};
 static const item_t MPAGES[NMPAGE][4] = {
     {IT_NONE, IT_NONE, IT_NONE, IT_NONE},       /* (PLAY: the four quick knobs: filter, resonance, delay, reverb) */
     {{"DRIVE", K_FX, OFX(drive), 100, 2}, {"TYPE", K_DRVTYPE, OFX(drv_type), 2, 1}, {"VOLUME", K_FX, OFX(mvol), 100, 2}, IT_SW(0)},
     {{"SWEEP", K_DJ, OFX(dj), 200, 2}, {"RESO", K_FX, OFX(dj_reso), 100, 2}, IT_NONE, IT_SW(1)},
+    {{"LENGTH", K_LEN, 0, 200, 2}, IT_NONE, IT_NONE, IT_NONE},   /* (KNOB 2 on PLAY, as a page: after the filter, as the knobs lie) */
     {{"TYPE", K_CHTYPE, OFX(ch_type), 3, 1}, {"SPEED", K_FX, OFX(ch_rate), 100, 2}, {"DEPTH", K_FX, OFX(ch_depth), 100, 2}, {"MIX", K_FX, OFX(ch_mix), 100, 2}},
     {{"AMOUNT", K_FX, OFX(del_all), 100, 2}, {"TIME", K_TIME, OFX(del_time), 57, 1}, {"REPEATS", K_FX, OFX(del_fb), 90, 2}, IT_SW(2)},
     {{"AMOUNT", K_FX, OFX(rev_all), 100, 2}, {"SIZE", K_FX, OFX(rev_size), 100, 2}, {"DAMP", K_FX, OFX(rev_damp), 100, 2}, IT_SW(3)},
@@ -1553,6 +1564,7 @@ static int32_t item_get(uint32_t c, const item_t *it)
     case K_CH: case K_LFOSPD: return ((volatile uint8_t *)&chan[c])[it->off];
     case K_FX: case K_TIME: case K_CHTYPE: case K_DRVTYPE: return ((uint8_t *)&cur)[it->off];
     case K_DJ: return (int8_t)cur.dj + 100;      /* 0 .. 200: lowpass .. open .. highpass */
+    case K_LEN: return len_off + 100;            /* 0 .. 200: shorter .. as the patch .. longer */
     case K_ONOFF: return !(cur.fx_off >> it->off & 1u);
     case K_SHAPE: return (int32_t)MSHAPE(c);
     case K_SYNC: return (int32_t)MSYNC(c);
@@ -1583,11 +1595,18 @@ static const char *item_text(char *s, uint32_t c, const item_t *it)   /* what th
         s[0] = d < 0 ? 'L' : 'H'; s_num(s + 1, d < 0 ? -d : d);
         return s;
     }
+    case K_LEN: {
+        char *q = s;
+        if (!len_off) return "0";
+        *q++ = len_off > 0 ? '+' : '-'; s_num(q, len_off < 0 ? -len_off : len_off);
+        return s;
+    }
     default: return 0;
     }
 }
 static void item_add(uint32_t c, const item_t *it, int32_t e)
 {
+    if (it->kind == K_LEN) { len_turn(e); return; }
     int32_t v = item_get(c, it) + e * it->step;
     v = v < 0 ? 0 : v > it->max ? it->max : v;
     switch (it->kind) {
@@ -2001,27 +2020,31 @@ static void say(const char *a, const char *b, const char *d)
  * synths' colours, cut where the filter cuts. The delay: the repeats as pillars marching off, a pulse running along
  * them at the delay's own time. The reverb: a hall you fly into, wider and deeper the more there is. */
 enum { T_FILTER, T_LEN, T_DELAY, T_REVERB };
-static uint32_t take, take_ms, len_stop_ms;
+static uint32_t take, take_ms;
 static int32_t dj_kind(void) { int32_t d = (int8_t)cur.dj; return d < 0 ? 1 : d > 0 ? 2 : 0; }
 static int32_t dj_fc(void) { int32_t d = (int8_t)cur.dj; return d < 0 ? (100 + d) * 256 / 100 : d * 256 / 100; }
 /* LENGTH: five tails, one a synth, in its colour: how long its note rings out. A white tick on each is where the patch
  * has it: the tail's end leaves the tick as you turn, and meets it again at 12 o'clock. Below, the knob as a scale:
  * a pointer, and the middle as a target that lights when you are back (the knob rests there for a moment, too). */
-static void g_length(uint32_t t)
+static void g_length(uint32_t t, int page)      /* page: under the dials: the tails closer, no title and no scale (the dial is the knob) */
 {
-    const int32_t off = len_off, X0 = 26, SY = 156;
+    const int32_t off = len_off, X0 = 26, SY = 156, Y0 = page ? 74 : 52, DY = page ? 15 : 20;
     uint32_t c;
     int32_t x, px;
     char s[8], *q = s;
     int home = !off;
-    cv_text(4, 4, &FONT_S, "LENGTH", C_SILK);
-    cv_text(4, 22, &FONT_S, home ? "AS THE PATCH" : off > 0 ? "LONGER" : "SHORTER", home ? C_AMBER : C_GREY);
-    if (off > 0) *q++ = '+';
-    if (off < 0) *q++ = '-';
-    s_num(q, off < 0 ? -off : off);
-    cv_text(236 - text_w(&FONT_L, s), 2, &FONT_L, s, home ? C_AMBER : C_SILK);
+    const char *say2 = home ? "AS THE PATCH" : off > 0 ? "LONGER" : "SHORTER";
+    if (page) cv_text(238 - text_w(&FONT_S, say2), 153, &FONT_S, say2, home ? C_AMBER : C_GREY);
+    else {
+        cv_text(4, 4, &FONT_S, "LENGTH", C_SILK);
+        cv_text(4, 22, &FONT_S, say2, home ? C_AMBER : C_GREY);
+        if (off > 0) *q++ = '+';
+        if (off < 0) *q++ = '-';
+        s_num(q, off < 0 ? -off : off);
+        cv_text(236 - text_w(&FONT_L, s), 2, &FONT_L, s, home ? C_AMBER : C_SILK);
+    }
     for (c = 0; c < NCH; c++) {
-        int32_t mid = 52 + (int32_t)c * 20, was = chan[c].release, now = (int32_t)len_of(chan[c].release), w = now * 2, wx;
+        int32_t mid = Y0 + (int32_t)c * DY, was = chan[c].release, now = (int32_t)len_of(chan[c].release), w = now * 2, wx;
         int on = chan[c].enabled == E_ON, end = !home && (now == 0 || now == 100) && was + off != now;
         char num[2] = {(char)('1' + c), 0};
         cv_text(6, mid - 8, &FONT_S, num, on ? shade(c, 255) : C_GREY);
@@ -2035,6 +2058,7 @@ static void g_length(uint32_t t)
         cv_rect(px, mid - 8, 1, 17, home ? C_AMBER : C_SILK);
         cv_rect(px - 1, mid - 8, 3, 1, home ? C_AMBER : C_SILK); cv_rect(px - 1, mid + 8, 3, 1, home ? C_AMBER : C_SILK);
     }
+    if (page) return;
     /* the knob: -100 .. +100 across; the middle is the patch */
     cv_rect(20, SY + 6, 201, 1, C_GREY);
     for (x = -100; x <= 100; x += 25) cv_rect(120 + x, SY + 4, 1, x ? 5 : 0, C_GREY);
@@ -2054,7 +2078,7 @@ static void draw_take(uint32_t t)               /* PLAY: one of the four quick k
     const char *l1, *l2 = "";
     char s[8];
     cv_begin(240, MAIN_H, C_BLACK);
-    if (take == T_LEN) { g_length(t); cv_blit(0, MAIN_Y); return; }
+    if (take == T_LEN) { g_length(t, 0); cv_blit(0, MAIN_Y); return; }
     switch (take) {
     case T_FILTER: v = dj < 0 ? -dj : dj; l1 = "FILTER"; l2 = dj < 0 ? "LOWPASS" : dj > 0 ? "HIGHPASS" : "OPEN"; break;
     case T_DELAY: v = cur.del_all; l1 = "DELAY"; break;
@@ -2089,6 +2113,7 @@ static void draw_mpage(uint32_t t)              /* a page of MAIN (ALGORITHM): f
     switch (mpage) {
     case MP_SAT: g_shaper(t, cur.drive, cur.drv_type, shade(1, 255)); break;
     case MP_FILTER: g_ridges(t, dj_kind(), dj_fc(), (int32_t)cur.dj_reso * 24 / 100, NCH); break;
+    case MP_LENGTH: g_length(t, 1); break;
     case MP_MOD: g_mod(0, t, 0); break;
     case MP_DELAY: g_echoes(t, cur.del_all, NCH); break;
     case MP_REVERB: g_hall(t, cur.rev_size, cur.rev_all, NCH); break;
@@ -3023,15 +3048,7 @@ web_step: ;
                     else {                      /* PLAY: the four quick knobs; the screen shows the one you turn */
                         int32_t v;
                         if (k == T_FILTER) { v = (int8_t)cur.dj + e * 2; cur.dj = (uint8_t)(int8_t)(v < -100 ? -100 : v > 100 ? 100 : v); }
-                        else if (k == T_LEN) {  /* LENGTH: every synth longer or shorter. It never passes 12 o'clock in one
-                                                 * go, and rests there 0.4 s: back to the patch by feel, not by eye */
-                            int32_t was = len_off;
-                            v = was + e * 2;
-                            if ((was < 0 && v > 0) || (was > 0 && v < 0)) v = 0;
-                            if (!was && len_stop_ms && fm1_ms - len_stop_ms < 400u) v = 0;
-                            if (!v && was) len_stop_ms = fm1_ms | 1u;
-                            len_off = v < -100 ? -100 : v > 100 ? 100 : v;
-                        }
+                        else if (k == T_LEN) len_turn(e);   /* LENGTH: every synth longer or shorter */
                         else {
                             uint8_t *f = k == T_DELAY ? &cur.del_all : &cur.rev_all;
                             v = (int32_t)*f + e * 2;

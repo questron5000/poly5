@@ -1,0 +1,15 @@
+# LENGTH as a page: ALGORITHM three clicks on (after FILTER), its dial out, a note, back (it stops at 12), and on to MODULATION
+200 keys 0
+2000 enc 1 2
+2200 shot
+2400 enc 1 1
+2700 shot
+3000 enc 2 15
+3200 keys 0x80
+3400 keys 0
+3500 shot
+4000 enc 2 -30
+4300 shot
+4800 enc 1 1
+5100 shot
+5500 end

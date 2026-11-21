@@ -37,7 +37,7 @@ SCRIPT = """
 10700 shot
 11000 keys 0
 11500 btn 2
-12000 enc 1 7
+12000 enc 1 8
 12100 btn 12
 14000 shot
 14200 btn 8

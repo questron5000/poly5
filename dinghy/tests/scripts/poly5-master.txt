@@ -1,6 +1,6 @@
-# MASTERING (ALGORITHM, eight clicks on): a note, then a chord: the compressor's and the limiter's meters
+# MASTERING (ALGORITHM, nine clicks on): a note, then a chord: the compressor's and the limiter's meters
 200 keys 0
-2000 enc 1 8
+2000 enc 1 9
 2300 keys 0x80
 2500 shot
 2800 keys 0
