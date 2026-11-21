@@ -2797,6 +2797,14 @@ static void app_main(void)
 web_step: ;
 #endif
         uint32_t hold = 0, first = NCH, spin, page;
+#ifndef DINGHY_HOST
+        /* an install is asked for (the updater's command has come; platform_poll, next, starts it): after it POLY5
+         * starts on F01 with the keys' octave in the middle, as new, whatever patch was on. Your patches stay. */
+        if (usb.ota_req && (set.patch || set.oct || set_dirty)) {
+            set.patch = 0; set.oct = 0; set_dirty = 0;
+            settings_save(&set, sizeof set);
+        }
+#endif
         platform_poll();
         passes++;
 

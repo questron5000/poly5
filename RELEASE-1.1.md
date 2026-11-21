@@ -19,6 +19,7 @@ Manual, videos and a playable version in your browser: https://questron5000.gith
 - Mastering: the compressor now works on single notes as well as chords, and gives back half of what it takes away, so more COMP is denser, not quieter.
 - A real limiter, always on: everything is 3 dB louder and held under a ceiling, so chords and unison stay clean. All patches are louder and closer to each other in level.
 - The MASTERING page shows two meters, COMP and LIMITER, each with its reduction in dB.
+- After an install POLY5 starts on F01, as new (from the install after this one: the firmware that is running when the install starts is the one that notes it). Your patches stay.
 
 ## Install
 
@@ -27,7 +28,7 @@ In Chrome or Edge, from the browser: https://questron5000.github.io/poly5/instal
 Or as a file, `poly5-1.1.fwsc` (below), from a terminal: `python3 tools/fm1_install.py poly5-1.1.fwsc --yes`.
 
 Package identity: FM-1_945. SHA-256 of `poly5-1.1.fwsc`:
-`ac629f327434e9216bb049ba6054ae1dd61842f6c61d74b42f7eb8047fc34208`
+`777d573c2a6b5a715d81074572247f8febec895aa148b3fa9e1cb70a29e3fcdc`
 
 ## Safe to try
 
