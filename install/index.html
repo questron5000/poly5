@@ -4,125 +4,125 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Install POLY5 on your FM-1</title>
-<meta name="description" content="Install POLY5 on the M-VAVE FM-1 from this page, in Chrome or Edge. No download, no driver, about a minute.">
+<meta name="description" content="Install POLY5 on the M-VAVE FM-1 from this page, in Chrome or Edge. The synth and its 24 patches in one go, about a minute.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../site/site.css">
 <link rel="stylesheet" href="install.css">
 </head>
-<body>
+<body class="inst-page">
 
-<nav class="nav" aria-label="POLY5">
-  <div class="wrap">
-    <a class="logo word" href="../" aria-label="POLY5, home"><span>P</span><span>O</span><span>L</span><span>Y</span><span>5</span></a>
-    <ul>
-      <li><a href="../#manual">Video manual</a></li>
-      <li><a href="../#play">Play it</a></li>
-      <li><a href="../#playing">Playing</a></li>
-      <li><a href="../#patches">Patches</a></li>
-      <li><a href="./" aria-current="page">Install</a></li>
-    </ul>
-  </div>
-</nav>
+<header class="inst-top">
+  <a class="logo word" href="../" aria-label="POLY5, back to the page"><span>P</span><span>O</span><span>L</span><span>Y</span><span>5</span></a>
+  <a class="inst-back" href="../">&larr; Back to POLY5</a>
+</header>
 
-<main>
-<section class="inst">
-  <div class="wrap">
-    <p class="eyebrow">Install</p>
-    <h1 class="inst-h">Put POLY5 on your FM&#8209;1</h1>
-    <p class="lede" style="font-size:clamp(20px,2.3vw,26px)">Right from this page, for free: the synth and its 24 patches with their sequences, in one go. No download, no driver, about a minute.</p>
-    <p class="note" id="demo-note" hidden>Demo: no FM&#8209;1 is touched, the steps only show what they look like.</p>
+<main class="inst-main">
+  <div class="inst-grid">
 
-    <ol class="steps5">
-
-      <li class="st" id="step-browser">
-        <h2 class="st-h"><span class="st-n">1</span>Your browser</h2>
-        <div class="st-body">
-          <p id="browser-ok" class="ok" hidden>This browser can install.</p>
-          <p id="browser-no" class="bad" hidden>This browser can't install: it can't send firmware over USB. Open this page in Chrome or Edge on a computer.</p>
-          <ul class="browsers">
-            <li><b>Chrome</b><span class="yes">Can install</span></li>
-            <li><b>Edge</b><span class="yes">Can install</span></li>
-            <li><b>Firefox</b><span class="no">Can't install</span></li>
-            <li><b>Safari</b><span class="no">Can't install</span></li>
-          </ul>
-          <p><button type="button" class="btn primary" id="to-ready">Continue</button></p>
-        </div>
-      </li>
-
-      <li class="st" id="step-ready">
-        <h2 class="st-h"><span class="st-n">2</span>Get ready</h2>
-        <div class="st-body" hidden>
-          <ul class="ready">
-            <li>Connect the FM&#8209;1 to this computer with a USB cable that carries data, and switch it on.</li>
-            <li>Close anything else that uses it: Ableton or another music app, the FM&#8209;1 Firmware Hub, other installer tabs.</li>
-            <li>The browser will ask to use your MIDI devices. Allow it: that is how the firmware reaches the FM&#8209;1.</li>
-            <li>On a laptop? Plug in its charger, so it does not sleep halfway.</li>
-            <li>Coming from another firmware? Saves made with it may be lost. Patches you saved in POLY5 stay when you update POLY5.</li>
-          </ul>
-          <p><button type="button" class="btn primary" id="to-connect">Test connection</button></p>
-        </div>
-      </li>
-
-      <li class="st" id="step-connect">
-        <h2 class="st-h"><span class="st-n">3</span>Test connection</h2>
-        <div class="st-body" hidden>
-          <p id="connect-out" class="status" aria-live="polite"></p>
-          <p id="connect-err" class="bad" role="alert" hidden></p>
-          <p>
-            <button type="button" class="btn primary" id="to-install" hidden>Continue</button>
-            <button type="button" class="btn" id="connect-again" hidden>Try again</button>
-          </p>
-        </div>
-      </li>
-
-      <li class="st" id="step-install">
-        <h2 class="st-h"><span class="st-n">4</span>Install</h2>
-        <div class="st-body" hidden>
-          <p id="pkg-state" class="status" aria-live="polite"></p>
-          <p id="install-from" class="note"></p>
-          <p><label class="agree"><input type="checkbox" id="agree"> I understand that POLY5 was not made by the manufacturer of my FM&#8209;1, and that I install it at my own risk.</label></p>
-          <p><button type="button" class="btn primary" id="install-go" disabled>Install POLY5 1.0</button></p>
-          <div id="prog" hidden>
-            <div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-labelledby="prog-label"><i id="prog-bar"></i></div>
-            <p id="prog-label" class="status" aria-live="polite"></p>
-            <p id="prog-warn" class="warn" hidden>Do not unplug the FM&#8209;1 and keep this tab open. Its screen shows the same progress.</p>
+    <!-- the FM-1's screen, as it will look at each step -->
+    <aside class="inst-device" aria-hidden="true">
+      <div class="dev-frame">
+        <div class="dev-screen" id="dev-screen" data-state="idle">
+          <img class="dev-home" src="../site/img/screen-home-chord.png" alt="" width="480" height="480">
+          <video class="dev-boot" id="dev-boot" muted playsinline preload="none" src="../site/img/loop-intro.mp4"></video>
+          <div class="dev-update">
+            <b class="word dev-name"><span>P</span><span>O</span><span>L</span><span>Y</span><span>5</span></b>
+            <i class="dev-line"><s></s><s></s><s></s><s></s><s></s></i>
+            <span class="dev-what" id="dev-what">UPDATE MODE</span>
+            <span class="dev-sub" id="dev-sub">WAITING FOR THE INSTALL</span>
+            <span class="dev-segs" id="dev-segs"></span>
+            <span class="dev-pct" id="dev-pct"></span>
           </div>
-          <p id="install-err" class="bad" role="alert" hidden></p>
         </div>
-      </li>
+      </div>
+      <p class="dev-cap" id="dev-cap">Your FM&#8209;1's screen</p>
+    </aside>
 
-      <li class="st" id="step-done">
-        <h2 class="st-h"><span class="st-n">5</span>Done</h2>
-        <div class="st-body" hidden>
-          <p class="ok">POLY5 is on your FM&#8209;1. Play a few keys: each note goes to the next of the five synths.</p>
-          <p><a class="btn primary" href="../#manual">Watch the manual</a> <a class="btn quiet" href="../#playing">What the panel does</a></p>
+    <section class="inst-card" aria-labelledby="inst-title">
+      <p class="eyebrow">Install</p>
+      <h1 class="inst-h" id="inst-title">Put POLY5 on your FM&#8209;1</h1>
+      <p class="inst-lede">The synth and its 24 patches, in one go. Free, from this page, about a minute.</p>
+      <p class="note" id="demo-note" hidden>Demo: no FM&#8209;1 is touched, the steps only show what they look like.</p>
+
+      <ol class="tabs" aria-label="Steps">
+        <li id="tab-browser"><i></i><span>1 Your browser</span></li>
+        <li id="tab-ready"><i></i><span>2 Get ready</span></li>
+        <li id="tab-connect"><i></i><span>3 Test connection</span></li>
+        <li id="tab-install"><i></i><span>4 Install</span></li>
+        <li id="tab-done"><i></i><span>5 Done</span></li>
+      </ol>
+
+      <div class="pane" id="step-browser">
+        <h2 class="pane-h" id="browser-h">Checking your browser</h2>
+        <ul class="browsers">
+          <li data-b="chrome"><b>Chrome</b><span class="yes">Can install</span></li>
+          <li data-b="edge"><b>Edge</b><span class="yes">Can install</span></li>
+          <li data-b="firefox"><b>Firefox</b><span class="no">Can't install</span></li>
+          <li data-b="safari"><b>Safari</b><span class="no">Can't install</span></li>
+        </ul>
+        <p id="browser-ok" class="pane-p" hidden>Next, get your FM&#8209;1 and a USB cable ready.</p>
+        <p id="browser-no" class="bad" hidden>This browser can't send firmware over USB. Open this page in Chrome or Edge on a computer, and you are a minute away.</p>
+        <div class="pane-foot"><span></span><button type="button" class="btn primary" id="to-ready">Next &rarr;</button></div>
+      </div>
+
+      <div class="pane" id="step-ready" hidden>
+        <h2 class="pane-h">Get ready</h2>
+        <p class="pane-p">Tick these off before the page talks to your FM&#8209;1.</p>
+        <ul class="checks" id="checks">
+          <li><label><input type="checkbox"><span><b>Connect the FM&#8209;1 to this computer by USB, and switch it on.</b><small>Straight into the computer if you can: a hub can hide it. The cable must carry data.</small></span></label></li>
+          <li><label><input type="checkbox"><span><b>Close anything else that uses the FM&#8209;1.</b><small>Ableton or another music app, the Firmware Hub, other installer tabs.</small></span></label></li>
+          <li><label><input type="checkbox"><span><b>On a laptop, plug in the charger.</b><small>So it does not go to sleep halfway.</small></span></label></li>
+          <li><label><input type="checkbox"><span><b>Coming from another firmware? Its saves may be lost.</b><small>Patches you saved in POLY5 stay when you update POLY5.</small></span></label></li>
+        </ul>
+        <div class="pane-foot"><button type="button" class="btn quiet" data-back="browser">&larr; Back</button><button type="button" class="btn primary" id="to-connect" disabled>Test connection &rarr;</button></div>
+      </div>
+
+      <div class="pane" id="step-connect" hidden>
+        <h2 class="pane-h" id="connect-h">Looking for your FM&#8209;1</h2>
+        <p class="pane-p" id="connect-ask">Your browser will ask to use your MIDI devices. Allow it: that is how the firmware reaches the FM&#8209;1.</p>
+        <p id="connect-out" class="status" aria-live="polite"></p>
+        <p id="connect-err" class="bad" role="alert" hidden></p>
+        <div class="pane-foot"><button type="button" class="btn quiet" data-back="ready">&larr; Back</button><span><button type="button" class="btn" id="connect-again" hidden>Try again</button> <button type="button" class="btn primary" id="to-install" hidden>Next &rarr;</button></span></div>
+      </div>
+
+      <div class="pane" id="step-install" hidden>
+        <h2 class="pane-h" id="install-h">Ready to install</h2>
+        <p id="pkg-state" class="status" aria-live="polite"></p>
+        <p id="install-from" class="pane-p"></p>
+        <label class="agree" id="agree-row"><input type="checkbox" id="agree"><span>I understand that POLY5 was not made by the manufacturer of my FM&#8209;1, and that I install it at my own risk.</span></label>
+        <div id="prog" hidden>
+          <div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-labelledby="prog-label"><i id="prog-bar"></i></div>
+          <p id="prog-label" class="prog-label" aria-live="polite"></p>
+          <p id="prog-warn" class="warn" hidden>Do not unplug the FM&#8209;1, and keep this tab open.</p>
         </div>
-      </li>
+        <p id="install-err" class="bad" role="alert" hidden></p>
+        <div class="pane-foot"><button type="button" class="btn quiet" data-back="connect" id="install-back">&larr; Back</button><button type="button" class="btn primary" id="install-go" disabled>Install POLY5 1.0</button></div>
+      </div>
 
-    </ol>
+      <div class="pane pane-done" id="step-done" hidden>
+        <div class="five" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+        <h2 class="pane-h">POLY5 is on your FM&#8209;1</h2>
+        <p class="pane-p">Play a few keys: every note goes to the next of the five synths. Press <span class="k">GLO</span> for five new sounds, <span class="k">PLAY</span> for the patch's sequence.</p>
+        <div class="pane-foot"><a class="btn quiet" href="../#playing">What the panel does</a><a class="btn primary" href="../#manual">Watch the manual &rarr;</a></div>
+      </div>
 
-    <div class="help">
-      <h3>If it gets stuck</h3>
-      <ul>
-        <li><b>Nothing found.</b> Try another USB cable or port, switch the FM&#8209;1 off and on, and close other apps and tabs that use it.</li>
-        <li><b>It stopped while writing.</b> Leave the FM&#8209;1 as it is, plug the cable in again, reload this page and install again: the update carries on.</li>
-        <li><b>The FM&#8209;1 does not start.</b> Switch it off, hold <span class="k">OCT&minus;</span> and switch it on: the USB rescue. Then install again.</li>
-        <li><b>Back to the official firmware</b> at any time with the <a href="https://thefirmwarehub.com">FM&#8209;1 Firmware Hub</a>.</li>
-      </ul>
-      <p class="note">Both FM&#8209;1 flash chips are supported; a unit with any other chip is refused before anything is erased. The file is checked before it is sent and every block is verified as it is written. Installing firmware is still at your own risk.</p>
-      <p class="note">Rather a file? <a href="https://github.com/questron5000/poly5/releases/tag/v1.0">POLY5 1.0 on GitHub</a>, with its checksum and the source. The installer on this page is Felucca's, by Leo Kuroshita, GPL&#8209;3.0.</p>
-    </div>
+      <details class="help">
+        <summary>If it gets stuck</summary>
+        <ul>
+          <li><b>Nothing found.</b> Try another USB cable or port, switch the FM&#8209;1 off and on, and close other apps and tabs that use it.</li>
+          <li><b>It stopped while writing.</b> Leave the FM&#8209;1 as it is, plug the cable in again, reload this page and install again: the update carries on.</li>
+          <li><b>The FM&#8209;1 does not start.</b> Switch it off, hold <span class="k">OCT&minus;</span> and switch it on: the USB rescue. Then install again.</li>
+          <li><b>Back to the official firmware</b> at any time with the <a href="https://thefirmwarehub.com">FM&#8209;1 Firmware Hub</a>.</li>
+        </ul>
+        <p class="note">Both FM&#8209;1 flash chips are supported; a unit with any other chip is refused before anything is erased. The file is checked before it is sent and every block is verified as it is written.</p>
+      </details>
+      <p class="inst-small">Rather a file? <a href="https://github.com/questron5000/poly5/releases/tag/v1.0">POLY5 1.0 on GitHub</a>, with its checksum and the source. The installer is Felucca's, by Leo Kuroshita, GPL&#8209;3.0.</p>
+    </section>
+
   </div>
-</section>
 </main>
-
-<footer>
-  <div class="wrap">
-    <p><b class="word"><span>P</span><span>O</span><span>L</span><span>Y</span><span>5</span></b> for the M&#8209;VAVE FM&#8209;1. Free software under the GPL&#8209;3.0. <a href="../">Back to the page</a></p>
-  </div>
-</footer>
 
 <script type="module" src="install.js"></script>
 </body>

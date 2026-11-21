@@ -17,7 +17,7 @@ function nameOf(text) {
   if (text === "FM-1_015") return "the official firmware V15";
   if (/^FM-1_0\d\d$/.test(text)) return "the official firmware";
   if (/^FM-1_99\d$/.test(text)) return "Dinghy";
-  return "another firmware";
+  return "another custom firmware";
 }
 
 const ERR = {
@@ -30,7 +30,7 @@ const ERR = {
   mismatch: "The update was written, but the FM-1 reports another firmware than POLY5. Switch it off and on, then test the connection again.",
   badreq: "The FM-1 asked for something outside the package, so the update was stopped. Switch it off, hold OCT− while switching it on, and try again.",
   foreign: "The FM-1 is in the update mode of another firmware. Finish that update with its own installer first, or use the FM-1 Firmware Hub.",
-  nomidi: "The browser did not allow MIDI. Allow it for this page (the lock or tune icon next to the address) and try again.",
+  nomidi: "The browser did not allow MIDI. Allow it for this page (the icon next to the address) and try again.",
   package: "The firmware file did not arrive whole, so nothing was sent to the FM-1. Reload the page and try again.",
 };
 function say(el, code, detail) {
@@ -38,31 +38,52 @@ function say(el, code, detail) {
   el.hidden = false;
 }
 
-// ---- the steps: one open at a time
+// ---- the FM-1's screen beside the steps: what the real one shows at each moment
+const SEGS = 20;
+$("dev-segs").innerHTML = "<i></i>".repeat(SEGS);
+function screen(state, cap, what, sub, pct) {
+  $("dev-screen").dataset.state = state;
+  $("dev-cap").textContent = cap;
+  if (what !== undefined) $("dev-what").textContent = what;
+  if (sub !== undefined) $("dev-sub").textContent = sub;
+  const lit = pct == null ? 0 : Math.round(pct * SEGS / 100);
+  [...$("dev-segs").children].forEach((s, i) => s.classList.toggle("on", i < lit));
+  $("dev-pct").textContent = pct == null ? "" : Math.round(pct) + "%";
+  if (state === "done") { const v = $("dev-boot"); v.currentTime = 0; v.loop = true; v.play().catch(() => {}); }
+}
+
+// ---- the steps: one at a time
 const STEPS = ["browser", "ready", "connect", "install", "done"];
 function open(name) {
   const at = STEPS.indexOf(name);
   STEPS.forEach((s, i) => {
-    const el = $("step-" + s);
-    el.classList.toggle("is-open", i === at);
-    el.classList.toggle("is-done", i < at);
-    el.querySelector(".st-body").hidden = i !== at;
+    $("step-" + s).hidden = i !== at;
+    $("tab-" + s).classList.toggle("is-open", i === at);
+    $("tab-" + s).classList.toggle("is-done", i < at);
+    if (i === at) $("tab-" + s).setAttribute("aria-current", "step"); else $("tab-" + s).removeAttribute("aria-current");
   });
-  $("step-" + name).scrollIntoView({ block: "nearest", behavior: "smooth" });
 }
+document.querySelectorAll("[data-back]").forEach((b) => { b.onclick = () => { if (!busy) open(b.dataset.back); }; });
 
 let access = null, updater = null, image = null, busy = false, found = null;
 
 // ---- 1: the browser
 function checkBrowser() {
+  const ua = navigator.userAgent;
+  const mine = /Edg\//.test(ua) ? "edge" : /Firefox\//.test(ua) ? "firefox" : /Chrome\//.test(ua) ? "chrome" : /Safari\//.test(ua) ? "safari" : "";
+  const li = document.querySelector('.browsers [data-b="' + mine + '"]');
+  if (li) li.classList.add("is-yours");
   const ok = DEMO || typeof navigator.requestMIDIAccess === "function";
+  $("browser-h").textContent = ok ? "This browser can install POLY5" : "This browser can't install POLY5";
   $("browser-ok").hidden = !ok;
   $("browser-no").hidden = ok;
   $("to-ready").disabled = !ok;
 }
 $("to-ready").onclick = () => open("ready");
 
-// ---- 2: get ready
+// ---- 2: get ready: every line ticked
+const checks = [...document.querySelectorAll("#checks input")];
+checks.forEach((c) => { c.onchange = () => { $("to-connect").disabled = !checks.every((x) => x.checked); }; });
 $("to-connect").onclick = () => { open("connect"); connect(); };
 
 // ---- 3: test the connection
@@ -73,50 +94,53 @@ async function midi() {
   return access;
 }
 async function connect() {
-  const out = $("connect-out"), err = $("connect-err"), go = $("to-install"), again = $("connect-again");
-  err.hidden = true; go.hidden = true; again.hidden = true;
-  out.textContent = "Looking for your FM‑1…";
+  const out = $("connect-out"), err = $("connect-err"), go = $("to-install"), again = $("connect-again"), h = $("connect-h");
+  const fail = (code, detail) => { h.textContent = "No FM‑1 found"; out.textContent = ""; say(err, code, detail); again.hidden = false; screen("idle", "Your FM‑1's screen"); };
+  err.hidden = true; go.hidden = true; again.hidden = true; $("connect-ask").hidden = false;
+  h.textContent = "Looking for your FM‑1";
+  out.textContent = "";
   try {
-    if (DEMO) { await sleep(900); found = { text: "FM-1_015" }; }
+    if (DEMO) { await sleep(1100); found = { text: "FM-1_015" }; }
     else {
-      try { await midi(); } catch (_) { out.textContent = ""; say(err, "nomidi"); again.hidden = false; return; }
+      try { await midi(); } catch (_) { fail("nomidi"); return; }
       const dev = await updater.find(null, false) || await updater.find((id) => /^ota-/i.test(id.text), true);
-      if (!dev) { out.textContent = ""; say(err, "notfound", updater.seen()); again.hidden = false; return; }
+      if (!dev) { fail("notfound", updater.seen()); return; }
       dev.link.close();
       found = dev.id;
     }
-  } catch (e) { out.textContent = ""; say(err, e.code || "notfound", e.detail); again.hidden = false; return; }
+  } catch (e) { fail(e.code || "notfound", e.detail); return; }
   const ota = /^ota-/i.test(found.text);
-  if (ota && !DEMO && !OUR_LOADER(found)) { out.textContent = ""; say(err, "foreign", "(" + found.text + ")"); again.hidden = false; return; }
-  out.textContent = ota
-    ? "Found: an FM‑1 waiting in update mode. Install will finish the update."
-    : "Found your FM‑1. It is running " + nameOf(found.text) + " (" + found.text + ").";
+  if (ota && !DEMO && !OUR_LOADER(found)) { fail("foreign", "(" + found.text + ")"); return; }
+  $("connect-ask").hidden = true;
+  h.textContent = "Your FM‑1 is ready";
+  out.textContent = ota ? "It is waiting in update mode: Install will finish the update."
+                        : "It is running " + nameOf(found.text) + ".";
   $("install-from").textContent = ota ? "An update is waiting to be finished." :
-    found.text === PKG.product ? "POLY5 is already on it: installing again puts version " + PKG.version + " on it and keeps your patches." :
-    "It will replace " + nameOf(found.text) + ". Saves made with that firmware may be lost.";
+    found.text === PKG.product ? "POLY5 is already on it. Installing again puts version " + PKG.version + " on it and keeps your patches." :
+    "POLY5 will replace " + nameOf(found.text) + ". You can go back at any time.";
+  if (ota) screen("update", "Your FM‑1 now", "UPDATE MODE", "WAITING FOR THE INSTALL"); else screen("found", "Found: " + found.text);
   go.hidden = false;
 }
 $("connect-again").onclick = connect;
 $("to-install").onclick = () => { open("install"); fetchPackage(); };
 
 // ---- 4: install
+function ready() { $("install-go").disabled = busy || !image || !$("agree").checked; }
+$("agree").onchange = ready;
 async function fetchPackage() {
-  const st = $("pkg-state"), btn = $("install-go");
+  const st = $("pkg-state");
   if (image) return;
-  btn.disabled = true;
-  st.textContent = "Getting the firmware file…";
+  st.textContent = "Getting POLY5…";
   try {
     const r = await fetch(PKG.file, { cache: "no-store" });
     if (!r.ok) throw new Error("http " + r.status);
     const raw = new Uint8Array(await r.arrayBuffer());
     if (await sha256hex(raw) !== PKG.sha256 || productOf(raw) !== PKG.product) throw new Error("checksum");
     image = logicalImage(raw);
-    st.textContent = "POLY5 " + PKG.version + " with its 24 patches, " + Math.round(raw.length / 1024) + " KB, checked: it is the file of the release.";
+    st.textContent = "POLY5 " + PKG.version + " with its 24 patches, " + Math.round(raw.length / 1024) + " KB. Checked: it is the file of the release.";
     ready();
   } catch (_) { st.textContent = ""; say($("install-err"), "package"); }
 }
-function ready() { $("install-go").disabled = busy || !image || !$("agree").checked; }
-$("agree").onchange = ready;
 function progress(label, pct, warn) {
   $("prog").hidden = false;
   $("prog-label").textContent = label;
@@ -126,36 +150,42 @@ function progress(label, pct, warn) {
 }
 function onStep(total) {
   return (what, n) => {
-    if (what === "start") progress("Starting the update…", 2, false);
-    else if (what === "verify") progress("The FM‑1 is checking the package…", 4, false);
-    else if (what === "loader") progress("Switching to update mode…", 6, true);
-    else if (what === "write") { const p = Math.min(99, Math.floor(n * 100 / total)); progress("Writing " + p + "%", 6 + p * 0.9, true); }
-    else if (what === "reboot") progress("Restarting…", 97, true);
+    if (what === "start") { progress("Starting the update", 2, false); $("install-h").textContent = "Installing"; }
+    else if (what === "verify") progress("The FM‑1 is checking the package", 4, false);
+    else if (what === "loader") { progress("Switching to update mode", 6, true); screen("update", "Your FM‑1 now", "UPDATE MODE", "WAITING FOR THE INSTALL"); }
+    else if (what === "write") {
+      const p = Math.min(99, Math.floor(n * 100 / total));
+      progress("Writing " + p + "%", 6 + p * 0.9, true);
+      screen("update", "Your FM‑1 now", "WRITING", "DO NOT SWITCH OFF", p);
+    }
+    else if (what === "reboot") { progress("Restarting", 97, true); screen("update", "Your FM‑1 now", "WRITING", "DO NOT SWITCH OFF", 100); }
     else if (what === "done") progress("Done", 100, false);
   };
 }
 async function install() {
   const err = $("install-err"), btn = $("install-go");
-  if (busy || !image) return;
-  if (!$("agree").checked) return;
+  if (busy || !image || !$("agree").checked) return;
   busy = true; btn.disabled = true; $("agree").disabled = true; err.hidden = true;
+  $("agree-row").hidden = true; $("install-back").hidden = true; $("install-from").hidden = true;
   const total = Math.ceil(image.length / 512), step = onStep(total);
   try {
     if (DEMO) {
-      step("start"); await sleep(700); step("verify"); await sleep(700); step("loader"); await sleep(900);
-      for (let n = 0; n <= total; n += Math.ceil(total / 40)) { step("write", n); await sleep(80); }
-      step("reboot"); await sleep(900); step("done");
+      step("start"); await sleep(700); step("verify"); await sleep(700); step("loader"); await sleep(1000);
+      for (let n = 0; n <= total; n += Math.ceil(total / 50)) { step("write", n); await sleep(90); }
+      step("reboot"); await sleep(1000); step("done");
     } else {
       // an FM-1 already in update mode (an install that was cut off): finish that write; else the whole install
       const resumed = await updater.resume(image, step, { product: PKG.product });
       if (!resumed) await updater.install(image, PKG.product, step);
     }
     busy = false;
+    screen("done", "POLY5, switched on");
     open("done");
   } catch (e) {
-    busy = false; btn.disabled = false; $("agree").disabled = false;
+    busy = false; $("agree").disabled = false; ready();
     btn.textContent = "Try again";
-    $("prog-warn").hidden = true;
+    $("install-h").textContent = "It stopped";
+    $("prog-warn").hidden = true; $("install-back").hidden = false;
     say(err, e.code || "stopped", e.code ? "" : String(e.message || e));
   }
 }
