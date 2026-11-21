@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="site/site.css?v=00148cf2">
+<link rel="stylesheet" href="site/site.css?v=78f94059">
 </head>
 <body>
 
@@ -17,15 +17,15 @@
   <div class="wrap">
     <a class="logo word" href="#top" aria-label="POLY5, top"><span>P</span><span>O</span><span>L</span><span>Y</span><span>5</span></a>
     <ul>
-      <li><a href="#play">Play it</a></li>
-      <li><a href="#random">Random</a></li>
-      <li><a href="#playing">Playing</a></li>
       <li><a href="#synth">A synth</a></li>
+      <li><a href="#manual">Video manual</a></li>
+      <li><a href="#random">Random</a></li>
+      <li><a href="#play">Play it</a></li>
+      <li><a href="#playing">Playing</a></li>
       <li><a href="#effects">Master effects</a></li>
       <li><a href="#sequencer">Sequencer</a></li>
       <li><a href="#saving">Saving</a></li>
       <li><a href="#patches">Patches</a></li>
-      <li><a href="#manual">Video manual</a></li>
       <li><a href="#install">Install</a></li>
     </ul>
   </div>
@@ -59,17 +59,82 @@
 
 <main>
 
-<section id="play" class="play">
+<section id="synth">
+  <div class="wrap split">
+    <div>
+      <p class="eyebrow">A synth's page</p>
+      <h2>Five synths, each its own</h2>
+      <p>Press a synth's button and its page opens: the keys play only that synth, and the four dials at the top follow <span class="k r">KNOB1</span> to <span class="k r">KNOB4</span>. <span class="k r">PRESETS</span> turns its ten pages, round and round:</p>
+      <ol class="pages">
+        <li>Wave</li><li>Amp envelope</li><li>Filter envelope</li><li>Filter</li><li>LFO</li>
+        <li>Noise</li><li>Saturation</li><li>Modulation</li><li>Delay</li><li>Reverb</li>
+      </ol>
+      <p><span class="k r">ALGORITHM</span> is its <b>noise</b> on every page: a little breath, hiss or static in the sound. Chance and noise are POLY5's two secret weapons.</p>
+    </div>
+    <figure class="screen">
+      <video class="ui-loop" muted loop playsinline preload="none" width="480" height="480" poster="site/img/screen-synth-page.png?v=f654d8cf" aria-label="Synth 1's WAVE page."><source src="site/img/loop-synth-page.mp4?v=3473388e" type="video/mp4"></video>
+      <figcaption>Synth 1's WAVE page: wave, octave, tone and detune; its shape and its wave running.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="manual" class="manual">
   <div class="wrap">
-    <p class="eyebrow">Play it here</p>
-    <h2>Try POLY5 in your browser</h2>
-    <p class="lede" style="font-size:clamp(20px,2.3vw,26px)">This is the real firmware, the same code the FM&#8209;1 runs, compiled for your browser. Switch it on and play.</p>
-    <div class="p5" id="p5" data-wasm="site/play/poly5.wasm?v=47a6fff7" data-worklet="site/play/poly5-worklet.js?v=bdee7d7f"></div>
-    <div class="p5-help">
-      <div><b>Play</b> click or tap the keys, or your keyboard: <span class="k">A</span> is C, <span class="k">W</span> <span class="k">S</span> <span class="k">E</span> <span class="k">D</span> &hellip; up to <span class="k">'</span>. A MIDI keyboard plays it too (Chrome, Edge).</div>
-      <div><b>Knobs</b> drag up or down, or scroll over them.</div>
-      <div><b>Buttons</b> click them; hold for a hold. Shortcuts: <span class="k">R</span> GLO (random sounds), <span class="k">1</span>&ndash;<span class="k">5</span> a synth's page, <span class="k">Space</span> PLAY, <span class="k">Q</span> ARP, <span class="k">B</span> HOME, <span class="k">Z</span> <span class="k">X</span> octave.</div>
-      <div><b>Saved patches</b> stay in this browser.</div>
+    <p class="eyebrow">Video manual &middot; 11 chapters &middot; 8 minutes</p>
+    <h2>Learn POLY5 in eight minutes</h2>
+    <p class="lede" style="font-size:clamp(20px,2.3vw,26px)">Eleven short chapters, made from the firmware itself: the screen and the sound are POLY5 running, the panel lights up what is pressed. Each one leads into the next; pick any chapter from the list. Or download them <a href="manual/videos/poly5-manual-full.mp4?v=29b1467c">all in one</a>.</p>
+    <p><button type="button" class="btn primary manual-start" id="manual-start">&#9654;&ensp;Start the manual</button></p>
+    <div class="player">
+      <div class="pl-main">
+        <div class="video"><video id="pl-video" controls preload="metadata" playsinline poster="site/img/poster-01-welcome.jpg?v=1cbab043" src="manual/videos/01-welcome.mp4?v=4ad35b69"></video></div>
+        <p class="pl-now"><b id="pl-num">01</b><span id="pl-title">Meet the five synths</span><span class="pl-next" id="pl-next">Next: Random: the key to everything</span></p>
+      </div>
+      <ol class="pl-list" id="pl-list" aria-label="Chapters">
+        <li><button type="button" class="pl-item on" data-src="manual/videos/01-welcome.mp4?v=4ad35b69" data-poster="site/img/poster-01-welcome.jpg?v=1cbab043" aria-current="true">
+          <img src="site/img/poster-01-welcome.jpg?v=1cbab043" width="640" height="360" alt="" loading="lazy">
+          <span class="pl-text"><b>01</b><span class="pl-title">Meet the five synths</span><span class="pl-dur">0:44</span></span>
+        </button></li>
+        <li><button type="button" class="pl-item" data-src="manual/videos/02-random.mp4?v=3a00db8b" data-poster="site/img/poster-02-random.jpg?v=0adaabf7">
+          <img src="site/img/poster-02-random.jpg?v=0adaabf7" width="640" height="360" alt="" loading="lazy">
+          <span class="pl-text"><b>02</b><span class="pl-title">Random: the key to everything</span><span class="pl-dur">1:11</span></span>
+        </button></li>
+        <li><button type="button" class="pl-item" data-src="manual/videos/03-play-modes.mp4?v=9c1fa007" data-poster="site/img/poster-03-play-modes.jpg?v=ca2d323b">
+          <img src="site/img/poster-03-play-modes.jpg?v=ca2d323b" width="640" height="360" alt="" loading="lazy">
+          <span class="pl-text"><b>03</b><span class="pl-title">Play modes</span><span class="pl-dur">0:45</span></span>
+        </button></li>
+        <li><button type="button" class="pl-item" data-src="manual/videos/04-patches-and-random.mp4?v=4e76798e" data-poster="site/img/poster-04-patches-and-random.jpg?v=eadd4350">
+          <img src="site/img/poster-04-patches-and-random.jpg?v=eadd4350" width="640" height="360" alt="" loading="lazy">
+          <span class="pl-text"><b>04</b><span class="pl-title">Patches and random sounds</span><span class="pl-dur">0:47</span></span>
+        </button></li>
+        <li><button type="button" class="pl-item" data-src="manual/videos/05-performance-knobs.mp4?v=6faca6ee" data-poster="site/img/poster-05-performance-knobs.jpg?v=5246702b">
+          <img src="site/img/poster-05-performance-knobs.jpg?v=5246702b" width="640" height="360" alt="" loading="lazy">
+          <span class="pl-text"><b>05</b><span class="pl-title">Performance knobs</span><span class="pl-dur">0:53</span></span>
+        </button></li>
+        <li><button type="button" class="pl-item" data-src="manual/videos/06-on-silent-skip.mp4?v=852cb182" data-poster="site/img/poster-06-on-silent-skip.jpg?v=82cb8fa6">
+          <img src="site/img/poster-06-on-silent-skip.jpg?v=82cb8fa6" width="640" height="360" alt="" loading="lazy">
+          <span class="pl-text"><b>06</b><span class="pl-title">On, silent, skip</span><span class="pl-dur">0:32</span></span>
+        </button></li>
+        <li><button type="button" class="pl-item" data-src="manual/videos/07-a-synths-page.mp4?v=f7e2928e" data-poster="site/img/poster-07-a-synths-page.jpg?v=c6cd6037">
+          <img src="site/img/poster-07-a-synths-page.jpg?v=c6cd6037" width="640" height="360" alt="" loading="lazy">
+          <span class="pl-text"><b>07</b><span class="pl-title">A synth's page</span><span class="pl-dur">0:40</span></span>
+        </button></li>
+        <li><button type="button" class="pl-item" data-src="manual/videos/08-master-effects.mp4?v=e7b8c9d9" data-poster="site/img/poster-08-master-effects.jpg?v=8bf9ffe1">
+          <img src="site/img/poster-08-master-effects.jpg?v=8bf9ffe1" width="640" height="360" alt="" loading="lazy">
+          <span class="pl-text"><b>08</b><span class="pl-title">The effects pages</span><span class="pl-dur">0:51</span></span>
+        </button></li>
+        <li><button type="button" class="pl-item" data-src="manual/videos/09-sequencer.mp4?v=8af81971" data-poster="site/img/poster-09-sequencer.jpg?v=d6a2e894">
+          <img src="site/img/poster-09-sequencer.jpg?v=d6a2e894" width="640" height="360" alt="" loading="lazy">
+          <span class="pl-text"><b>09</b><span class="pl-title">The sequencer</span><span class="pl-dur">0:50</span></span>
+        </button></li>
+        <li><button type="button" class="pl-item" data-src="manual/videos/10-arpeggiator.mp4?v=730f9111" data-poster="site/img/poster-10-arpeggiator.jpg?v=201ceb0f">
+          <img src="site/img/poster-10-arpeggiator.jpg?v=201ceb0f" width="640" height="360" alt="" loading="lazy">
+          <span class="pl-text"><b>10</b><span class="pl-title">The arpeggiator</span><span class="pl-dur">0:35</span></span>
+        </button></li>
+        <li><button type="button" class="pl-item" data-src="manual/videos/11-saving.mp4?v=bb3ea237" data-poster="site/img/poster-11-saving.jpg?v=1b37cf5d">
+          <img src="site/img/poster-11-saving.jpg?v=1b37cf5d" width="640" height="360" alt="" loading="lazy">
+          <span class="pl-text"><b>11</b><span class="pl-title">Saving your patches</span><span class="pl-dur">0:31</span></span>
+        </button></li>
+      </ol>
     </div>
   </div>
 </section>
@@ -103,6 +168,21 @@
       <video controls preload="none" playsinline poster="site/img/poster-random-play.jpg?v=1b27f014" src="manual/videos/02-random.mp4?v=3a00db8b"></video>
     </div>
     <p class="note" style="margin-top:12px">Chapter 2 of the video manual: Random, the key to everything (71&nbsp;s). Found something good? <span class="k">SAVE</span> <span class="k">SAVE</span> keeps it.</p>
+  </div>
+</section>
+
+<section id="play" class="play">
+  <div class="wrap">
+    <p class="eyebrow">Play it here</p>
+    <h2>Try POLY5 in your browser</h2>
+    <p class="lede" style="font-size:clamp(20px,2.3vw,26px)">This is the real firmware, the same code the FM&#8209;1 runs, compiled for your browser. Switch it on and play.</p>
+    <div class="p5" id="p5" data-wasm="site/play/poly5.wasm?v=47a6fff7" data-worklet="site/play/poly5-worklet.js?v=bdee7d7f"></div>
+    <div class="p5-help">
+      <div><b>Play</b> click or tap the keys, or your keyboard: <span class="k">A</span> is C, <span class="k">W</span> <span class="k">S</span> <span class="k">E</span> <span class="k">D</span> &hellip; up to <span class="k">'</span>. A MIDI keyboard plays it too (Chrome, Edge).</div>
+      <div><b>Knobs</b> drag up or down, or scroll over them.</div>
+      <div><b>Buttons</b> click them; hold for a hold. Shortcuts: <span class="k">R</span> GLO (random sounds), <span class="k">1</span>&ndash;<span class="k">5</span> a synth's page, <span class="k">Space</span> PLAY, <span class="k">Q</span> ARP, <span class="k">B</span> HOME, <span class="k">Z</span> <span class="k">X</span> octave.</div>
+      <div><b>Saved patches</b> stay in this browser.</div>
+    </div>
   </div>
 </section>
 
@@ -156,25 +236,6 @@
 
     <h3>On, silent, skip</h3>
     <p>Shape the round robin. Turn <span class="k r">SELECT</span> and a cursor appears over a synth; turn <span class="k r">ALGORITHM</span> and it goes <b>SILENT</b> (it still takes its turn but makes no sound: a rest in the rhythm) or <b>SKIP</b> (left out of the cycle, so the pattern lands differently).</p>
-  </div>
-</section>
-
-<section id="synth">
-  <div class="wrap split">
-    <div>
-      <p class="eyebrow">A synth's page</p>
-      <h2>Five synths, each its own</h2>
-      <p>Press a synth's button and its page opens: the keys play only that synth, and the four dials at the top follow <span class="k r">KNOB1</span> to <span class="k r">KNOB4</span>. <span class="k r">PRESETS</span> turns its ten pages, round and round:</p>
-      <ol class="pages">
-        <li>Wave</li><li>Amp envelope</li><li>Filter envelope</li><li>Filter</li><li>LFO</li>
-        <li>Noise</li><li>Saturation</li><li>Modulation</li><li>Delay</li><li>Reverb</li>
-      </ol>
-      <p><span class="k r">ALGORITHM</span> is its <b>noise</b> on every page: a little breath, hiss or static in the sound. Chance and noise are POLY5's two secret weapons.</p>
-    </div>
-    <figure class="screen">
-      <video class="ui-loop" muted loop playsinline preload="none" width="480" height="480" poster="site/img/screen-synth-page.png?v=f654d8cf" aria-label="Synth 1's WAVE page."><source src="site/img/loop-synth-page.mp4?v=3473388e" type="video/mp4"></video>
-      <figcaption>Synth 1's WAVE page: wave, octave, tone and detune; its shape and its wave running.</figcaption>
-    </figure>
   </div>
 </section>
 
@@ -282,72 +343,6 @@
           <tr><td>F24</td><td><b>Answered in Drum</b></td><td><span class="tag rnd">RANDOM</span></td><td>Crunchy drum kit: kick, clap, hat, tom, rim; crushed and driven</td></tr>
         </tbody>
       </table>
-    </div>
-  </div>
-</section>
-
-<section id="manual" class="manual">
-  <div class="wrap">
-    <div class="manual-head">
-      <span class="manual-play" aria-hidden="true"></span>
-      <div>
-        <p class="eyebrow">Video manual &middot; 11 chapters &middot; 8 minutes</p>
-        <h2>Learn POLY5 in eight minutes</h2>
-      </div>
-      <button type="button" class="btn primary manual-start" id="manual-start">&#9654;&ensp;Start the manual</button>
-    </div>
-    <p>Eleven short chapters, made from the firmware itself: the screen and the sound are POLY5 running, the panel lights up what is pressed. Each one leads into the next; pick any chapter from the list. Or download them <a href="manual/videos/poly5-manual-full.mp4?v=29b1467c">all in one</a>.</p>
-    <div class="player">
-      <div class="pl-main">
-        <div class="video"><video id="pl-video" controls preload="metadata" playsinline poster="site/img/poster-01-welcome.jpg?v=1cbab043" src="manual/videos/01-welcome.mp4?v=4ad35b69"></video></div>
-        <p class="pl-now"><b id="pl-num">01</b><span id="pl-title">Meet the five synths</span><span class="pl-next" id="pl-next">Next: Random: the key to everything</span></p>
-      </div>
-      <ol class="pl-list" id="pl-list" aria-label="Chapters">
-        <li><button type="button" class="pl-item on" data-src="manual/videos/01-welcome.mp4?v=4ad35b69" data-poster="site/img/poster-01-welcome.jpg?v=1cbab043" aria-current="true">
-          <img src="site/img/poster-01-welcome.jpg?v=1cbab043" width="640" height="360" alt="" loading="lazy">
-          <span class="pl-text"><b>01</b><span class="pl-title">Meet the five synths</span><span class="pl-dur">0:44</span></span>
-        </button></li>
-        <li><button type="button" class="pl-item" data-src="manual/videos/02-random.mp4?v=3a00db8b" data-poster="site/img/poster-02-random.jpg?v=0adaabf7">
-          <img src="site/img/poster-02-random.jpg?v=0adaabf7" width="640" height="360" alt="" loading="lazy">
-          <span class="pl-text"><b>02</b><span class="pl-title">Random: the key to everything</span><span class="pl-dur">1:11</span></span>
-        </button></li>
-        <li><button type="button" class="pl-item" data-src="manual/videos/03-play-modes.mp4?v=9c1fa007" data-poster="site/img/poster-03-play-modes.jpg?v=ca2d323b">
-          <img src="site/img/poster-03-play-modes.jpg?v=ca2d323b" width="640" height="360" alt="" loading="lazy">
-          <span class="pl-text"><b>03</b><span class="pl-title">Play modes</span><span class="pl-dur">0:45</span></span>
-        </button></li>
-        <li><button type="button" class="pl-item" data-src="manual/videos/04-patches-and-random.mp4?v=4e76798e" data-poster="site/img/poster-04-patches-and-random.jpg?v=eadd4350">
-          <img src="site/img/poster-04-patches-and-random.jpg?v=eadd4350" width="640" height="360" alt="" loading="lazy">
-          <span class="pl-text"><b>04</b><span class="pl-title">Patches and random sounds</span><span class="pl-dur">0:47</span></span>
-        </button></li>
-        <li><button type="button" class="pl-item" data-src="manual/videos/05-performance-knobs.mp4?v=6faca6ee" data-poster="site/img/poster-05-performance-knobs.jpg?v=5246702b">
-          <img src="site/img/poster-05-performance-knobs.jpg?v=5246702b" width="640" height="360" alt="" loading="lazy">
-          <span class="pl-text"><b>05</b><span class="pl-title">Performance knobs</span><span class="pl-dur">0:53</span></span>
-        </button></li>
-        <li><button type="button" class="pl-item" data-src="manual/videos/06-on-silent-skip.mp4?v=852cb182" data-poster="site/img/poster-06-on-silent-skip.jpg?v=82cb8fa6">
-          <img src="site/img/poster-06-on-silent-skip.jpg?v=82cb8fa6" width="640" height="360" alt="" loading="lazy">
-          <span class="pl-text"><b>06</b><span class="pl-title">On, silent, skip</span><span class="pl-dur">0:32</span></span>
-        </button></li>
-        <li><button type="button" class="pl-item" data-src="manual/videos/07-a-synths-page.mp4?v=f7e2928e" data-poster="site/img/poster-07-a-synths-page.jpg?v=c6cd6037">
-          <img src="site/img/poster-07-a-synths-page.jpg?v=c6cd6037" width="640" height="360" alt="" loading="lazy">
-          <span class="pl-text"><b>07</b><span class="pl-title">A synth's page</span><span class="pl-dur">0:40</span></span>
-        </button></li>
-        <li><button type="button" class="pl-item" data-src="manual/videos/08-master-effects.mp4?v=e7b8c9d9" data-poster="site/img/poster-08-master-effects.jpg?v=8bf9ffe1">
-          <img src="site/img/poster-08-master-effects.jpg?v=8bf9ffe1" width="640" height="360" alt="" loading="lazy">
-          <span class="pl-text"><b>08</b><span class="pl-title">The effects pages</span><span class="pl-dur">0:51</span></span>
-        </button></li>
-        <li><button type="button" class="pl-item" data-src="manual/videos/09-sequencer.mp4?v=8af81971" data-poster="site/img/poster-09-sequencer.jpg?v=d6a2e894">
-          <img src="site/img/poster-09-sequencer.jpg?v=d6a2e894" width="640" height="360" alt="" loading="lazy">
-          <span class="pl-text"><b>09</b><span class="pl-title">The sequencer</span><span class="pl-dur">0:50</span></span>
-        </button></li>
-        <li><button type="button" class="pl-item" data-src="manual/videos/10-arpeggiator.mp4?v=730f9111" data-poster="site/img/poster-10-arpeggiator.jpg?v=201ceb0f">
-          <img src="site/img/poster-10-arpeggiator.jpg?v=201ceb0f" width="640" height="360" alt="" loading="lazy">
-          <span class="pl-text"><b>10</b><span class="pl-title">The arpeggiator</span><span class="pl-dur">0:35</span></span>
-        </button></li>
-        <li><button type="button" class="pl-item" data-src="manual/videos/11-saving.mp4?v=bb3ea237" data-poster="site/img/poster-11-saving.jpg?v=1b37cf5d">
-          <img src="site/img/poster-11-saving.jpg?v=1b37cf5d" width="640" height="360" alt="" loading="lazy">
-          <span class="pl-text"><b>11</b><span class="pl-title">Saving your patches</span><span class="pl-dur">0:31</span></span>
-        </button></li>
-      </ol>
     </div>
   </div>
 </section>
