@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Install POLY5 on your FM-1</title>
+<meta name="description" content="Install POLY5 on the M-VAVE FM-1 from this page, in Chrome or Edge. No download, no driver, about a minute.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../site/site.css">
+<link rel="stylesheet" href="install.css">
+</head>
+<body>
+
+<nav class="nav" aria-label="POLY5">
+  <div class="wrap">
+    <a class="logo word" href="../" aria-label="POLY5, home"><span>P</span><span>O</span><span>L</span><span>Y</span><span>5</span></a>
+    <ul>
+      <li><a href="../#manual">Video manual</a></li>
+      <li><a href="../#play">Play it</a></li>
+      <li><a href="../#playing">Playing</a></li>
+      <li><a href="../#patches">Patches</a></li>
+      <li><a href="./" aria-current="page">Install</a></li>
+    </ul>
+  </div>
+</nav>
+
+<main>
+<section class="inst">
+  <div class="wrap">
+    <p class="eyebrow">Install</p>
+    <h1 class="inst-h">Put POLY5 on your FM&#8209;1</h1>
+    <p class="lede" style="font-size:clamp(20px,2.3vw,26px)">Right from this page, for free: the synth and its 24 patches with their sequences, in one go. No download, no driver, about a minute.</p>
+    <p class="note" id="demo-note" hidden>Demo: no FM&#8209;1 is touched, the steps only show what they look like.</p>
+
+    <ol class="steps5">
+
+      <li class="st" id="step-browser">
+        <h2 class="st-h"><span class="st-n">1</span>Your browser</h2>
+        <div class="st-body">
+          <p id="browser-ok" class="ok" hidden>This browser can install.</p>
+          <p id="browser-no" class="bad" hidden>This browser can't install: it can't send firmware over USB. Open this page in Chrome or Edge on a computer.</p>
+          <ul class="browsers">
+            <li><b>Chrome</b><span class="yes">Can install</span></li>
+            <li><b>Edge</b><span class="yes">Can install</span></li>
+            <li><b>Firefox</b><span class="no">Can't install</span></li>
+            <li><b>Safari</b><span class="no">Can't install</span></li>
+          </ul>
+          <p><button type="button" class="btn primary" id="to-ready">Continue</button></p>
+        </div>
+      </li>
+
+      <li class="st" id="step-ready">
+        <h2 class="st-h"><span class="st-n">2</span>Get ready</h2>
+        <div class="st-body" hidden>
+          <ul class="ready">
+            <li>Connect the FM&#8209;1 to this computer with a USB cable that carries data, and switch it on.</li>
+            <li>Close anything else that uses it: Ableton or another music app, the FM&#8209;1 Firmware Hub, other installer tabs.</li>
+            <li>The browser will ask to use your MIDI devices. Allow it: that is how the firmware reaches the FM&#8209;1.</li>
+            <li>On a laptop? Plug in its charger, so it does not sleep halfway.</li>
+            <li>Coming from another firmware? Saves made with it may be lost. Patches you saved in POLY5 stay when you update POLY5.</li>
+          </ul>
+          <p><button type="button" class="btn primary" id="to-connect">Test connection</button></p>
+        </div>
+      </li>
+
+      <li class="st" id="step-connect">
+        <h2 class="st-h"><span class="st-n">3</span>Test connection</h2>
+        <div class="st-body" hidden>
+          <p id="connect-out" class="status" aria-live="polite"></p>
+          <p id="connect-err" class="bad" role="alert" hidden></p>
+          <p>
+            <button type="button" class="btn primary" id="to-install" hidden>Continue</button>
+            <button type="button" class="btn" id="connect-again" hidden>Try again</button>
+          </p>
+        </div>
+      </li>
+
+      <li class="st" id="step-install">
+        <h2 class="st-h"><span class="st-n">4</span>Install</h2>
+        <div class="st-body" hidden>
+          <p id="pkg-state" class="status" aria-live="polite"></p>
+          <p id="install-from" class="note"></p>
+          <p><label class="agree"><input type="checkbox" id="agree"> I understand that POLY5 was not made by the manufacturer of my FM&#8209;1, and that I install it at my own risk.</label></p>
+          <p><button type="button" class="btn primary" id="install-go" disabled>Install POLY5 1.0</button></p>
+          <div id="prog" hidden>
+            <div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-labelledby="prog-label"><i id="prog-bar"></i></div>
+            <p id="prog-label" class="status" aria-live="polite"></p>
+            <p id="prog-warn" class="warn" hidden>Do not unplug the FM&#8209;1 and keep this tab open. Its screen shows the same progress.</p>
+          </div>
+          <p id="install-err" class="bad" role="alert" hidden></p>
+        </div>
+      </li>
+
+      <li class="st" id="step-done">
+        <h2 class="st-h"><span class="st-n">5</span>Done</h2>
+        <div class="st-body" hidden>
+          <p class="ok">POLY5 is on your FM&#8209;1. Play a few keys: each note goes to the next of the five synths.</p>
+          <p><a class="btn primary" href="../#manual">Watch the manual</a> <a class="btn quiet" href="../#playing">What the panel does</a></p>
+        </div>
+      </li>
+
+    </ol>
+
+    <div class="help">
+      <h3>If it gets stuck</h3>
+      <ul>
+        <li><b>Nothing found.</b> Try another USB cable or port, switch the FM&#8209;1 off and on, and close other apps and tabs that use it.</li>
+        <li><b>It stopped while writing.</b> Leave the FM&#8209;1 as it is, plug the cable in again, reload this page and install again: the update carries on.</li>
+        <li><b>The FM&#8209;1 does not start.</b> Switch it off, hold <span class="k">OCT&minus;</span> and switch it on: the USB rescue. Then install again.</li>
+        <li><b>Back to the official firmware</b> at any time with the <a href="https://thefirmwarehub.com">FM&#8209;1 Firmware Hub</a>.</li>
+      </ul>
+      <p class="note">Both FM&#8209;1 flash chips are supported; a unit with any other chip is refused before anything is erased. The file is checked before it is sent and every block is verified as it is written. Installing firmware is still at your own risk.</p>
+      <p class="note">Rather a file? <a href="https://github.com/questron5000/poly5/releases/tag/v1.0">POLY5 1.0 on GitHub</a>, with its checksum and the source. The installer on this page is Felucca's, by Leo Kuroshita, GPL&#8209;3.0.</p>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p><b class="word"><span>P</span><span>O</span><span>L</span><span>Y</span><span>5</span></b> for the M&#8209;VAVE FM&#8209;1. Free software under the GPL&#8209;3.0. <a href="../">Back to the page</a></p>
+  </div>
+</footer>
+
+<script type="module" src="install.js"></script>
+</body>
+</html>

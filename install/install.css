@@ -1,0 +1,36 @@
+/* POLY5's install page: five steps, one open at a time (on top of site/site.css) */
+.inst { padding-top: 120px; }
+.inst-h { color: var(--cream); font-size: clamp(38px, 6vw, 68px); font-weight: 700; letter-spacing: -0.03em; line-height: 1.05; margin: 0 0 0.35em; }
+.steps5 { list-style: none; margin: 34px 0 40px; padding: 0; display: grid; gap: 12px; max-width: 46em; }
+.st { border: 1px solid var(--line); border-radius: 16px; background: var(--panel); padding: 16px 20px; }
+.st.is-open { border-color: var(--amber); }
+.st-h { display: flex; align-items: center; gap: 14px; margin: 0; font-size: 20px; font-weight: 600; letter-spacing: -0.01em; color: var(--dim); }
+.st.is-open .st-h, .st.is-done .st-h { color: var(--cream); }
+.st-n { display: inline-grid; place-items: center; width: 30px; height: 30px; flex: none; border-radius: 50%; border: 2px solid var(--line);
+        font-family: "JetBrains Mono", monospace; font-size: 14px; color: var(--dim); }
+.st.is-open .st-n { border-color: var(--amber); color: var(--amber); }
+.st.is-done .st-n { border-color: var(--s3); background: var(--s3); color: #06140B; font-size: 0; }
+.st.is-done .st-n::after { content: "\2713"; font-size: 15px; font-weight: 700; }
+.st-body { padding: 14px 0 4px 44px; }
+.st-body p { margin: 0 0 14px; }
+.st-body .btn { cursor: pointer; font-family: inherit; }
+.st-body .btn:disabled { opacity: .4; cursor: not-allowed; }
+.status { color: var(--cream); min-height: 1.4em; }
+.ok { color: var(--s3); font-weight: 500; }
+.bad { color: var(--s2); font-weight: 500; }
+.warn { color: var(--amber); font-weight: 600; }
+.browsers { list-style: none; margin: 0 0 18px; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; }
+.browsers li { display: flex; justify-content: space-between; gap: 10px; border: 1px solid var(--line); border-radius: 10px; padding: 9px 12px; font-size: 15px; }
+.browsers b { color: var(--cream); font-weight: 600; }
+.browsers .yes { color: var(--s3); }
+.browsers .no { color: var(--dim); }
+.ready { margin: 0 0 18px; padding-left: 1.1em; display: grid; gap: 8px; }
+.bar { height: 12px; border-radius: 999px; background: var(--ground); border: 1px solid var(--line); overflow: hidden; margin: 6px 0 10px; }
+.bar i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--s1), var(--s2), var(--s3), var(--s4), var(--s5)); transition: width .25s ease; }
+.help { max-width: 46em; border-top: 1px solid var(--line); padding-top: 28px; }
+.help h3 { margin: 0 0 12px; }
+.help ul { padding-left: 1.1em; display: grid; gap: 8px; margin: 0 0 18px; }
+@media (max-width: 600px) { .st-body { padding-left: 0; } }
+@media (prefers-reduced-motion: reduce) { .bar i { transition: none; } }
+.agree { display: flex; gap: 10px; align-items: flex-start; color: var(--cream); cursor: pointer; }
+.agree input { margin-top: 5px; width: 17px; height: 17px; accent-color: var(--amber); flex: none; }
